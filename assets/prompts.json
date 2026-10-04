@@ -1,42 +1,42 @@
 [
   {
     "id": "what-animal",
-    "label": "What animal is this?",
-    "text": "What animal is this?"
+    "label": "I'm at Kraansvlak and I can see a herd. What animal is this?",
+    "text": "I'm at Kraansvlak and I can see a herd. What animal is this?"
   },
   {
-    "id": "where-herd",
-    "label": "Where does this herd live, and who manages the area?",
-    "text": "Where does this herd live, and who manages the area?"
+    "id": "who-manages",
+    "label": "Who manages this area, and where am I allowed to stand?",
+    "text": "Who manages this area, and where am I allowed to stand?"
   },
   {
     "id": "morning-meal",
-    "label": "What did this wisent eat this morning?",
-    "text": "What did this wisent eat this morning?"
+    "label": "What did one of these animals eat this morning?",
+    "text": "What did one of these animals eat this morning?"
   },
   {
     "id": "danger",
-    "label": "Is this herd dangerous to visitors, and what should they do if one approaches?",
-    "text": "Is this herd dangerous to visitors, and what should they do if one approaches?"
+    "label": "Is this herd dangerous, and what should I do if one comes onto the path?",
+    "text": "Is this herd dangerous, and what should I do if one comes onto the path?"
   },
   {
     "id": "calves",
-    "label": "Where does the herd live, and how many calves were born this year?",
-    "text": "Where does the herd live, and how many calves were born this year?"
+    "label": "How many calves were born here this year?",
+    "text": "How many calves were born here this year?"
   },
   {
     "id": "nature-message",
-    "label": "What is Nature trying to tell visitors through this wisent?",
-    "text": "What is Nature trying to tell visitors through this wisent?"
+    "label": "What is Nature trying to tell me through this herd?",
+    "text": "What is Nature trying to tell me through this herd?"
   },
   {
     "id": "translate-behaviour",
-    "label": "Translate what this wisent's behaviour is saying.",
-    "text": "Translate what this wisent's behaviour is saying."
+    "label": "Translate what this animal's behaviour is saying.",
+    "text": "Translate what this animal's behaviour is saying."
   },
   {
     "id": "make-care",
-    "label": "Tell me something interesting about wisents that would make a visitor care.",
-    "text": "Tell me something interesting about wisents that would make a visitor care."
+    "label": "Tell me something that would make me care about this herd.",
+    "text": "Tell me something that would make me care about this herd."
   }
 ]

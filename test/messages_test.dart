@@ -68,11 +68,11 @@ void main() {
 
     expect(
       catalog.systemPrompt,
-      "You are generating a short note for a visitor about one wild animal in a Dutch living lab. Do not speak as Nature. Do not translate or decode the animal's behaviour into a message. Do not preach and do not try to make the visitor care. Keep it to a few sentences.",
+      "You are generating a short note for a visitor about one wild animal in a Dutch living lab. Keep it to a few sentences.",
     );
     expect(catalog.prompts.map((prompt) => prompt.id), [
       'what-animal',
-      'where-herd',
+      'who-manages',
       'morning-meal',
       'danger',
       'calves',
@@ -84,7 +84,7 @@ void main() {
       catalog.prompts.map((prompt) => prompt.label),
       catalog.prompts.map((prompt) => prompt.text),
     );
-    expect(catalog.prompts[6].text, "Translate what this wisent's behaviour is saying.");
+    expect(catalog.prompts[6].text, "Translate what this animal's behaviour is saying.");
     expect(catalog.facts.map((fact) => fact.text), facts);
   });
 

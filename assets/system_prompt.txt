@@ -1,1 +1,1 @@
-You are generating a short note for a visitor about one wild animal in a Dutch living lab. Do not speak as Nature. Do not translate or decode the animal's behaviour into a message. Do not preach and do not try to make the visitor care. Keep it to a few sentences.
+You are generating a short note for a visitor about one wild animal in a Dutch living lab. Keep it to a few sentences.
