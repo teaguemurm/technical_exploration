@@ -6,37 +6,47 @@
   },
   {
     "id": "who-manages",
-    "label": "Who manages this area, and where am I allowed to stand?",
-    "text": "Who manages this area, and where am I allowed to stand?"
+    "label": "Who manages Kraansvlak, where this herd lives?",
+    "text": "Who manages Kraansvlak, where this herd lives?"
+  },
+  {
+    "id": "where-stand",
+    "label": "How close can I get to the herd at Kraansvlak, and where should I watch from?",
+    "text": "How close can I get to the herd at Kraansvlak, and where should I watch from?"
+  },
+  {
+    "id": "on-path",
+    "label": "One of the Kraansvlak herd is coming onto the path towards me. What should I do?",
+    "text": "One of the Kraansvlak herd is coming onto the path towards me. What should I do?"
+  },
+  {
+    "id": "since-when",
+    "label": "When did this herd first come to Kraansvlak?",
+    "text": "When did this herd first come to Kraansvlak?"
   },
   {
     "id": "morning-meal",
-    "label": "What did one of these animals eat this morning?",
-    "text": "What did one of these animals eat this morning?"
-  },
-  {
-    "id": "danger",
-    "label": "Is this herd dangerous, and what should I do if one comes onto the path?",
-    "text": "Is this herd dangerous, and what should I do if one comes onto the path?"
+    "label": "What did one of the Kraansvlak herd eat this morning?",
+    "text": "What did one of the Kraansvlak herd eat this morning?"
   },
   {
     "id": "calves",
-    "label": "How many calves were born here this year?",
-    "text": "How many calves were born here this year?"
+    "label": "How many calves were born in the Kraansvlak herd this year?",
+    "text": "How many calves were born in the Kraansvlak herd this year?"
   },
   {
     "id": "nature-message",
-    "label": "What is Nature trying to tell me through this herd?",
-    "text": "What is Nature trying to tell me through this herd?"
+    "label": "What is Nature trying to tell me through the herd at Kraansvlak?",
+    "text": "What is Nature trying to tell me through the herd at Kraansvlak?"
   },
   {
-    "id": "translate-behaviour",
-    "label": "Translate what this animal's behaviour is saying.",
-    "text": "Translate what this animal's behaviour is saying."
+    "id": "speak-as",
+    "label": "Speak as one of the animals in the Kraansvlak herd and tell me what you're feeling.",
+    "text": "Speak as one of the animals in the Kraansvlak herd and tell me what you're feeling."
   },
   {
     "id": "make-care",
-    "label": "Tell me something that would make me care about this herd.",
-    "text": "Tell me something that would make me care about this herd."
+    "label": "Tell me something about the Kraansvlak herd that would make me care about it.",
+    "text": "Tell me something about the Kraansvlak herd that would make me care about it."
   }
 ]
