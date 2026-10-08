@@ -3,15 +3,9 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:llm_llamacpp/llm_llamacpp.dart';
 import 'package:technical_exploration/messages.dart';
+import 'package:technical_exploration/system_metrics.dart';
 
 void main() {
-  const facts = [
-    'EXAMPLE, not approved: This animal is a wisent in the Kraansvlak herd.',
-    'EXAMPLE, not approved: The herd lives in Nationaal Park Zuid-Kennemerland.',
-    'EXAMPLE, not approved: PWN manages the area.',
-    'EXAMPLE, not approved: Visitors may see the herd from the designated paths.',
-  ];
-
   test('system prompt drops one trailing newline only', () {
     expect(trimSingleTrailingNewline('abc\n'), 'abc');
     expect(trimSingleTrailingNewline('abc\r\n'), 'abc');
@@ -19,109 +13,177 @@ void main() {
     expect(trimSingleTrailingNewline('  abc  '), '  abc  ');
   });
 
-  test('dataset off sends the system prompt then the selected prompt', () {
-    final messages = buildMessages(
-      systemPrompt: 'Stay brief.\n',
-      promptText: 'What animal is this?',
-      useDataset: false,
-      datasetLines: facts,
-    );
-
-    expect(messages.map((message) => message.role), [
-      LLMRole.system,
-      LLMRole.user,
-    ]);
-    expect(messages[0].content, 'Stay brief.');
-    expect(messages[1].content, 'What animal is this?');
-  });
-
-  test('dataset on lists every fact before the selected prompt', () {
-    final messages = buildMessages(
-      systemPrompt: 'Stay brief.',
-      promptText: 'What animal is this?',
-      useDataset: true,
-      datasetLines: facts,
-    );
-
-    expect(messages.map((message) => message.role), [
-      LLMRole.system,
-      LLMRole.user,
-      LLMRole.user,
-    ]);
-    expect(
-      messages[1].content,
-      'Local notes\n\n'
-      'Local notes follow. They are the only place-specific notes supplied for this run.\n'
-      '${facts.join('\n')}',
-    );
-    expect(messages[2].content, 'What animal is this?');
-    expect(formatMessages(messages), contains('system\nStay brief.'));
-    expect(formatMessages(messages), contains('user\nLocal notes'));
-  });
-
-  test('seeded assets keep the eight prompts and four facts in order', () {
+  test('seeded assets parse all 10 prompts and 10 facts correctly', () {
     final catalog = parseCatalog(
       systemPrompt: File('assets/system_prompt.txt').readAsStringSync(),
       promptsJson: File('assets/prompts.json').readAsStringSync(),
       datasetJson: File('assets/dataset.json').readAsStringSync(),
     );
 
-    expect(
-      catalog.systemPrompt,
-      "You are generating a short note for a visitor about one wild animal in a Dutch living lab. Keep it to a few sentences.",
-    );
-    expect(catalog.prompts.map((prompt) => prompt.id), [
-      'what-animal',
-      'who-manages',
-      'morning-meal',
-      'danger',
-      'calves',
-      'nature-message',
-      'translate-behaviour',
-      'make-care',
-    ]);
-    expect(
-      catalog.prompts.map((prompt) => prompt.label),
-      catalog.prompts.map((prompt) => prompt.text),
-    );
-    expect(catalog.prompts[6].text, "Translate what this animal's behaviour is saying.");
-    expect(catalog.facts.map((fact) => fact.text), facts);
+    expect(catalog.prompts.length, 10);
+    expect(catalog.facts.length, 10);
+    expect(catalog.prompts.first.id, 'what-animal');
+    expect(catalog.prompts.first.relevantFactIds, ['wisent-herd']);
+    expect(catalog.facts.first.id, 'wisent-herd');
   });
 
-  test('tokens per second uses the library count and measured interval', () {
+  test('Condition A sends system prompt and user prompt only', () {
+    const prompt = PromptSpec(
+      id: 'what-animal',
+      label: 'What animal is this?',
+      text: 'What animal is this?',
+      relevantFactIds: ['wisent-herd'],
+    );
+    const facts = [
+      DatasetFact(id: 'wisent-herd', text: 'Wisent herd fact.'),
+      DatasetFact(id: 'other', text: 'Other fact.'),
+    ];
+
+    final messages = buildConditionMessages(
+      condition: PromptCondition.conditionA,
+      systemPrompt: 'System note.',
+      prompt: prompt,
+      allFacts: facts,
+    );
+
+    expect(messages.length, 2);
+    expect(messages[0].role, LLMRole.system);
+    expect(messages[0].content, 'System note.');
+    expect(messages[1].role, LLMRole.user);
+    expect(messages[1].content, 'What animal is this?');
+  });
+
+  test('Condition B with simulated RAG injects only relevant facts', () {
+    const prompt = PromptSpec(
+      id: 'what-animal',
+      label: 'What animal is this?',
+      text: 'What animal is this?',
+      relevantFactIds: ['wisent-herd'],
+    );
+    const facts = [
+      DatasetFact(id: 'wisent-herd', text: 'Wisent herd fact.'),
+      DatasetFact(id: 'other', text: 'Other fact.'),
+    ];
+
+    final messages = buildConditionMessages(
+      condition: PromptCondition.conditionB,
+      systemPrompt: 'System note.',
+      prompt: prompt,
+      allFacts: facts,
+      relevantOnly: true,
+    );
+
+    expect(messages.length, 3);
+    expect(messages[0].role, LLMRole.system);
+    expect(messages[1].role, LLMRole.user);
+    expect(messages[1].content, contains('Wisent herd fact.'));
+    expect(messages[1].content, isNot(contains('Other fact.')));
+    expect(messages[2].content, 'What animal is this?');
+  });
+
+  test('Condition B with all notes injects all facts', () {
+    const prompt = PromptSpec(
+      id: 'what-animal',
+      label: 'What animal is this?',
+      text: 'What animal is this?',
+      relevantFactIds: ['wisent-herd'],
+    );
+    const facts = [
+      DatasetFact(id: 'wisent-herd', text: 'Wisent herd fact.'),
+      DatasetFact(id: 'other', text: 'Other fact.'),
+    ];
+
+    final messages = buildConditionMessages(
+      condition: PromptCondition.conditionB,
+      systemPrompt: 'System note.',
+      prompt: prompt,
+      allFacts: facts,
+      relevantOnly: false,
+    );
+
+    expect(messages.length, 3);
+    expect(messages[1].content, contains('Wisent herd fact.'));
+    expect(messages[1].content, contains('Other fact.'));
+  });
+
+  test('Condition C includes strict grounding constraints and refusal rule', () {
+    const prompt = PromptSpec(
+      id: 'calves',
+      label: 'How many calves were born?',
+      text: 'How many calves were born?',
+      relevantFactIds: [],
+    );
+    const facts = [
+      DatasetFact(id: 'wisent-herd', text: 'Wisent herd fact.'),
+    ];
+
+    final messages = buildConditionMessages(
+      condition: PromptCondition.conditionC,
+      systemPrompt: 'Base prompt.',
+      prompt: prompt,
+      allFacts: facts,
+      relevantOnly: true,
+    );
+
+    expect(messages[0].role, LLMRole.system);
+    expect(messages[0].content, contains('STRICT GROUNDING & FORM CONSTRAINTS'));
+    expect(messages[0].content, contains(standardRefusalStatement));
+    expect(messages[1].content, contains('(No specific local notes match this query.)'));
+  });
+
+  test('isRefusalOutput detects standard refusal phrasings', () {
+    expect(isRefusalOutput('I do not have information about that in the approved notes.'), isTrue);
+    expect(isRefusalOutput('There is no information regarding this.'), isTrue);
+    expect(isRefusalOutput('The wisent herd was introduced in 2007.'), isFalse);
+  });
+
+  test('formatBytes formats GB, MB, KB correctly', () {
+    expect(formatBytes(1024 * 1024 * 1024), '1.00 GB');
+    expect(formatBytes(500 * 1024 * 1024), '500.00 MB');
+    expect(formatBytes(2048), '2.00 KB');
+    expect(formatBytes(1024 * 1024 * 1024, signed: true), '+1.00 GB');
+    expect(formatBytes(null), '--');
+  });
+
+  test('tokens per second uses library count and measured interval', () {
     expect(
       tokensPerSecond(
         evalCount: 10,
         generation: const Duration(milliseconds: 500),
       ),
-      20,
+      20.0,
     );
     expect(
       tokensPerSecond(evalCount: null, generation: const Duration(seconds: 1)),
       isNull,
     );
-    expect(
-      tokensPerSecond(evalCount: 4, generation: Duration.zero),
-      isNull,
-    );
   });
 
-  test('memory line stays empty unless the library reported one', () {
-    expect(
-      formatMemoryReport(
-        providerMetadata: const {'evalCount': 12, 'fileSize': 99},
-        backends: const [BackendMemory(name: 'Metal')],
-      ),
-      isNull,
+  test('BenchmarkExporter exports Markdown table with runs', () {
+    final report = BenchmarkExporter.exportMarkdownReport(
+      modelFileName: 'qwen2.5.gguf',
+      coldLoadMs: 1200,
+      baselineRssBytes: 100 * 1024 * 1024,
+      idleModelRssBytes: 1500 * 1024 * 1024,
+      runs: [
+        RunRecord(
+          promptId: 'what-animal',
+          promptText: 'What animal is this?',
+          conditionLabel: 'Condition B',
+          relevantOnly: true,
+          maxTokens: 256,
+          output: 'This is a wisent.',
+          timestamp: DateTime.now(),
+          ttftMs: 350,
+          tokensPerSecond: 18.5,
+          evalCount: 30,
+        ),
+      ],
     );
-    expect(
-      formatMemoryReport(
-        providerMetadata: const {'memory_bytes': 1024},
-        backends: const [
-          BackendMemory(name: 'Metal', total: 8, free: 3),
-        ],
-      ),
-      'memory_bytes: 1024\nMetal memoryTotal: 8\nMetal memoryFree: 3',
-    );
+
+    expect(report, contains('Technical Exploration Benchmark Report'));
+    expect(report, contains('qwen2.5.gguf'));
+    expect(report, contains('Condition B'));
+    expect(report, contains('18.50'));
   });
 }

@@ -2,51 +2,61 @@
   {
     "id": "what-animal",
     "label": "I'm at Kraansvlak and I can see a herd. What animal is this?",
-    "text": "I'm at Kraansvlak and I can see a herd. What animal is this?"
+    "text": "I'm at Kraansvlak and I can see a herd. What animal is this?",
+    "relevantFactIds": ["wisent-herd"]
   },
   {
     "id": "who-manages",
     "label": "Who manages Kraansvlak, where this herd lives?",
-    "text": "Who manages Kraansvlak, where this herd lives?"
+    "text": "Who manages Kraansvlak, where this herd lives?",
+    "relevantFactIds": ["pwn", "park"]
   },
   {
     "id": "where-stand",
     "label": "How close can I get to the herd at Kraansvlak, and where should I watch from?",
-    "text": "How close can I get to the herd at Kraansvlak, and where should I watch from?"
+    "text": "How close can I get to the herd at Kraansvlak, and where should I watch from?",
+    "relevantFactIds": ["distance", "paths", "wisentenpad"]
   },
   {
     "id": "on-path",
     "label": "One of the Kraansvlak herd is coming onto the path towards me. What should I do?",
-    "text": "One of the Kraansvlak herd is coming onto the path towards me. What should I do?"
+    "text": "One of the Kraansvlak herd is coming onto the path towards me. What should I do?",
+    "relevantFactIds": ["on-path"]
   },
   {
     "id": "since-when",
     "label": "When did this herd first come to Kraansvlak?",
-    "text": "When did this herd first come to Kraansvlak?"
+    "text": "When did this herd first come to Kraansvlak?",
+    "relevantFactIds": ["arrival"]
   },
   {
     "id": "morning-meal",
     "label": "What did one of the Kraansvlak herd eat this morning?",
-    "text": "What did one of the Kraansvlak herd eat this morning?"
+    "text": "What did one of the Kraansvlak herd eat this morning?",
+    "relevantFactIds": []
   },
   {
     "id": "calves",
     "label": "How many calves were born in the Kraansvlak herd this year?",
-    "text": "How many calves were born in the Kraansvlak herd this year?"
+    "text": "How many calves were born in the Kraansvlak herd this year?",
+    "relevantFactIds": []
   },
   {
     "id": "nature-message",
     "label": "What is Nature trying to tell me through the herd at Kraansvlak?",
-    "text": "What is Nature trying to tell me through the herd at Kraansvlak?"
+    "text": "What is Nature trying to tell me through the herd at Kraansvlak?",
+    "relevantFactIds": []
   },
   {
     "id": "speak-as",
     "label": "Speak as one of the animals in the Kraansvlak herd and tell me what you're feeling.",
-    "text": "Speak as one of the animals in the Kraansvlak herd and tell me what you're feeling."
+    "text": "Speak as one of the animals in the Kraansvlak herd and tell me what you're feeling.",
+    "relevantFactIds": []
   },
   {
     "id": "make-care",
     "label": "Tell me something about the Kraansvlak herd that would make me care about it.",
-    "text": "Tell me something about the Kraansvlak herd that would make me care about it."
+    "text": "Tell me something about the Kraansvlak herd that would make me care about it.",
+    "relevantFactIds": ["other-grazers", "no-feeding"]
   }
 ]
