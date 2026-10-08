@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -13,128 +14,296 @@ void main() {
     expect(trimSingleTrailingNewline('  abc  '), '  abc  ');
   });
 
-  test('seeded assets parse all 10 prompts and 10 facts correctly', () {
+  test('bundled JSON matches the locked prompts and notes (10 prompts, 10 notes)', () {
+    final promptsFile = File('assets/prompts.json').readAsStringSync();
+    final datasetFile = File('assets/dataset.json').readAsStringSync();
+    final simRagFile = File('assets/simulated_rag.json').readAsStringSync();
+    final systemPrompt = File('assets/system_prompt.txt').readAsStringSync();
+
     final catalog = parseCatalog(
-      systemPrompt: File('assets/system_prompt.txt').readAsStringSync(),
-      promptsJson: File('assets/prompts.json').readAsStringSync(),
-      datasetJson: File('assets/dataset.json').readAsStringSync(),
+      systemPrompt: systemPrompt,
+      promptsJson: promptsFile,
+      datasetJson: datasetFile,
+      simRagJson: simRagFile,
     );
 
     expect(catalog.prompts.length, 10);
     expect(catalog.facts.length, 10);
-    expect(catalog.prompts.first.id, 'what-animal');
-    expect(catalog.prompts.first.relevantFactIds, ['wisent-herd']);
-    expect(catalog.facts.first.id, 'wisent-herd');
+
+    const expectedPromptIds = [
+      'what-animal',
+      'who-manages',
+      'where-stand',
+      'on-path',
+      'since-when',
+      'morning-meal',
+      'calves',
+      'nature-message',
+      'speak-as',
+      'make-care',
+    ];
+    expect(catalog.prompts.map((p) => p.id).toList(), expectedPromptIds);
+
+    const expectedFactIds = [
+      'wisent-herd',
+      'other-grazers',
+      'park',
+      'pwn',
+      'arrival',
+      'distance',
+      'paths',
+      'wisentenpad',
+      'on-path',
+      'no-feeding',
+    ];
+    expect(catalog.facts.map((f) => f.id).toList(), expectedFactIds);
+
+    expect(catalog.simRagConfig.k, 2);
+    for (final id in expectedPromptIds) {
+      expect(catalog.simRagConfig.retrieval.containsKey(id), isTrue,
+          reason: 'simulated_rag.json must contain prompt $id');
+      expect(catalog.simRagConfig.retrieval[id]!.length, 2,
+          reason: 'prompt $id must have exactly k=2 notes');
+    }
+
+    // Near-miss checks
+    expect(catalog.simRagConfig.retrieval['morning-meal'], contains('no-feeding'));
+    expect(catalog.simRagConfig.retrieval['what-animal'], contains('other-grazers'));
   });
 
-  test('Condition A sends system prompt and user prompt only', () {
-    const prompt = PromptSpec(
-      id: 'what-animal',
-      label: 'What animal is this?',
-      text: 'What animal is this?',
-      relevantFactIds: ['wisent-herd'],
-    );
-    const facts = [
-      DatasetFact(id: 'wisent-herd', text: 'Wisent herd fact.'),
-      DatasetFact(id: 'other', text: 'Other fact.'),
-    ];
+  test('Condition B and C contain all 10 notes, while sim-RAG variants contain exactly their fixed lists', () {
+    final promptsFile = File('assets/prompts.json').readAsStringSync();
+    final datasetFile = File('assets/dataset.json').readAsStringSync();
+    final simRagFile = File('assets/simulated_rag.json').readAsStringSync();
+    final systemPrompt = File('assets/system_prompt.txt').readAsStringSync();
 
-    final messages = buildConditionMessages(
-      condition: PromptCondition.conditionA,
-      systemPrompt: 'System note.',
-      prompt: prompt,
-      allFacts: facts,
+    final catalog = parseCatalog(
+      systemPrompt: systemPrompt,
+      promptsJson: promptsFile,
+      datasetJson: datasetFile,
+      simRagJson: simRagFile,
     );
 
-    expect(messages.length, 2);
-    expect(messages[0].role, LLMRole.system);
-    expect(messages[0].content, 'System note.');
-    expect(messages[1].role, LLMRole.user);
-    expect(messages[1].content, 'What animal is this?');
-  });
+    final prompt = catalog.prompts.firstWhere((p) => p.id == 'morning-meal');
 
-  test('Condition B with simulated RAG injects only relevant facts', () {
-    const prompt = PromptSpec(
-      id: 'what-animal',
-      label: 'What animal is this?',
-      text: 'What animal is this?',
-      relevantFactIds: ['wisent-herd'],
-    );
-    const facts = [
-      DatasetFact(id: 'wisent-herd', text: 'Wisent herd fact.'),
-      DatasetFact(id: 'other', text: 'Other fact.'),
-    ];
-
-    final messages = buildConditionMessages(
+    // Condition B: all 10 notes
+    final bMessages = buildConditionMessages(
       condition: PromptCondition.conditionB,
-      systemPrompt: 'System note.',
+      systemPrompt: catalog.systemPrompt,
       prompt: prompt,
-      allFacts: facts,
-      relevantOnly: true,
+      allFacts: catalog.facts,
+      simRagConfig: catalog.simRagConfig,
     );
+    expect(bMessages.length, 3);
+    for (final fact in catalog.facts) {
+      expect(bMessages[1].content, contains(fact.text));
+    }
+    // Nothing in B hints at abstaining
+    expect(bMessages[1].content, isNot(contains(standardRefusalStatement)));
+    expect(bMessages[1].content, isNot(contains('No specific local notes match')));
 
-    expect(messages.length, 3);
-    expect(messages[0].role, LLMRole.system);
-    expect(messages[1].role, LLMRole.user);
-    expect(messages[1].content, contains('Wisent herd fact.'));
-    expect(messages[1].content, isNot(contains('Other fact.')));
-    expect(messages[2].content, 'What animal is this?');
-  });
-
-  test('Condition B with all notes injects all facts', () {
-    const prompt = PromptSpec(
-      id: 'what-animal',
-      label: 'What animal is this?',
-      text: 'What animal is this?',
-      relevantFactIds: ['wisent-herd'],
-    );
-    const facts = [
-      DatasetFact(id: 'wisent-herd', text: 'Wisent herd fact.'),
-      DatasetFact(id: 'other', text: 'Other fact.'),
-    ];
-
-    final messages = buildConditionMessages(
-      condition: PromptCondition.conditionB,
-      systemPrompt: 'System note.',
-      prompt: prompt,
-      allFacts: facts,
-      relevantOnly: false,
-    );
-
-    expect(messages.length, 3);
-    expect(messages[1].content, contains('Wisent herd fact.'));
-    expect(messages[1].content, contains('Other fact.'));
-  });
-
-  test('Condition C includes strict grounding constraints and refusal rule', () {
-    const prompt = PromptSpec(
-      id: 'calves',
-      label: 'How many calves were born?',
-      text: 'How many calves were born?',
-      relevantFactIds: [],
-    );
-    const facts = [
-      DatasetFact(id: 'wisent-herd', text: 'Wisent herd fact.'),
-    ];
-
-    final messages = buildConditionMessages(
+    // Condition C: all 10 notes
+    final cMessages = buildConditionMessages(
       condition: PromptCondition.conditionC,
-      systemPrompt: 'Base prompt.',
+      systemPrompt: catalog.systemPrompt,
       prompt: prompt,
-      allFacts: facts,
-      relevantOnly: true,
+      allFacts: catalog.facts,
+      simRagConfig: catalog.simRagConfig,
     );
+    expect(cMessages.length, 3);
+    for (final fact in catalog.facts) {
+      expect(cMessages[1].content, contains(fact.text));
+    }
 
-    expect(messages[0].role, LLMRole.system);
-    expect(messages[0].content, contains('STRICT GROUNDING & FORM CONSTRAINTS'));
-    expect(messages[0].content, contains(standardRefusalStatement));
-    expect(messages[1].content, contains('(No specific local notes match this query.)'));
+    // Condition B-sim-RAG: exactly k=2 notes
+    final bSimMessages = buildConditionMessages(
+      condition: PromptCondition.conditionBSimRag,
+      systemPrompt: catalog.systemPrompt,
+      prompt: prompt,
+      allFacts: catalog.facts,
+      simRagConfig: catalog.simRagConfig,
+    );
+    expect(bSimMessages.length, 3);
+    expect(bSimMessages[1].content, contains('The wisents are not fed by people and find their own food in the dunes.'));
+    expect(bSimMessages[1].content, contains('The Kraansvlak herd is a herd of wisents (European bison).'));
+    expect(bSimMessages[1].content, isNot(contains('PWN manages the area.')));
+
+    // Condition C-sim-RAG: exactly k=2 notes
+    final cSimMessages = buildConditionMessages(
+      condition: PromptCondition.conditionCSimRag,
+      systemPrompt: catalog.systemPrompt,
+      prompt: prompt,
+      allFacts: catalog.facts,
+      simRagConfig: catalog.simRagConfig,
+    );
+    expect(cSimMessages.length, 3);
+    expect(cSimMessages[1].content, contains('The wisents are not fed by people and find their own food in the dunes.'));
+    expect(cSimMessages[1].content, isNot(contains('PWN manages the area.')));
+
+    // Unmapped prompt gets 0 notes and does not fallback to keyword matching
+    const unmappedPrompt = PromptSpec(
+      id: 'unmapped-query',
+      label: 'Unmapped',
+      text: 'What did the wisent eat?',
+    );
+    final unmappedMessages = buildConditionMessages(
+      condition: PromptCondition.conditionBSimRag,
+      systemPrompt: catalog.systemPrompt,
+      prompt: unmappedPrompt,
+      allFacts: catalog.facts,
+      simRagConfig: catalog.simRagConfig,
+    );
+    // When 0 notes, B variant has only system and user prompt (no abstention hint)
+    expect(unmappedMessages.length, 2);
+    expect(unmappedMessages[0].role, LLMRole.system);
+    expect(unmappedMessages[1].role, LLMRole.user);
+    expect(unmappedMessages[1].content, contains('What did the wisent eat?'));
   });
 
-  test('isRefusalOutput detects standard refusal phrasings', () {
-    expect(isRefusalOutput('I do not have information about that in the approved notes.'), isTrue);
-    expect(isRefusalOutput('There is no information regarding this.'), isTrue);
-    expect(isRefusalOutput('The wisent herd was introduced in 2007.'), isFalse);
+  test('Condition C bans appear only in the C variants', () {
+    const baseSystemPrompt = 'Base system note.';
+    const prompt = PromptSpec(
+      id: 'what-animal',
+      label: 'What animal',
+      text: 'What animal is this?',
+    );
+    const facts = [
+      DatasetFact(id: 'wisent-herd', text: 'Wisent herd fact.'),
+    ];
+
+    const bans = [
+      'Do NOT speak as Nature or in the animal\'s first-person voice.',
+      'Do NOT claim to decode or translate the animal\'s behaviour.',
+      'Do NOT preach or moralise at the visitor.',
+      standardRefusalStatement,
+    ];
+
+    for (final cond in [PromptCondition.conditionA, PromptCondition.conditionB, PromptCondition.conditionBSimRag]) {
+      final msgs = buildConditionMessages(
+        condition: cond,
+        systemPrompt: baseSystemPrompt,
+        prompt: prompt,
+        allFacts: facts,
+      );
+      for (final ban in bans) {
+        expect(msgs[0].content, isNot(contains(ban)),
+            reason: '$ban should NOT appear in ${cond.code}');
+      }
+    }
+
+    for (final cond in [PromptCondition.conditionC, PromptCondition.conditionCSimRag]) {
+      final msgs = buildConditionMessages(
+        condition: cond,
+        systemPrompt: baseSystemPrompt,
+        prompt: prompt,
+        allFacts: facts,
+      );
+      for (final ban in bans) {
+        expect(msgs[0].content, contains(ban),
+            reason: '$ban MUST appear in ${cond.code}');
+      }
+    }
+  });
+
+  test('stripThinkingBlocks removes <think> blocks and leaves response text intact', () {
+    expect(
+      stripThinkingBlocks('<think>Let me reason about this...</think>The herd is wisents.'),
+      'The herd is wisents.',
+    );
+    expect(
+      stripThinkingBlocks('<think>Unclosed thinking block...'),
+      '',
+    );
+    expect(
+      stripThinkingBlocks('Direct answer with no thinking.'),
+      'Direct answer with no thinking.',
+    );
+  });
+
+  test('a run record round-trips to CSV and JSON with every field', () {
+    final now = DateTime.now();
+    final record = RunRecord(
+      runIndex: 1,
+      runIndexSinceLoad: 1,
+      isColdLoad: true,
+      loadDurationMs: 1450,
+      timestamp: now,
+      deviceModel: 'Fairphone 5',
+      osVersion: 'Android 14',
+      modelFileName: 'qwen2.5-1.5b-instruct-q4_k_m.gguf',
+      architecture: 'qwen2',
+      quantization: 'Q4_K_M',
+      backend: 'CPU',
+      nGpuLayers: 0,
+      condition: 'B',
+      notesMode: 'all',
+      k: 0,
+      injectedNoteIds: ['wisent-herd', 'park'],
+      promptId: 'what-animal',
+      promptText: 'What animal is this?',
+      decodingSettings: const DecodingSettings(
+        temperature: 0.0,
+        seed: 42,
+        topK: 40,
+        topP: 0.9,
+        repeatPenalty: 1.1,
+        maxTokens: 256,
+        contextSize: 2048,
+      ),
+      systemPrompt: 'System prompt content',
+      messagesSent: 'system\n...\nuser\n...',
+      output: 'The Kraansvlak herd consists of wisents.',
+      hitMaxTokens: false,
+      ramBeforeLoadBytes: 85 * 1024 * 1024,
+      ramIdleBytes: 1320 * 1024 * 1024,
+      ramPeakBytes: 1450 * 1024 * 1024,
+      promptTokenCount: null,
+      generatedTokenCount: 22,
+      ttftMs: 320,
+      generationDurationMs: 1100,
+      tokensPerSecond: 20.0,
+      batteryLevelBefore: 88,
+      batteryLevelAfter: 87,
+      batteryTempBeforeCelsius: 32.5,
+      batteryTempAfterCelsius: 33.1,
+      throttlePercentage: null,
+      isHeatTest: false,
+      thinkingDisabled: true,
+    );
+
+    // JSON round-trip
+    final jsonMap = record.toJson();
+    final jsonStr = jsonEncode(jsonMap);
+    final deserialized = RunRecord.fromJson(jsonDecode(jsonStr) as Map<String, dynamic>);
+
+    expect(deserialized.runIndex, record.runIndex);
+    expect(deserialized.runIndexSinceLoad, record.runIndexSinceLoad);
+    expect(deserialized.isColdLoad, record.isColdLoad);
+    expect(deserialized.loadDurationMs, record.loadDurationMs);
+    expect(deserialized.deviceModel, 'Fairphone 5');
+    expect(deserialized.modelFileName, 'qwen2.5-1.5b-instruct-q4_k_m.gguf');
+    expect(deserialized.architecture, 'qwen2');
+    expect(deserialized.quantization, 'Q4_K_M');
+    expect(deserialized.condition, 'B');
+    expect(deserialized.injectedNoteIds, ['wisent-herd', 'park']);
+    expect(deserialized.decodingSettings.temperature, 0.0);
+    expect(deserialized.decodingSettings.seed, 42);
+    expect(deserialized.output, record.output);
+    expect(deserialized.hitMaxTokens, false);
+    expect(deserialized.tokensPerSecond, 20.0);
+    expect(deserialized.batteryLevelBefore, 88);
+    expect(deserialized.batteryLevelAfter, 87);
+    expect(deserialized.batteryTempBeforeCelsius, 32.5);
+    expect(deserialized.batteryTempAfterCelsius, 33.1);
+
+    // CSV format verification
+    final csv = BenchmarkExporter.exportCsv([record]);
+    expect(csv, contains('# Tab: Load and idle'));
+    expect(csv, contains('# Tab: Inference'));
+    expect(csv, contains('Fairphone 5'));
+    expect(csv, contains('qwen2.5-1.5b-instruct-q4_k_m.gguf'));
+    expect(csv, contains('Q4_K_M'));
+    expect(csv, contains('The Kraansvlak herd consists of wisents.'));
   });
 
   test('formatBytes formats GB, MB, KB correctly', () {
@@ -157,33 +326,5 @@ void main() {
       tokensPerSecond(evalCount: null, generation: const Duration(seconds: 1)),
       isNull,
     );
-  });
-
-  test('BenchmarkExporter exports Markdown table with runs', () {
-    final report = BenchmarkExporter.exportMarkdownReport(
-      modelFileName: 'qwen2.5.gguf',
-      coldLoadMs: 1200,
-      baselineRssBytes: 100 * 1024 * 1024,
-      idleModelRssBytes: 1500 * 1024 * 1024,
-      runs: [
-        RunRecord(
-          promptId: 'what-animal',
-          promptText: 'What animal is this?',
-          conditionLabel: 'Condition B',
-          relevantOnly: true,
-          maxTokens: 256,
-          output: 'This is a wisent.',
-          timestamp: DateTime.now(),
-          ttftMs: 350,
-          tokensPerSecond: 18.5,
-          evalCount: 30,
-        ),
-      ],
-    );
-
-    expect(report, contains('Technical Exploration Benchmark Report'));
-    expect(report, contains('qwen2.5.gguf'));
-    expect(report, contains('Condition B'));
-    expect(report, contains('18.50'));
   });
 }

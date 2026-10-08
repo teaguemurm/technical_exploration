@@ -3,16 +3,18 @@ import 'package:flutter/services.dart';
 import 'package:technical_exploration/messages.dart';
 import 'package:technical_exploration/system_metrics.dart';
 
-/// Renders Condition A, B, and C outputs for direct comparative analysis.
+/// Renders Condition outputs neutrally for direct comparative analysis without automated judging.
 class ComparisonView extends StatefulWidget {
   const ComparisonView({
     super.key,
     required this.prompt,
     required this.results,
+    this.showSimRag = false,
   });
 
   final PromptSpec prompt;
   final Map<PromptCondition, RunRecord?> results;
+  final bool showSimRag;
 
   @override
   State<ComparisonView> createState() => _ComparisonViewState();
@@ -21,17 +23,35 @@ class ComparisonView extends StatefulWidget {
 class _ComparisonViewState extends State<ComparisonView> {
   int _selectedTabIndex = 0;
 
+  List<PromptCondition> get _activeConditions {
+    if (widget.showSimRag) {
+      return PromptCondition.values;
+    }
+    return [
+      PromptCondition.conditionA,
+      PromptCondition.conditionB,
+      PromptCondition.conditionC,
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final conditions = PromptCondition.values;
+    final conditions = _activeConditions;
+    final allIndex = conditions.length;
+
+    if (_selectedTabIndex > allIndex) {
+      _selectedTabIndex = 0;
+    }
 
     return Card(
       margin: const EdgeInsets.only(top: 16),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: colorScheme.outlineVariant.withValues(alpha: 0.6)),
+        side: BorderSide(
+          color: colorScheme.outlineVariant.withValues(alpha: 0.6),
+        ),
       ),
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -43,7 +63,9 @@ class _ComparisonViewState extends State<ComparisonView> {
                 Icon(Icons.compare_arrows, color: colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
-                  'Condition Comparison (A vs B vs C)',
+                  widget.showSimRag
+                      ? 'Condition Comparison (A vs B vs B-sim vs C vs C-sim)'
+                      : 'Condition Comparison (A vs B vs C)',
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -59,25 +81,29 @@ class _ComparisonViewState extends State<ComparisonView> {
               ),
             ),
             const SizedBox(height: 12),
-            SegmentedButton<int>(
-              segments: [
-                for (var i = 0; i < conditions.length; i++)
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: SegmentedButton<int>(
+                segments: [
+                  for (var i = 0; i < conditions.length; i++)
+                    ButtonSegment(
+                      value: i,
+                      label: Text(conditions[i].shortCode),
+                      tooltip: conditions[i].label,
+                    ),
                   ButtonSegment(
-                    value: i,
-                    label: Text(conditions[i].code),
+                    value: allIndex,
+                    label: Text(widget.showSimRag ? 'All 5' : 'All 3'),
                   ),
-                const ButtonSegment(
-                  value: 3,
-                  label: Text('All 3'),
-                ),
-              ],
-              selected: {_selectedTabIndex},
-              onSelectionChanged: (set) {
-                setState(() => _selectedTabIndex = set.first);
-              },
+                ],
+                selected: {_selectedTabIndex},
+                onSelectionChanged: (set) {
+                  setState(() => _selectedTabIndex = set.first);
+                },
+              ),
             ),
             const SizedBox(height: 16),
-            if (_selectedTabIndex < 3)
+            if (_selectedTabIndex < allIndex)
               _buildSingleConditionCard(conditions[_selectedTabIndex])
             else
               Column(
@@ -99,14 +125,13 @@ class _ComparisonViewState extends State<ComparisonView> {
     final colorScheme = theme.colorScheme;
     final run = widget.results[condition];
 
-    final isConditionC = condition == PromptCondition.conditionC;
-    final refusalTriggered = run != null && isRefusalOutput(run.output);
-
     return Container(
       decoration: BoxDecoration(
         color: colorScheme.surfaceContainerLow,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: colorScheme.outlineVariant.withValues(alpha: 0.5)),
+        border: Border.all(
+          color: colorScheme.outlineVariant.withValues(alpha: 0.5),
+        ),
       ),
       padding: const EdgeInsets.all(12),
       child: Column(
@@ -122,27 +147,7 @@ class _ComparisonViewState extends State<ComparisonView> {
                 ),
               ),
               const Spacer(),
-              if (run != null) ...[
-                if (isConditionC)
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                    margin: const EdgeInsets.only(right: 8),
-                    decoration: BoxDecoration(
-                      color: refusalTriggered
-                          ? colorScheme.primaryContainer
-                          : colorScheme.tertiaryContainer,
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    child: Text(
-                      refusalTriggered ? 'Refusal Enforced' : 'Grounded Answer',
-                      style: theme.textTheme.labelSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: refusalTriggered
-                            ? colorScheme.onPrimaryContainer
-                            : colorScheme.onTertiaryContainer,
-                      ),
-                    ),
-                  ),
+              if (run != null)
                 IconButton(
                   icon: const Icon(Icons.copy, size: 16),
                   visualDensity: VisualDensity.compact,
@@ -154,7 +159,6 @@ class _ComparisonViewState extends State<ComparisonView> {
                     );
                   },
                 ),
-              ],
             ],
           ),
           Text(
@@ -186,9 +190,14 @@ class _ComparisonViewState extends State<ComparisonView> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   _stat('TTFT', '${run.ttftMs ?? "--"} ms'),
-                  _stat('TPS', run.tokensPerSecond != null ? '${run.tokensPerSecond!.toStringAsFixed(1)} t/s' : '--'),
-                  _stat('Tokens', '${run.evalCount ?? "--"}'),
-                  _stat('RAM', formatBytes(run.peakRssBytes)),
+                  _stat(
+                    'TPS',
+                    run.tokensPerSecond != null
+                        ? '${run.tokensPerSecond!.toStringAsFixed(1)} t/s'
+                        : '--',
+                  ),
+                  _stat('Tokens', '${run.generatedTokenCount ?? "--"}'),
+                  _stat('RAM Peak', formatBytes(run.ramPeakBytes)),
                 ],
               ),
             ),
@@ -208,8 +217,9 @@ class _ComparisonViewState extends State<ComparisonView> {
       children: [
         Text(
           label,
-          style: const TextStyle(fontSize: 10, color: Colors.grey),
+          style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w500),
         ),
+        const SizedBox(height: 2),
         Text(
           value,
           style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),

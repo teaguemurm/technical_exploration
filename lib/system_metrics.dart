@@ -1,8 +1,15 @@
 import 'dart:convert';
 import 'dart:io';
 
-/// Captures a snapshot of current and peak process memory, as well as
-/// system memory on Linux/Android.
+import 'package:path_provider/path_provider.dart';
+
+/// Captures a snapshot of current and peak process memory.
+///
+/// Documented measurement method:
+/// - Process RSS: On Linux & Android, read from `/proc/self/status` `VmRSS`
+///   (instantaneous physical memory) and `VmHWM` (High Water Mark / peak memory).
+///   Falls back to `ProcessInfo.currentRss` and `ProcessInfo.maxRss`.
+/// - On macOS and iOS, read directly via `ProcessInfo.currentRss` and `ProcessInfo.maxRss`.
 class MemorySnapshot {
   const MemorySnapshot({
     required this.currentRssBytes,
@@ -16,7 +23,6 @@ class MemorySnapshot {
   final int? systemTotalBytes;
   final int? systemAvailableBytes;
 
-  /// Takes an immediate snapshot of process and system memory.
   static MemorySnapshot capture() {
     var current = ProcessInfo.currentRss;
     var max = ProcessInfo.maxRss;
@@ -28,7 +34,8 @@ class MemorySnapshot {
         final meminfo = _readProcFile('/proc/meminfo');
         if (meminfo != null) {
           final totalKb = _parseKb(meminfo, 'MemTotal');
-          final availKb = _parseKb(meminfo, 'MemAvailable') ?? _parseKb(meminfo, 'MemFree');
+          final availKb =
+              _parseKb(meminfo, 'MemAvailable') ?? _parseKb(meminfo, 'MemFree');
           if (totalKb != null) sysTotal = totalKb * 1024;
           if (availKb != null) sysAvail = availKb * 1024;
         }
@@ -40,9 +47,7 @@ class MemorySnapshot {
           if (vmRssKb != null && vmRssKb > 0) current = vmRssKb * 1024;
           if (vmHwmKb != null && vmHwmKb > 0) max = vmHwmKb * 1024;
         }
-      } catch (_) {
-        // Fall back to dart:io ProcessInfo
-      }
+      } catch (_) {}
     }
 
     return MemorySnapshot(
@@ -73,15 +78,81 @@ class MemorySnapshot {
   }
 }
 
-/// Attempts to read the device battery or SoC temperature on Android.
+/// Reads the device model name (e.g. "Fairphone 5", "Mac14,6", "SM-F946B").
+String readDeviceModel() {
+  if (Platform.isAndroid) {
+    try {
+      final res = Process.runSync('getprop', ['ro.product.model']);
+      if (res.exitCode == 0 && res.stdout.toString().trim().isNotEmpty) {
+        final model = res.stdout.toString().trim();
+        final brandRes = Process.runSync('getprop', ['ro.product.brand']);
+        final brand = brandRes.stdout.toString().trim();
+        if (brand.isNotEmpty && !model.toLowerCase().contains(brand.toLowerCase())) {
+          return '$brand $model';
+        }
+        return model;
+      }
+    } catch (_) {}
+
+    try {
+      final buildProp = File('/system/build.prop');
+      if (buildProp.existsSync()) {
+        final lines = buildProp.readAsLinesSync();
+        for (final line in lines) {
+          if (line.startsWith('ro.product.model=')) {
+            return line.split('=').last.trim();
+          }
+        }
+      }
+    } catch (_) {}
+    return 'Android Device';
+  } else if (Platform.isMacOS) {
+    try {
+      final res = Process.runSync('sysctl', ['-n', 'hw.model']);
+      if (res.exitCode == 0 && res.stdout.toString().trim().isNotEmpty) {
+        return res.stdout.toString().trim();
+      }
+    } catch (_) {}
+    return 'macOS (${Platform.localHostname})';
+  } else if (Platform.isLinux) {
+    return 'Linux Device';
+  }
+  return Platform.operatingSystem;
+}
+
+/// Reads the device battery level (percentage 0–100) on Linux/Android.
+int? readDeviceBatteryLevel() {
+  if (!Platform.isAndroid && !Platform.isLinux) {
+    return null;
+  }
+  const candidatePaths = [
+    '/sys/class/power_supply/battery/capacity',
+    '/sys/class/power_supply/BAT0/capacity',
+  ];
+  for (final path in candidatePaths) {
+    try {
+      final file = File(path);
+      if (file.existsSync()) {
+        final text = file.readAsStringSync().trim();
+        final val = int.tryParse(text);
+        if (val != null && val >= 0 && val <= 100) {
+          return val;
+        }
+      }
+    } catch (_) {}
+  }
+  return null;
+}
+
+/// Attempts to read the device battery or SoC temperature on Android/Linux.
 /// Returns temperature in degrees Celsius, or null if inaccessible.
 double? readDeviceTemperatureCelsius() {
   if (!Platform.isAndroid && !Platform.isLinux) {
     return null;
   }
   const candidatePaths = [
-    '/sys/class/power_supply/battery/temp', // often 1/10 degree C (e.g. 345 = 34.5 C)
-    '/sys/class/thermal/thermal_zone0/temp', // often millidegree C (e.g. 34500 = 34.5 C)
+    '/sys/class/power_supply/battery/temp',
+    '/sys/class/thermal/thermal_zone0/temp',
     '/sys/devices/virtual/thermal/thermal_zone0/temp',
   ];
   for (final path in candidatePaths) {
@@ -136,136 +207,415 @@ String formatBytes(int? bytes, {bool signed = false}) {
   return '${isNegative ? '-' : ''}$formatted $unit';
 }
 
-/// A single recorded prompt run with full telemetry.
+/// Fixed decoding settings used across the reproducible protocol.
+class DecodingSettings {
+  const DecodingSettings({
+    this.temperature = 0.0, // Protocol default: greedy decoding
+    this.seed = 42, // Fixed reproducible seed
+    this.topK = 40,
+    this.topP = 0.9,
+    this.repeatPenalty = 1.1,
+    this.maxTokens = 256,
+    this.contextSize = 2048,
+  });
+
+  final double temperature;
+  final int? seed;
+  final int topK;
+  final double topP;
+  final double? repeatPenalty;
+  final int maxTokens;
+  final int contextSize;
+
+  Map<String, dynamic> toJson() => {
+    'temperature': temperature,
+    'seed': seed,
+    'topK': topK,
+    'topP': topP,
+    'repeatPenalty': repeatPenalty,
+    'maxTokens': maxTokens,
+    'contextSize': contextSize,
+  };
+
+  factory DecodingSettings.fromJson(Map<String, dynamic> json) {
+    return DecodingSettings(
+      temperature: (json['temperature'] as num?)?.toDouble() ?? 0.0,
+      seed: (json['seed'] as num?)?.toInt() ?? 42,
+      topK: (json['topK'] as num?)?.toInt() ?? 40,
+      topP: (json['topP'] as num?)?.toDouble() ?? 0.9,
+      repeatPenalty: (json['repeatPenalty'] as num?)?.toDouble() ?? 1.1,
+      maxTokens: (json['maxTokens'] as num?)?.toInt() ?? 256,
+      contextSize: (json['contextSize'] as num?)?.toInt() ?? 2048,
+    );
+  }
+}
+
+/// A complete, persistent telemetry record of a single inference run.
 class RunRecord {
   RunRecord({
+    required this.runIndex,
+    required this.runIndexSinceLoad,
+    required this.isColdLoad,
+    required this.timestamp,
+    required this.deviceModel,
+    required this.osVersion,
+    required this.modelFileName,
+    required this.architecture,
+    required this.quantization,
+    required this.backend,
+    required this.nGpuLayers,
+    required this.condition,
+    required this.notesMode,
+    required this.k,
+    required this.injectedNoteIds,
     required this.promptId,
     required this.promptText,
-    required this.conditionLabel,
-    required this.relevantOnly,
-    required this.maxTokens,
+    required this.decodingSettings,
+    required this.systemPrompt,
+    required this.messagesSent,
     required this.output,
-    required this.timestamp,
-    this.coldLoadMs,
+    required this.hitMaxTokens,
+    this.loadDurationMs,
+    this.ramBeforeLoadBytes,
+    this.ramIdleBytes,
+    this.ramPeakBytes,
+    this.promptTokenCount,
+    this.generatedTokenCount,
     this.ttftMs,
+    this.generationDurationMs,
     this.tokensPerSecond,
-    this.evalCount,
-    this.generationDuration,
-    this.peakRssBytes,
-    this.batteryTempCelsius,
+    this.batteryLevelBefore,
+    this.batteryLevelAfter,
+    this.batteryTempBeforeCelsius,
+    this.batteryTempAfterCelsius,
+    this.throttlePercentage,
+    this.isHeatTest = false,
+    this.thinkingDisabled = true,
   });
+
+  final int runIndex;
+  final int runIndexSinceLoad;
+  final bool isColdLoad;
+  final DateTime timestamp;
+  final String deviceModel;
+  final String osVersion;
+  final String modelFileName;
+  final String architecture;
+  final String quantization;
+  final String backend;
+  final int nGpuLayers;
+
+  final String condition; // 'A', 'B', 'C', 'B-sim-RAG', 'C-sim-RAG'
+  final String notesMode; // 'none', 'all', 'sim-rag'
+  final int k; // 0 for A/B/C, 2 for sim-RAG
+  final List<String> injectedNoteIds;
 
   final String promptId;
   final String promptText;
-  final String conditionLabel;
-  final bool relevantOnly;
-  final int maxTokens;
+  final DecodingSettings decodingSettings;
+  final String systemPrompt;
+  final String messagesSent;
   final String output;
-  final DateTime timestamp;
-  final int? coldLoadMs;
+  final bool hitMaxTokens;
+
+  final int? loadDurationMs;
+  final int? ramBeforeLoadBytes;
+  final int? ramIdleBytes;
+  final int? ramPeakBytes;
+
+  final int? promptTokenCount;
+  final int? generatedTokenCount;
   final int? ttftMs;
+  final int? generationDurationMs;
   final double? tokensPerSecond;
-  final int? evalCount;
-  final Duration? generationDuration;
-  final int? peakRssBytes;
-  final double? batteryTempCelsius;
+
+  final int? batteryLevelBefore;
+  final int? batteryLevelAfter;
+  final double? batteryTempBeforeCelsius;
+  final double? batteryTempAfterCelsius;
+
+  final double? throttlePercentage; // populated only during heat test
+  final bool isHeatTest;
+  final bool thinkingDisabled;
 
   Map<String, dynamic> toJson() => {
+    'runIndex': runIndex,
+    'runIndexSinceLoad': runIndexSinceLoad,
+    'isColdLoad': isColdLoad,
+    'loadDurationMs': loadDurationMs,
+    'timestamp': timestamp.toIso8601String(),
+    'deviceModel': deviceModel,
+    'osVersion': osVersion,
+    'modelFileName': modelFileName,
+    'architecture': architecture,
+    'quantization': quantization,
+    'backend': backend,
+    'nGpuLayers': nGpuLayers,
+    'condition': condition,
+    'notesMode': notesMode,
+    'k': k,
+    'injectedNoteIds': injectedNoteIds,
     'promptId': promptId,
     'promptText': promptText,
-    'condition': conditionLabel,
-    'relevantOnly': relevantOnly,
-    'maxTokens': maxTokens,
-    'coldLoadMs': coldLoadMs,
-    'ttftMs': ttftMs,
-    'tokensPerSecond': tokensPerSecond,
-    'evalCount': evalCount,
-    'generationDurationMs': generationDuration?.inMilliseconds,
-    'peakRssBytes': peakRssBytes,
-    'batteryTempCelsius': batteryTempCelsius,
-    'timestamp': timestamp.toIso8601String(),
+    'decodingSettings': decodingSettings.toJson(),
+    'systemPrompt': systemPrompt,
+    'messagesSent': messagesSent,
     'output': output,
+    'hitMaxTokens': hitMaxTokens,
+    'ramBeforeLoadBytes': ramBeforeLoadBytes,
+    'ramIdleBytes': ramIdleBytes,
+    'ramPeakBytes': ramPeakBytes,
+    'promptTokenCount': promptTokenCount,
+    'generatedTokenCount': generatedTokenCount,
+    'ttftMs': ttftMs,
+    'generationDurationMs': generationDurationMs,
+    'tokensPerSecond': tokensPerSecond,
+    'batteryLevelBefore': batteryLevelBefore,
+    'batteryLevelAfter': batteryLevelAfter,
+    'batteryTempBeforeCelsius': batteryTempBeforeCelsius,
+    'batteryTempAfterCelsius': batteryTempAfterCelsius,
+    'throttlePercentage': throttlePercentage,
+    'isHeatTest': isHeatTest,
+    'thinkingDisabled': thinkingDisabled,
   };
+
+  factory RunRecord.fromJson(Map<String, dynamic> json) {
+    return RunRecord(
+      runIndex: (json['runIndex'] as num?)?.toInt() ?? 0,
+      runIndexSinceLoad: (json['runIndexSinceLoad'] as num?)?.toInt() ?? 1,
+      isColdLoad: json['isColdLoad'] as bool? ?? false,
+      loadDurationMs: (json['loadDurationMs'] as num?)?.toInt(),
+      timestamp: DateTime.tryParse(json['timestamp']?.toString() ?? '') ??
+          DateTime.now(),
+      deviceModel: json['deviceModel']?.toString() ?? 'Unknown',
+      osVersion: json['osVersion']?.toString() ?? 'Unknown',
+      modelFileName: json['modelFileName']?.toString() ?? 'Unknown',
+      architecture: json['architecture']?.toString() ?? 'unknown',
+      quantization: json['quantization']?.toString() ?? 'unknown',
+      backend: json['backend']?.toString() ?? 'CPU',
+      nGpuLayers: (json['nGpuLayers'] as num?)?.toInt() ?? 0,
+      condition: json['condition']?.toString() ?? 'A',
+      notesMode: json['notesMode']?.toString() ?? 'none',
+      k: (json['k'] as num?)?.toInt() ?? 0,
+      injectedNoteIds: (json['injectedNoteIds'] as List?)
+              ?.map((e) => e.toString())
+              .toList() ??
+          const [],
+      promptId: json['promptId']?.toString() ?? '',
+      promptText: json['promptText']?.toString() ?? '',
+      decodingSettings: json['decodingSettings'] is Map<String, dynamic>
+          ? DecodingSettings.fromJson(json['decodingSettings'])
+          : const DecodingSettings(),
+      systemPrompt: json['systemPrompt']?.toString() ?? '',
+      messagesSent: json['messagesSent']?.toString() ?? '',
+      output: json['output']?.toString() ?? '',
+      hitMaxTokens: json['hitMaxTokens'] as bool? ?? false,
+      ramBeforeLoadBytes: (json['ramBeforeLoadBytes'] as num?)?.toInt(),
+      ramIdleBytes: (json['ramIdleBytes'] as num?)?.toInt(),
+      ramPeakBytes: (json['ramPeakBytes'] as num?)?.toInt(),
+      promptTokenCount: (json['promptTokenCount'] as num?)?.toInt(),
+      generatedTokenCount: (json['generatedTokenCount'] as num?)?.toInt(),
+      ttftMs: (json['ttftMs'] as num?)?.toInt(),
+      generationDurationMs: (json['generationDurationMs'] as num?)?.toInt(),
+      tokensPerSecond: (json['tokensPerSecond'] as num?)?.toDouble(),
+      batteryLevelBefore: (json['batteryLevelBefore'] as num?)?.toInt(),
+      batteryLevelAfter: (json['batteryLevelAfter'] as num?)?.toInt(),
+      batteryTempBeforeCelsius:
+          (json['batteryTempBeforeCelsius'] as num?)?.toDouble(),
+      batteryTempAfterCelsius:
+          (json['batteryTempAfterCelsius'] as num?)?.toDouble(),
+      throttlePercentage: (json['throttlePercentage'] as num?)?.toDouble(),
+      isHeatTest: json['isHeatTest'] as bool? ?? false,
+      thinkingDisabled: json['thinkingDisabled'] as bool? ?? true,
+    );
+  }
 }
 
-/// Generates structured Markdown and JSON reports for benchmark export.
+/// Manages persistence to disk across app sessions.
+class RunPersistenceManager {
+  static const _fileName = 'runs_history.jsonl';
+
+  static Future<File> _getFile() async {
+    final dir = await getApplicationDocumentsDirectory();
+    return File('${dir.path}/$_fileName');
+  }
+
+  /// Appends a new run to disk immediately.
+  static Future<void> appendRun(RunRecord record) async {
+    try {
+      final file = await _getFile();
+      final line = '${jsonEncode(record.toJson())}\n';
+      await file.writeAsString(line, mode: FileMode.append, flush: true);
+    } catch (e) {
+      // ignore: avoid_print
+      print('[RunPersistenceManager] Failed to persist run: $e');
+    }
+  }
+
+  /// Loads all saved runs from disk.
+  static Future<List<RunRecord>> loadRuns() async {
+    try {
+      final file = await _getFile();
+      if (!await file.exists()) return [];
+      final lines = await file.readAsLines();
+      final records = <RunRecord>[];
+      for (final line in lines) {
+        if (line.trim().isEmpty) continue;
+        try {
+          final map = jsonDecode(line) as Map<String, dynamic>;
+          records.add(RunRecord.fromJson(map));
+        } catch (_) {}
+      }
+      return records;
+    } catch (_) {
+      return [];
+    }
+  }
+
+  /// Clears persisted runs.
+  static Future<void> clearRuns() async {
+    try {
+      final file = await _getFile();
+      if (await file.exists()) {
+        await file.delete();
+      }
+    } catch (_) {}
+  }
+}
+
+/// Generates CSV and JSON benchmark exports matching the protocol sheets:
+/// - "Load and idle" tab
+/// - "Inference" tab
 class BenchmarkExporter {
-  static String exportMarkdownReport({
-    required String? modelFileName,
-    required int? coldLoadMs,
-    required int? baselineRssBytes,
-    required int? idleModelRssBytes,
-    required List<RunRecord> runs,
-  }) {
+  /// Exports CSV aligning directly with the measurements sheet's tabs.
+  static String exportCsv(List<RunRecord> runs) {
     final buffer = StringBuffer();
-    buffer.writeln('# Technical Exploration Benchmark Report');
-    buffer.writeln();
-    buffer.writeln('**Device OS:** ${Platform.operatingSystem} (${Platform.operatingSystemVersion})');
-    buffer.writeln('**Model:** ${modelFileName ?? "Unknown"}');
-    buffer.writeln('**Cold Load Time:** ${coldLoadMs != null ? "$coldLoadMs ms" : "--"}');
-    buffer.writeln('**Baseline App RAM:** ${formatBytes(baselineRssBytes)}');
-    buffer.writeln('**Model Idle RAM Overhead:** ${formatBytes(idleModelRssBytes, signed: true)}');
-    buffer.writeln();
 
-    if (runs.isEmpty) {
-      buffer.writeln('_No runs recorded yet._');
-      return buffer.toString();
-    }
-
-    buffer.writeln('## Recorded Runs (${runs.length})');
-    buffer.writeln();
-    buffer.writeln('| # | Condition | Prompt ID | TTFT | TPS | Tokens | Gen Time | Peak RAM | Temp |');
-    buffer.writeln('|---|-----------|-----------|------|-----|--------|----------|----------|------|');
-
-    for (var i = 0; i < runs.length; i++) {
-      final r = runs[i];
-      final ttft = r.ttftMs != null ? '${r.ttftMs} ms' : '--';
-      final tps = r.tokensPerSecond != null ? r.tokensPerSecond!.toStringAsFixed(2) : '--';
-      final tokens = r.evalCount?.toString() ?? '--';
-      final genTime = r.generationDuration != null ? '${r.generationDuration!.inMilliseconds} ms' : '--';
-      final ram = formatBytes(r.peakRssBytes);
-      final temp = r.batteryTempCelsius != null ? '${r.batteryTempCelsius!.toStringAsFixed(1)}°C' : '--';
-
-      buffer.writeln('| ${i + 1} | ${r.conditionLabel} | ${r.promptId} | $ttft | $tps | $tokens | $genTime | $ram | $temp |');
+    // Section 1: Load and Idle Summary
+    buffer.writeln('# Tab: Load and idle');
+    buffer.writeln(
+      'Device Model,OS Version,Model File,Architecture,Quantization,Backend,GPU Layers,Load Type,Load Time (ms),RAM Before Load (MB),RAM Idle Model (MB),RAM Overhead (MB),Timestamp',
+    );
+    final seenLoads = <String>{};
+    for (final r in runs) {
+      final key = '${r.modelFileName}_${r.isColdLoad}_${r.loadDurationMs}';
+      if (!seenLoads.contains(key) && r.loadDurationMs != null) {
+        seenLoads.add(key);
+        final beforeMb = r.ramBeforeLoadBytes != null
+            ? (r.ramBeforeLoadBytes! / 1024 / 1024).toStringAsFixed(1)
+            : '';
+        final idleMb = r.ramIdleBytes != null
+            ? (r.ramIdleBytes! / 1024 / 1024).toStringAsFixed(1)
+            : '';
+        final overheadMb = (r.ramIdleBytes != null && r.ramBeforeLoadBytes != null)
+            ? ((r.ramIdleBytes! - r.ramBeforeLoadBytes!) / 1024 / 1024)
+                .toStringAsFixed(1)
+            : '';
+        buffer.writeln(
+          '${_escape(r.deviceModel)},${_escape(r.osVersion)},${_escape(r.modelFileName)},${_escape(r.architecture)},${_escape(r.quantization)},${_escape(r.backend)},${r.nGpuLayers},${r.isColdLoad ? "Cold" : "Warm"},${r.loadDurationMs ?? ""},$beforeMb,$idleMb,$overheadMb,${r.timestamp.toIso8601String()}',
+        );
+      }
     }
 
     buffer.writeln();
-    buffer.writeln('### Detailed Outputs');
-    buffer.writeln();
-    for (var i = 0; i < runs.length; i++) {
-      final r = runs[i];
-      buffer.writeln('#### Run ${i + 1}: [${r.conditionLabel}] ${r.promptId}');
-      buffer.writeln('> **Prompt:** ${r.promptText}');
-      buffer.writeln();
-      buffer.writeln('```');
-      buffer.writeln(r.output.trim());
-      buffer.writeln('```');
-      buffer.writeln();
+
+    // Section 2: Inference Runs
+    buffer.writeln('# Tab: Inference');
+    buffer.writeln(
+      'Run Index,Run Since Load,Is Cold Load,Timestamp,Device Model,OS Version,Model File,Architecture,Quantization,Backend,Condition,Notes Mode,k,Injected Notes,Prompt ID,Prompt Text,Temperature,Seed,Top-K,Top-P,Repeat Penalty,Max Tokens,Context Size,Prompt Tokens,Gen Tokens,Hit Max Tokens,TTFT (ms),Gen Duration (ms),TPS (tok/s),RAM Peak (MB),Battery Level Before (%),Battery Level After (%),Battery Temp Before (C),Battery Temp After (C),Throttle (%),Is Heat Test,Thinking Disabled,Output',
+    );
+
+    for (final r in runs) {
+      final peakMb = r.ramPeakBytes != null
+          ? (r.ramPeakBytes! / 1024 / 1024).toStringAsFixed(1)
+          : '';
+      final tps = r.tokensPerSecond != null
+          ? r.tokensPerSecond!.toStringAsFixed(2)
+          : '';
+      final throttle = r.throttlePercentage != null
+          ? r.throttlePercentage!.toStringAsFixed(1)
+          : '';
+      final tempB = r.batteryTempBeforeCelsius != null
+          ? r.batteryTempBeforeCelsius!.toStringAsFixed(1)
+          : '';
+      final tempA = r.batteryTempAfterCelsius != null
+          ? r.batteryTempAfterCelsius!.toStringAsFixed(1)
+          : '';
+
+      buffer.writeln([
+        r.runIndex,
+        r.runIndexSinceLoad,
+        r.isColdLoad ? 'Yes' : 'No',
+        r.timestamp.toIso8601String(),
+        _escape(r.deviceModel),
+        _escape(r.osVersion),
+        _escape(r.modelFileName),
+        _escape(r.architecture),
+        _escape(r.quantization),
+        _escape(r.backend),
+        _escape(r.condition),
+        _escape(r.notesMode),
+        r.k,
+        _escape(r.injectedNoteIds.join('; ')),
+        _escape(r.promptId),
+        _escape(r.promptText),
+        r.decodingSettings.temperature,
+        r.decodingSettings.seed ?? '',
+        r.decodingSettings.topK,
+        r.decodingSettings.topP,
+        r.decodingSettings.repeatPenalty ?? '',
+        r.decodingSettings.maxTokens,
+        r.decodingSettings.contextSize,
+        r.promptTokenCount ?? '',
+        r.generatedTokenCount ?? '',
+        r.hitMaxTokens ? 'Yes' : 'No',
+        r.ttftMs ?? '',
+        r.generationDurationMs ?? '',
+        tps,
+        peakMb,
+        r.batteryLevelBefore ?? '',
+        r.batteryLevelAfter ?? '',
+        tempB,
+        tempA,
+        throttle,
+        r.isHeatTest ? 'Yes' : 'No',
+        r.thinkingDisabled ? 'Yes' : 'No',
+        _escape(r.output),
+      ].join(','));
     }
 
     return buffer.toString();
   }
 
-  static String exportJsonReport({
-    required String? modelFileName,
-    required int? coldLoadMs,
-    required int? baselineRssBytes,
-    required int? idleModelRssBytes,
-    required List<RunRecord> runs,
-  }) {
-    final data = {
-      'system': {
-        'os': Platform.operatingSystem,
-        'osVersion': Platform.operatingSystemVersion,
-      },
-      'model': {
-        'name': modelFileName,
-        'coldLoadMs': coldLoadMs,
-        'baselineRssBytes': baselineRssBytes,
-        'idleModelRssBytes': idleModelRssBytes,
-      },
-      'runs': runs.map((r) => r.toJson()).toList(),
+  /// Exports complete JSON format.
+  static String exportJson(List<RunRecord> runs) {
+    const encoder = JsonEncoder.withIndent('  ');
+    return encoder.convert(runs.map((r) => r.toJson()).toList());
+  }
+
+  /// Writes exports to files in app documents / downloads and returns file paths.
+  static Future<Map<String, String>> exportToFiles(List<RunRecord> runs) async {
+    final dir = await getApplicationDocumentsDirectory();
+    final now = DateTime.now().millisecondsSinceEpoch;
+    final csvFile = File('${dir.path}/technical_exploration_runs_$now.csv');
+    final jsonFile = File('${dir.path}/technical_exploration_runs_$now.json');
+
+    await csvFile.writeAsString(exportCsv(runs));
+    await jsonFile.writeAsString(exportJson(runs));
+
+    return {
+      'csv': csvFile.path,
+      'json': jsonFile.path,
     };
-    return const JsonEncoder.withIndent('  ').convert(data);
+  }
+
+  static String _escape(String value) {
+    if (value.contains(',') ||
+        value.contains('\n') ||
+        value.contains('"') ||
+        value.contains('\r')) {
+      return '"${value.replaceAll('"', '""')}"';
+    }
+    return value;
   }
 }

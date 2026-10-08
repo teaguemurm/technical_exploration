@@ -1,0 +1,16 @@
+{
+  "k": 2,
+  "retrieval": {
+    "what-animal": ["wisent-herd", "other-grazers"],
+    "who-manages": ["pwn", "park"],
+    "where-stand": ["distance", "paths"],
+    "on-path": ["on-path", "distance"],
+    "since-when": ["arrival", "wisent-herd"],
+    "morning-meal": ["no-feeding", "wisent-herd"],
+    "calves": ["arrival", "wisent-herd"],
+    "nature-message": ["park", "wisent-herd"],
+    "speak-as": ["wisent-herd", "other-grazers"],
+    "make-care": ["wisent-herd", "no-feeding"]
+  }
+}
+

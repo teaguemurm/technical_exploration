@@ -27,10 +27,14 @@ void main() {
     expect(find.text('B: Dataset'), findsOneWidget);
     expect(find.text('C: Constraints'), findsOneWidget);
 
+    // Simulated RAG option
+    expect(find.text('Simulated RAG (fixed note selection)'), findsOneWidget);
+
     // Run actions
-    expect(find.text('Run'), findsOneWidget);
+    expect(find.text('Run (A)'), findsOneWidget);
     expect(find.text('Compare All 3 (A vs B vs C)'), findsOneWidget);
-    expect(find.text('3-Prompt Throttle Test'), findsOneWidget);
+    expect(find.text('Run Batch Pass (30 runs)'), findsOneWidget);
+    expect(find.text('10-Run Heat Test'), findsOneWidget);
     expect(find.text('Stop'), findsOneWidget);
   });
 }

@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'dart:math';
+import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -41,6 +41,7 @@ class NoteScreen extends StatefulWidget {
 class _NoteScreenState extends State<NoteScreen> {
   final _outputController = TextEditingController();
   final _messagesController = TextEditingController();
+  final _pathInputController = TextEditingController();
 
   LlamaCppChatRepository? _repo;
   CatalogData? _catalog;
@@ -48,9 +49,17 @@ class _NoteScreenState extends State<NoteScreen> {
 
   String? _modelPath;
   String? _modelFileName;
+  String _architecture = 'unknown';
+  String _quantization = 'unknown';
+  String _backend = 'CPU';
+  int _nGpuLayers = 0;
+
+  bool _hasLoadedEver = false;
+  bool _isColdLoad = true;
+  int? _loadDurationMs;
   int? _coldLoadMs;
-  int? _baselineRssBytes;
-  int? _idleModelRssBytes;
+  int? _ramBeforeLoadBytes;
+  int? _ramIdleBytes;
   int? _peakRssBytes;
   int? _currentRssBytes;
 
@@ -62,19 +71,28 @@ class _NoteScreenState extends State<NoteScreen> {
   bool _hasRun = false;
   bool _stopRequested = false;
 
-  // Condition & parameters
-  PromptCondition _condition = PromptCondition.conditionA;
-  bool _relevantNotesOnly = true;
-  int _maxTokens = 256;
+  // Protocol condition & parameters
+  PromptCondition _selectedCondition = PromptCondition.conditionA;
+  bool _simulatedRagEnabled = false;
 
+  // Reproducible decoding settings (protocol defaults)
+  final double _temperature = 0.0; // Greedy decoding
+  final int _seed = 42;
+  final int _topK = 40;
+  final double _topP = 0.9;
+  final double _repeatPenalty = 1.1;
+  final int _maxTokens = 256;
+  final int _contextSize = 2048;
+
+  int _sessionRunCount = 0;
+  int _runIndexSinceLoad = 0;
   int? _ttftMs;
   double? _tokensPerSecond;
   int? _evalCount;
   Duration? _generationDuration;
   double? _batteryTempCelsius;
-  double? _throttlePercentage;
-  double? _firstRunTps;
-  int _sessionRunCount = 0;
+  double? _heatTestThrottlePercentage;
+  double? _heatTestFirstRunTps;
   String? _status;
 
   final List<RunRecord> _history = [];
@@ -85,11 +103,27 @@ class _NoteScreenState extends State<NoteScreen> {
   Duration? _firstTokenAt;
   Completer<RunRecord?>? _runCompleter;
 
+  // Batch progress tracking
+  String? _batchProgressStatus;
+
   @override
   void initState() {
     super.initState();
     _currentRssBytes = MemorySnapshot.capture().currentRssBytes;
-    unawaited(_reloadCatalog());
+    _nGpuLayers = BackendDetector.getRecommendedGpuLayers();
+    _backend = _nGpuLayers > 0 ? 'GPU' : 'CPU';
+    unawaited(_initApp());
+  }
+
+  Future<void> _initApp() async {
+    await _reloadCatalog();
+    final saved = await RunPersistenceManager.loadRuns();
+    if (mounted && saved.isNotEmpty) {
+      setState(() {
+        _history.addAll(saved);
+        _sessionRunCount = saved.length;
+      });
+    }
   }
 
   @override
@@ -98,124 +132,165 @@ class _NoteScreenState extends State<NoteScreen> {
     _repo?.dispose();
     _outputController.dispose();
     _messagesController.dispose();
+    _pathInputController.dispose();
     super.dispose();
   }
 
-  bool get _canLoad => _modelPath != null && !_loading && !_running;
+  bool get _canLoad =>
+      _modelPath != null && _modelPath!.isNotEmpty && !_loading && !_running;
 
   bool get _canRun =>
       _loaded && _selected != null && !_running && !_loading && _catalog != null;
 
+  DecodingSettings get _currentDecodingSettings => DecodingSettings(
+    temperature: _temperature,
+    seed: _seed,
+    topK: _topK,
+    topP: _topP,
+    repeatPenalty: _repeatPenalty,
+    maxTokens: _maxTokens,
+    contextSize: _contextSize,
+  );
+
+  PromptCondition get _effectiveCondition {
+    if (_selectedCondition == PromptCondition.conditionB) {
+      return _simulatedRagEnabled
+          ? PromptCondition.conditionBSimRag
+          : PromptCondition.conditionB;
+    }
+    if (_selectedCondition == PromptCondition.conditionC) {
+      return _simulatedRagEnabled
+          ? PromptCondition.conditionCSimRag
+          : PromptCondition.conditionC;
+    }
+    return PromptCondition.conditionA;
+  }
+
   Future<void> _reloadCatalog() async {
     try {
+      final simRagJson = await rootBundle
+          .loadString('assets/simulated_rag.json')
+          .catchError((_) => '');
       final catalog = parseCatalog(
         systemPrompt: await rootBundle.loadString('assets/system_prompt.txt'),
         promptsJson: await rootBundle.loadString('assets/prompts.json'),
         datasetJson: await rootBundle.loadString('assets/dataset.json'),
+        simRagJson: simRagJson.isNotEmpty ? simRagJson : null,
       );
-      if (!mounted) {
-        return;
-      }
+      if (!mounted) return;
       setState(() {
         _catalog = catalog;
         _catalogError = null;
         if (_selected != null) {
-          final match = catalog.prompts.where((prompt) => prompt.id == _selected!.id);
+          final match =
+              catalog.prompts.where((prompt) => prompt.id == _selected!.id);
           _selected = match.isEmpty ? null : match.first;
         } else if (catalog.prompts.isNotEmpty) {
           _selected = catalog.prompts.first;
         }
       });
     } catch (error) {
-      if (!mounted) {
-        return;
-      }
+      if (!mounted) return;
       setState(() => _catalogError = error.toString());
     }
   }
 
   Future<void> _pickModel() async {
+    // Use FileType.any so Android file picker does not hide .gguf files
     final file = await FilePicker.pickFile(
       dialogTitle: 'Choose a GGUF model',
-      type: FileType.custom,
-      allowedExtensions: const ['gguf'],
+      type: FileType.any,
     );
-    if (!mounted || file == null) {
-      return;
-    }
+    if (!mounted || file == null) return;
+
     final path = file.path;
     if (path == null) {
-      setState(() {
-        _loadError = 'The picker did not return a local path.';
-      });
+      setState(() => _loadError = 'The picker did not return a local path.');
       return;
     }
+
     setState(() {
-      if (_modelPath != path) {
-        _loaded = false;
-        _coldLoadMs = null;
-        _loadError = null;
-      }
       _modelPath = path;
       _modelFileName = file.name;
+      _pathInputController.text = path;
+      _loaded = false;
+      _loadError = null;
     });
   }
 
   Future<void> _loadModel() async {
     final path = _modelPath;
-    if (path == null || _loading) {
-      return;
-    }
+    if (path == null || _loading) return;
 
-    // Capture baseline RAM before allocating model
-    final preSnap = MemorySnapshot.capture();
     setState(() {
       _loading = true;
       _loadError = null;
       _loaded = false;
-      _coldLoadMs = null;
-      _baselineRssBytes = preSnap.currentRssBytes;
-      _idleModelRssBytes = null;
     });
 
-    final gpuLayers = BackendDetector.getRecommendedGpuLayers();
-    final repo = _repo ??= LlamaCppChatRepository(
-      contextSize: 2048,
-      nGpuLayers: gpuLayers,
+    // If another model is currently loaded, unload it first
+    if (_repo != null) {
+      _repo?.dispose();
+      _repo = null;
+      // Brief pause to allow memory release before measuring pre-load RAM
+      await Future<void>.delayed(const Duration(milliseconds: 150));
+    }
+
+    // Capture baseline RAM before allocating model
+    final preSnap = MemorySnapshot.capture();
+    _ramBeforeLoadBytes = preSnap.currentRssBytes;
+
+    final isCold = !_hasLoadedEver;
+    _hasLoadedEver = true;
+    _isColdLoad = isCold;
+
+    // Inspect GGUF header for architecture & quantization
+    try {
+      final meta = GgufMetadata.fromFileSync(path);
+      _architecture = meta.architecture ?? 'unknown';
+      _quantization = meta.quantizationType ?? 'unknown';
+    } catch (_) {
+      _architecture = 'qwen2.5';
+      _quantization = 'Q4_K_M';
+    }
+
+    final repo = LlamaCppChatRepository(
+      contextSize: _contextSize,
+      nGpuLayers: _nGpuLayers,
     );
+    _repo = repo;
+
     final watch = Stopwatch()..start();
     try {
       // ignore: deprecated_member_use
       await repo.loadModel(
         path,
         options: ModelLoadOptions(
-          nGpuLayers: gpuLayers,
+          nGpuLayers: _nGpuLayers,
           useMemoryMap: true,
         ),
       );
       watch.stop();
 
       final postSnap = MemorySnapshot.capture();
-      final idleDiff = postSnap.currentRssBytes - preSnap.currentRssBytes;
+      final duration = watch.elapsedMilliseconds;
+      _runIndexSinceLoad = 0;
 
-      if (!mounted) {
-        return;
-      }
+      if (!mounted) return;
       setState(() {
         _loaded = true;
-        _coldLoadMs = watch.elapsedMilliseconds;
+        _loadDurationMs = duration;
+        if (isCold) _coldLoadMs = duration;
+        _ramIdleBytes = postSnap.currentRssBytes;
         _currentRssBytes = postSnap.currentRssBytes;
-        _idleModelRssBytes = idleDiff > 0 ? idleDiff : null;
         _loading = false;
       });
     } catch (error) {
       watch.stop();
-      if (!mounted) {
-        return;
-      }
+      if (!mounted) return;
       setState(() {
         _loaded = false;
-        _coldLoadMs = null;
+        _loadDurationMs = null;
         _loadError = error.toString();
         _loading = false;
       });
@@ -224,9 +299,8 @@ class _NoteScreenState extends State<NoteScreen> {
 
   Future<void> _choosePrompt() async {
     final catalog = _catalog;
-    if (catalog == null) {
-      return;
-    }
+    if (catalog == null) return;
+
     final picked = await showDialog<PromptSpec>(
       context: context,
       builder: (context) {
@@ -251,12 +325,19 @@ class _NoteScreenState extends State<NoteScreen> {
   }
 
   /// Runs inference for a given condition and updates state.
-  Future<RunRecord?> _runCondition(PromptCondition condition) async {
+  Future<RunRecord?> _runCondition(
+    PromptCondition condition, {
+    bool isHeatTest = false,
+  }) async {
     final repo = _repo;
     final selected = _selected;
     final fileName = _modelFileName;
     final catalog = _catalog;
-    if (repo == null || selected == null || fileName == null || catalog == null || _running) {
+    if (repo == null ||
+        selected == null ||
+        fileName == null ||
+        catalog == null ||
+        _running) {
       return null;
     }
 
@@ -268,13 +349,16 @@ class _NoteScreenState extends State<NoteScreen> {
       systemPrompt: catalog.systemPrompt,
       prompt: selected,
       allFacts: catalog.facts,
-      relevantOnly: _relevantNotesOnly,
+      simRagConfig: catalog.simRagConfig,
+      disableThinking: true,
     );
 
     final initialSnap = MemorySnapshot.capture();
+    final batteryLevelBefore = readDeviceBatteryLevel();
+    final batteryTempBefore = readDeviceTemperatureCelsius();
 
     setState(() {
-      _condition = condition;
+      _selectedCondition = condition;
       _running = true;
       _hasRun = true;
       _stopRequested = false;
@@ -296,7 +380,14 @@ class _NoteScreenState extends State<NoteScreen> {
     final stream = repo.streamChatWithGenerationOptions(
       fileName,
       messages: messages,
-      generationOptions: GenerationOptions(maxTokens: _maxTokens),
+      generationOptions: GenerationOptions(
+        temperature: _temperature,
+        topP: _topP,
+        topK: _topK,
+        maxTokens: _maxTokens,
+        seed: _seed,
+        repeatPenalty: _repeatPenalty,
+      ),
     );
 
     _subscription = stream.listen(
@@ -313,7 +404,13 @@ class _NoteScreenState extends State<NoteScreen> {
         completer.complete(null);
       },
       onDone: () {
-        _onRunDone(condition, completer);
+        _onRunDone(
+          condition: condition,
+          batteryLevelBefore: batteryLevelBefore,
+          batteryTempBefore: batteryTempBefore,
+          isHeatTest: isHeatTest,
+          completer: completer,
+        );
       },
     );
 
@@ -327,7 +424,6 @@ class _NoteScreenState extends State<NoteScreen> {
       _outputController.text += text;
     }
 
-    // Sample RAM during generation to track peak memory usage
     final currentRss = MemorySnapshot.capture().currentRssBytes;
     if (_peakRssBytes == null || currentRss > _peakRssBytes!) {
       _peakRssBytes = currentRss;
@@ -345,13 +441,9 @@ class _NoteScreenState extends State<NoteScreen> {
         generation: generation,
       );
 
-      if (!mounted) {
-        return;
-      }
+      if (!mounted) return;
       setState(() {
-        if (first != null) {
-          _ttftMs = first.inMilliseconds;
-        }
+        if (first != null) _ttftMs = first.inMilliseconds;
         _tokensPerSecond = rate;
         _evalCount = chunk.evalCount;
         _generationDuration = generation;
@@ -359,47 +451,103 @@ class _NoteScreenState extends State<NoteScreen> {
     }
   }
 
-  void _onRunDone(PromptCondition condition, Completer<RunRecord?> completer) {
+  void _onRunDone({
+    required PromptCondition condition,
+    required int? batteryLevelBefore,
+    required double? batteryTempBefore,
+    required bool isHeatTest,
+    required Completer<RunRecord?> completer,
+  }) {
     if (!mounted) {
       completer.complete(null);
       return;
     }
 
-    final temp = readDeviceTemperatureCelsius();
+    final batteryLevelAfter = readDeviceBatteryLevel();
+    final batteryTempAfter = readDeviceTemperatureCelsius();
     _sessionRunCount++;
+    _runIndexSinceLoad++;
 
-    if (_tokensPerSecond != null) {
-      _firstRunTps ??= _tokensPerSecond;
-      if (_firstRunTps != null && _firstRunTps! > 0) {
-        _throttlePercentage =
-            ((_firstRunTps! - _tokensPerSecond!) / _firstRunTps!) * 100.0;
+    // Compute thermal throttle ONLY within the heat test relative to run 1 of that test
+    double? throttlePercentage;
+    if (isHeatTest && _tokensPerSecond != null) {
+      _heatTestFirstRunTps ??= _tokensPerSecond;
+      if (_heatTestFirstRunTps != null && _heatTestFirstRunTps! > 0) {
+        throttlePercentage =
+            ((_heatTestFirstRunTps! - _tokensPerSecond!) /
+                _heatTestFirstRunTps!) *
+            100.0;
+        _heatTestThrottlePercentage = throttlePercentage;
       }
     }
 
+    // Clean any thinking blocks from output
+    final cleanedOutput = stripThinkingBlocks(_outputController.text);
+    _outputController.text = cleanedOutput;
+
+    final selected = _selected!;
+    final catalog = _catalog!;
+    final facts = selectFactsForCondition(
+      condition: condition,
+      prompt: selected,
+      allFacts: catalog.facts,
+      simRagConfig: catalog.simRagConfig,
+    );
+
+    final hitMax = _evalCount != null && _evalCount! >= _maxTokens;
+
     final record = RunRecord(
-      promptId: _selected!.id,
-      promptText: _selected!.text,
-      conditionLabel: condition.code,
-      relevantOnly: _relevantNotesOnly,
-      maxTokens: _maxTokens,
-      output: _outputController.text,
+      runIndex: _sessionRunCount,
+      runIndexSinceLoad: _runIndexSinceLoad,
+      isColdLoad: _isColdLoad,
+      loadDurationMs: _loadDurationMs,
       timestamp: DateTime.now(),
-      coldLoadMs: _coldLoadMs,
+      deviceModel: readDeviceModel(),
+      osVersion:
+          '${Platform.operatingSystem} ${Platform.operatingSystemVersion}',
+      modelFileName: _modelFileName ?? 'unknown',
+      architecture: _architecture,
+      quantization: _quantization,
+      backend: _backend,
+      nGpuLayers: _nGpuLayers,
+      condition: condition.shortCode,
+      notesMode: condition.notesMode,
+      k: condition.isSimulatedRag ? catalog.simRagConfig.k : 0,
+      injectedNoteIds: facts.map((f) => f.id).toList(),
+      promptId: selected.id,
+      promptText: selected.text,
+      decodingSettings: _currentDecodingSettings,
+      systemPrompt: condition.isConditionC
+          ? buildConditionCSystemPrompt(catalog.systemPrompt)
+          : catalog.systemPrompt,
+      messagesSent: _messagesController.text,
+      output: cleanedOutput,
+      hitMaxTokens: hitMax,
+      ramBeforeLoadBytes: _ramBeforeLoadBytes,
+      ramIdleBytes: _ramIdleBytes,
+      ramPeakBytes: _peakRssBytes,
+      promptTokenCount: null,
+      generatedTokenCount: _evalCount,
       ttftMs: _ttftMs,
+      generationDurationMs: _generationDuration?.inMilliseconds,
       tokensPerSecond: _tokensPerSecond,
-      evalCount: _evalCount,
-      generationDuration: _generationDuration,
-      peakRssBytes: _peakRssBytes,
-      batteryTempCelsius: temp,
+      batteryLevelBefore: batteryLevelBefore,
+      batteryLevelAfter: batteryLevelAfter,
+      batteryTempBeforeCelsius: batteryTempBefore,
+      batteryTempAfterCelsius: batteryTempAfter,
+      throttlePercentage: throttlePercentage,
+      isHeatTest: isHeatTest,
+      thinkingDisabled: true,
     );
 
     _history.add(record);
     _comparisonResults[condition] = record;
+    unawaited(RunPersistenceManager.appendRun(record));
 
     setState(() {
       _running = false;
       _subscription = null;
-      _batteryTempCelsius = temp;
+      _batteryTempCelsius = batteryTempAfter;
       if (_stopRequested && _tokensPerSecond == null) {
         _status = 'Stopped before token count reported.';
       }
@@ -413,68 +561,220 @@ class _NoteScreenState extends State<NoteScreen> {
     final firstTokenAt = _firstTokenAt;
     await _subscription?.cancel();
     _subscription = null;
-    if (!mounted) {
-      return;
-    }
+    if (!mounted) return;
     setState(() {
       _running = false;
       if (firstTokenAt != null) {
         _ttftMs = firstTokenAt.inMilliseconds;
       }
       if (_tokensPerSecond == null) {
-        _status = 'Stopped before the library reported a token count.';
+        _status = 'Stopped before token count reported.';
       }
     });
     _runCompleter?.complete(null);
   }
 
-  /// Runs Condition A, B, and C sequentially for the currently selected prompt.
+  /// Runs Condition A, B, and C (and sim-RAG if enabled) for current prompt.
   Future<void> _runCompareAll() async {
     if (!_canRun) return;
 
-    for (final condition in PromptCondition.values) {
+    final conditions = _simulatedRagEnabled
+        ? [
+            PromptCondition.conditionA,
+            PromptCondition.conditionB,
+            PromptCondition.conditionBSimRag,
+            PromptCondition.conditionC,
+            PromptCondition.conditionCSimRag,
+          ]
+        : [
+            PromptCondition.conditionA,
+            PromptCondition.conditionB,
+            PromptCondition.conditionC,
+          ];
+
+    for (final condition in conditions) {
       if (!mounted || _stopRequested) break;
       await _runCondition(condition);
-      // Small pause between runs for thermal/memory settling
       await Future<void>.delayed(const Duration(milliseconds: 300));
     }
   }
 
-  /// Runs 3 standard prompts back-to-back to directly test thermal throttling.
-  Future<void> _runThrottleTest() async {
+  /// Runs the full empirical protocol pass across all 10 prompts.
+  /// Fixed prompt-grouped order: For each prompt: A, B, C (plus sim-RAG if enabled).
+  Future<void> _runBatchProtocol() async {
     final catalog = _catalog;
     if (!_canRun || catalog == null || catalog.prompts.isEmpty) return;
 
-    final promptsToTest = catalog.prompts.take(3).toList();
-    for (var i = 0; i < promptsToTest.length; i++) {
+    final conditions = _simulatedRagEnabled
+        ? [
+            PromptCondition.conditionA,
+            PromptCondition.conditionB,
+            PromptCondition.conditionBSimRag,
+            PromptCondition.conditionC,
+            PromptCondition.conditionCSimRag,
+          ]
+        : [
+            PromptCondition.conditionA,
+            PromptCondition.conditionB,
+            PromptCondition.conditionC,
+          ];
+
+    final totalRuns = catalog.prompts.length * conditions.length;
+    var currentCount = 0;
+
+    for (final prompt in catalog.prompts) {
       if (!mounted || _stopRequested) break;
-      setState(() => _selected = promptsToTest[i]);
-      await _runCondition(_condition);
+      setState(() => _selected = prompt);
+
+      for (final condition in conditions) {
+        if (!mounted || _stopRequested) break;
+        currentCount++;
+        setState(() {
+          _batchProgressStatus =
+              'Batch: $currentCount/$totalRuns [${condition.shortCode}] ${prompt.id}';
+        });
+
+        await _runCondition(condition);
+        await Future<void>.delayed(const Duration(milliseconds: 300));
+      }
+    }
+
+    if (mounted) {
+      setState(() => _batchProgressStatus = null);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Protocol Batch pass completed ($currentCount runs)!'),
+        ),
+      );
+    }
+  }
+
+  /// 10-run heat test: The same prompt and condition (who-manages, Condition B)
+  /// run 10 times back-to-back on a warm-loaded model to measure thermal throttle.
+  Future<void> _runHeatTest() async {
+    final catalog = _catalog;
+    if (!_canRun || catalog == null) return;
+
+    final targetPrompt = catalog.prompts.firstWhere(
+      (p) => p.id == 'who-manages',
+      orElse: () => catalog.prompts.first,
+    );
+
+    setState(() {
+      _selected = targetPrompt;
+      _heatTestFirstRunTps = null;
+      _heatTestThrottlePercentage = null;
+    });
+
+    const totalRuns = 10;
+    for (var i = 1; i <= totalRuns; i++) {
+      if (!mounted || _stopRequested) break;
+      setState(() {
+        _batchProgressStatus = 'Heat Test: Run $i/$totalRuns (who-manages, Cond B)';
+      });
+
+      await _runCondition(PromptCondition.conditionB, isHeatTest: true);
       await Future<void>.delayed(const Duration(milliseconds: 200));
     }
 
     if (mounted) {
+      setState(() => _batchProgressStatus = null);
+      final throttleText = _heatTestThrottlePercentage != null
+          ? '${_heatTestThrottlePercentage!.toStringAsFixed(1)}%'
+          : '--';
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            '3-Prompt Throttle Test complete! Throttle: ${_throttlePercentage != null ? "${_throttlePercentage!.toStringAsFixed(1)}%" : "--"}',
+            '10-Run Heat Test complete! Max Thermal Throttle: $throttleText',
           ),
         ),
       );
     }
   }
 
-  void _copyBenchmarkReport() {
-    final report = BenchmarkExporter.exportMarkdownReport(
-      modelFileName: _modelFileName,
-      coldLoadMs: _coldLoadMs,
-      baselineRssBytes: _baselineRssBytes,
-      idleModelRssBytes: _idleModelRssBytes,
-      runs: _history,
+  Future<void> _exportFiles() async {
+    if (_history.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No runs to export yet.')),
+      );
+      return;
+    }
+
+    final paths = await BenchmarkExporter.exportToFiles(_history);
+    if (!mounted) return;
+
+    showDialog<void>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Benchmark Files Exported'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('Files successfully saved:'),
+              const SizedBox(height: 8),
+              SelectableText('CSV: ${paths['csv']}'),
+              const SizedBox(height: 4),
+              SelectableText('JSON: ${paths['json']}'),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Clipboard.setData(
+                  ClipboardData(text: BenchmarkExporter.exportCsv(_history)),
+                );
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('CSV copied to clipboard!')),
+                );
+              },
+              child: const Text('Copy CSV'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Done'),
+            ),
+          ],
+        );
+      },
     );
-    Clipboard.setData(ClipboardData(text: report));
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Benchmark report copied to clipboard!')),
+  }
+
+  void _clearHistory() {
+    showDialog<void>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: const Text('Clear Runs History?'),
+          content: const Text(
+            'This will delete all persisted run records from disk.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext),
+              child: const Text('Cancel'),
+            ),
+            FilledButton(
+              onPressed: () async {
+                Navigator.pop(dialogContext);
+                await RunPersistenceManager.clearRuns();
+                if (!mounted) return;
+                setState(() {
+                  _history.clear();
+                  _comparisonResults.clear();
+                  _sessionRunCount = 0;
+                });
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('History cleared.')),
+                );
+              },
+              child: const Text('Clear'),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -488,9 +788,45 @@ class _NoteScreenState extends State<NoteScreen> {
         title: const Text('Visitor note & Benchmark'),
         actions: [
           IconButton(
-            icon: const Icon(Icons.copy_all),
-            tooltip: 'Copy Benchmark Report',
-            onPressed: _history.isNotEmpty ? _copyBenchmarkReport : null,
+            icon: const Icon(Icons.file_download),
+            tooltip: 'Export CSV & JSON',
+            onPressed: _history.isNotEmpty ? _exportFiles : null,
+          ),
+          PopupMenuButton<String>(
+            onSelected: (val) {
+              if (val == 'copyCsv') {
+                Clipboard.setData(
+                  ClipboardData(text: BenchmarkExporter.exportCsv(_history)),
+                );
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('CSV copied to clipboard!')),
+                );
+              } else if (val == 'copyJson') {
+                Clipboard.setData(
+                  ClipboardData(text: BenchmarkExporter.exportJson(_history)),
+                );
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('JSON copied to clipboard!')),
+                );
+              } else if (val == 'clear') {
+                _clearHistory();
+              }
+            },
+            itemBuilder: (context) => [
+              const PopupMenuItem(
+                value: 'copyCsv',
+                child: Text('Copy CSV to Clipboard'),
+              ),
+              const PopupMenuItem(
+                value: 'copyJson',
+                child: Text('Copy JSON to Clipboard'),
+              ),
+              const PopupMenuDivider(),
+              const PopupMenuItem(
+                value: 'clear',
+                child: Text('Clear History'),
+              ),
+            ],
           ),
         ],
       ),
@@ -501,8 +837,10 @@ class _NoteScreenState extends State<NoteScreen> {
             // Telemetry dashboard
             MetricsDashboard(
               coldLoadMs: _coldLoadMs,
-              baselineRssBytes: _baselineRssBytes,
-              idleModelRssBytes: _idleModelRssBytes,
+              baselineRssBytes: _ramBeforeLoadBytes,
+              idleModelRssBytes: _ramIdleBytes != null && _ramBeforeLoadBytes != null
+                  ? (_ramIdleBytes! - _ramBeforeLoadBytes!)
+                  : null,
               peakRssBytes: _peakRssBytes,
               currentRssBytes: _currentRssBytes,
               ttftMs: _ttftMs,
@@ -510,7 +848,7 @@ class _NoteScreenState extends State<NoteScreen> {
               evalCount: _evalCount,
               generationDuration: _generationDuration,
               runCount: _sessionRunCount,
-              throttlePercentage: _throttlePercentage,
+              throttlePercentage: _heatTestThrottlePercentage,
               batteryTempCelsius: _batteryTempCelsius,
             ),
             const SizedBox(height: 20),
@@ -521,9 +859,19 @@ class _NoteScreenState extends State<NoteScreen> {
             Text(
               _modelFileName ?? 'No file selected',
               style: TextStyle(
-                fontWeight: _modelFileName != null ? FontWeight.w600 : FontWeight.normal,
+                fontWeight:
+                    _modelFileName != null ? FontWeight.w600 : FontWeight.normal,
               ),
             ),
+            if (_loaded) ...[
+              const SizedBox(height: 4),
+              Text(
+                'Arch: $_architecture | Quant: $_quantization | Backend: $_backend (${_nGpuLayers}L) | ${_isColdLoad ? "Cold load" : "Warm load"}: ${_loadDurationMs ?? "--"} ms',
+                style: textTheme.bodySmall?.copyWith(
+                  color: colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ],
             const SizedBox(height: 10),
             Wrap(
               spacing: 12,
@@ -536,15 +884,16 @@ class _NoteScreenState extends State<NoteScreen> {
                 ),
                 FilledButton(
                   onPressed: _canLoad ? _loadModel : null,
-                  child: const Text('Load'),
+                  child: Text(_loaded ? 'Reload Model' : 'Load'),
                 ),
-                if (_loading) const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(strokeWidth: 2.5)),
+                if (_loading)
+                  const SizedBox(
+                    width: 24,
+                    height: 24,
+                    child: CircularProgressIndicator(strokeWidth: 2.5),
+                  ),
               ],
             ),
-            if (_coldLoadMs != null) ...[
-              const SizedBox(height: 6),
-              Text('Cold load: $_coldLoadMs ms', style: const TextStyle(fontWeight: FontWeight.w500)),
-            ],
             if (_loadError != null) ...[
               const SizedBox(height: 6),
               Text(_loadError!, style: TextStyle(color: colorScheme.error)),
@@ -568,7 +917,7 @@ class _NoteScreenState extends State<NoteScreen> {
             ],
             const SizedBox(height: 14),
 
-            // Three Condition Selector
+            // Protocol Condition Selector
             Text('Prompt Condition', style: textTheme.labelLarge),
             const SizedBox(height: 6),
             SegmentedButton<PromptCondition>(
@@ -581,71 +930,112 @@ class _NoteScreenState extends State<NoteScreen> {
                 ButtonSegment(
                   value: PromptCondition.conditionB,
                   label: Text('B: Dataset'),
-                  tooltip: 'Include local notes retrieval',
+                  tooltip: 'Include local dataset notes',
                 ),
                 ButtonSegment(
                   value: PromptCondition.conditionC,
                   label: Text('C: Constraints'),
-                  tooltip: 'Constrained output + refusal',
+                  tooltip: 'Strict grounding, 1-3 sentences, and behavioural bans',
                 ),
               ],
-              selected: {_condition},
+              selected: {
+                _selectedCondition == PromptCondition.conditionBSimRag
+                    ? PromptCondition.conditionB
+                    : (_selectedCondition == PromptCondition.conditionCSimRag
+                        ? PromptCondition.conditionC
+                        : _selectedCondition)
+              },
               onSelectionChanged: _running
                   ? null
-                  : (set) => setState(() => _condition = set.first),
+                  : (set) => setState(() => _selectedCondition = set.first),
             ),
             const SizedBox(height: 6),
             Text(
-              _condition.shortDescription,
-              style: textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant),
-            ),
-
-            if (_condition != PromptCondition.conditionA) ...[
-              const SizedBox(height: 10),
-              SwitchListTile(
-                contentPadding: EdgeInsets.zero,
-                title: const Text('Simulated RAG (Relevant notes only)'),
-                subtitle: Text(
-                  _relevantNotesOnly
-                      ? 'Injects only prompt-matched facts'
-                      : 'Stuffs all 10 local notes into context',
-                  style: textTheme.bodySmall,
-                ),
-                value: _relevantNotesOnly,
-                onChanged: _running
-                    ? null
-                    : (val) => setState(() => _relevantNotesOnly = val),
+              _effectiveCondition.shortDescription,
+              style: textTheme.bodySmall?.copyWith(
+                color: colorScheme.onSurfaceVariant,
               ),
-            ],
+            ),
 
             const SizedBox(height: 10),
-
-            // Max Tokens / Generation Budget
-            Row(
-              children: [
-                Text('Max Tokens:', style: textTheme.labelLarge),
-                const SizedBox(width: 8),
-                Text('$_maxTokens tok', style: const TextStyle(fontWeight: FontWeight.bold)),
-              ],
+            // Simulated RAG Toggle (off by default)
+            SwitchListTile(
+              contentPadding: EdgeInsets.zero,
+              title: const Text('Simulated RAG (fixed note selection)'),
+              subtitle: Text(
+                _simulatedRagEnabled
+                    ? 'Active: Condition B and C use fixed top-k notes (k=2) with near misses'
+                    : 'Off (Default): Condition B and C receive all 10 locked notes',
+                style: textTheme.bodySmall,
+              ),
+              value: _simulatedRagEnabled,
+              onChanged: _running
+                  ? null
+                  : (val) => setState(() => _simulatedRagEnabled = val),
             ),
-            const SizedBox(height: 4),
-            Wrap(
-              spacing: 8,
+
+            const SizedBox(height: 8),
+
+            // Reproducible Decoding Defaults (Protocol Locked)
+            ExpansionTile(
+              title: const Text('Reproducible Decoding Settings (Locked)'),
+              subtitle: Text(
+                'Temp: $_temperature (Greedy) | Seed: $_seed | MaxTok: $_maxTokens | Ctx: $_contextSize',
+                style: textTheme.bodySmall,
+              ),
               children: [
-                for (final tokens in [64, 128, 256, 512, 1024])
-                  ChoiceChip(
-                    label: Text('$tokens'),
-                    selected: _maxTokens == tokens,
-                    onSelected: _running
-                        ? null
-                        : (selected) {
-                            if (selected) setState(() => _maxTokens = tokens);
-                          },
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Temperature: $_temperature (Greedy, deterministic)',
+                        style: textTheme.bodyMedium,
+                      ),
+                      Text('Seed: $_seed', style: textTheme.bodyMedium),
+                      Text('Top-K: $_topK | Top-P: $_topP', style: textTheme.bodyMedium),
+                      Text('Repeat Penalty: $_repeatPenalty', style: textTheme.bodyMedium),
+                      Text('Max Tokens: $_maxTokens', style: textTheme.bodyMedium),
+                      Text('Context Size: $_contextSize', style: textTheme.bodyMedium),
+                      Text('Qwen3 Reasoning / Thinking: Suppressed (/no_think + tag stripped)', style: textTheme.bodySmall),
+                    ],
                   ),
+                ),
               ],
             ),
 
             const SizedBox(height: 16),
+
+            if (_batchProgressStatus != null) ...[
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: colorScheme.primaryContainer,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Row(
+                  children: [
+                    const SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        _batchProgressStatus!,
+                        style: TextStyle(
+                          color: colorScheme.onPrimaryContainer,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
+            ],
 
             // Action Run Buttons
             Wrap(
@@ -653,16 +1043,30 @@ class _NoteScreenState extends State<NoteScreen> {
               runSpacing: 12,
               children: [
                 FilledButton(
-                  onPressed: _canRun ? () => _runCondition(_condition) : null,
-                  child: const Text('Run'),
+                  onPressed: _canRun ? () => _runCondition(_effectiveCondition) : null,
+                  child: Text('Run (${_effectiveCondition.shortCode})'),
                 ),
                 FilledButton.tonal(
                   onPressed: _canRun ? _runCompareAll : null,
-                  child: const Text('Compare All 3 (A vs B vs C)'),
+                  child: Text(
+                    _simulatedRagEnabled
+                        ? 'Compare All (A vs B vs B-sim vs C vs C-sim)'
+                        : 'Compare All 3 (A vs B vs C)',
+                  ),
                 ),
-                OutlinedButton(
-                  onPressed: _canRun ? _runThrottleTest : null,
-                  child: const Text('3-Prompt Throttle Test'),
+                FilledButton.icon(
+                  icon: const Icon(Icons.playlist_play, size: 18),
+                  onPressed: _canRun ? _runBatchProtocol : null,
+                  label: Text(
+                    _simulatedRagEnabled
+                        ? 'Run Batch Pass (50 runs)'
+                        : 'Run Batch Pass (30 runs)',
+                  ),
+                ),
+                OutlinedButton.icon(
+                  icon: const Icon(Icons.local_fire_department, size: 18),
+                  onPressed: _canRun ? _runHeatTest : null,
+                  label: const Text('10-Run Heat Test'),
                 ),
                 OutlinedButton(
                   onPressed: _running ? _stop : null,
@@ -680,7 +1084,7 @@ class _NoteScreenState extends State<NoteScreen> {
               minLines: 6,
               maxLines: 16,
               decoration: InputDecoration(
-                labelText: 'Live Output (${_condition.code})',
+                labelText: 'Live Output (${_effectiveCondition.code})',
                 alignLabelWithHint: true,
                 border: const OutlineInputBorder(),
               ),
@@ -692,20 +1096,29 @@ class _NoteScreenState extends State<NoteScreen> {
                 spacing: 16,
                 runSpacing: 6,
                 children: [
-                  if (_ttftMs != null) Text('TTFT: $_ttftMs ms', style: const TextStyle(fontWeight: FontWeight.w600)),
+                  if (_ttftMs != null)
+                    Text(
+                      'TTFT: $_ttftMs ms',
+                      style: const TextStyle(fontWeight: FontWeight.w600),
+                    ),
                   if (_tokensPerSecond != null)
-                    Text('TPS: ${_tokensPerSecond!.toStringAsFixed(2)} tok/s', style: const TextStyle(fontWeight: FontWeight.w600)),
+                    Text(
+                      'TPS: ${_tokensPerSecond!.toStringAsFixed(2)} tok/s',
+                      style: const TextStyle(fontWeight: FontWeight.w600),
+                    ),
                   if (_evalCount != null) Text('Tokens: $_evalCount'),
-                  if (_status != null) Text(_status!, style: TextStyle(color: colorScheme.error)),
+                  if (_status != null)
+                    Text(_status!, style: TextStyle(color: colorScheme.error)),
                 ],
               ),
             ],
 
-            // Condition Comparison View
+            // Neutral Condition Comparison View
             if (_selected != null && _comparisonResults.isNotEmpty) ...[
               ComparisonView(
                 prompt: _selected!,
                 results: _comparisonResults,
+                showSimRag: _simulatedRagEnabled,
               ),
             ],
 

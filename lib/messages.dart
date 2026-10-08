@@ -14,20 +14,22 @@ String trimSingleTrailingNewline(String raw) {
   return raw;
 }
 
-/// The three prompt conditions defined in the Technical Exploration Project Plan.
+/// The prompt conditions defined for the empirical exploration protocol.
 enum PromptCondition {
   /// Condition A: System prompt only. Dataset is not used.
-  /// Tests how much the base model already knows, and what kind of output it defaults to.
   conditionA,
 
-  /// Condition B: Include data retrieval (simulated RAG or all notes).
-  /// Tests whether output can be grounded using the supplied facts.
+  /// Condition B: All 10 dataset notes injected into the prompt.
   conditionB,
 
-  /// Condition C: Specific output constraints and grounding boundaries on top of B.
-  /// Tests whether form can be constrained and whether the model says it doesn't
-  /// know / says nothing when the dataset does not cover the query.
+  /// Condition C: All 10 dataset notes + output constraints + refusal rule + bans.
   conditionC,
+
+  /// Condition B-sim-RAG: Fixed note selection (k=2) approximation.
+  conditionBSimRag,
+
+  /// Condition C-sim-RAG: Fixed note selection (k=2) + output constraints + refusal rule + bans.
+  conditionCSimRag,
 }
 
 extension PromptConditionExt on PromptCondition {
@@ -35,18 +37,48 @@ extension PromptConditionExt on PromptCondition {
     PromptCondition.conditionA => 'Condition A',
     PromptCondition.conditionB => 'Condition B',
     PromptCondition.conditionC => 'Condition C',
+    PromptCondition.conditionBSimRag => 'Condition B-sim-RAG',
+    PromptCondition.conditionCSimRag => 'Condition C-sim-RAG',
+  };
+
+  String get shortCode => switch (this) {
+    PromptCondition.conditionA => 'A',
+    PromptCondition.conditionB => 'B',
+    PromptCondition.conditionC => 'C',
+    PromptCondition.conditionBSimRag => 'B-sim-RAG',
+    PromptCondition.conditionCSimRag => 'C-sim-RAG',
   };
 
   String get label => switch (this) {
     PromptCondition.conditionA => 'Condition A (Base only)',
     PromptCondition.conditionB => 'Condition B (Dataset)',
     PromptCondition.conditionC => 'Condition C (Constraints)',
+    PromptCondition.conditionBSimRag => 'Condition B-sim-RAG (Simulated RAG)',
+    PromptCondition.conditionCSimRag => 'Condition C-sim-RAG (Simulated RAG + Constraints)',
   };
+
+  String get notesMode => switch (this) {
+    PromptCondition.conditionA => 'none',
+    PromptCondition.conditionB => 'all',
+    PromptCondition.conditionC => 'all',
+    PromptCondition.conditionBSimRag => 'sim-rag',
+    PromptCondition.conditionCSimRag => 'sim-rag',
+  };
+
+  bool get isSimulatedRag =>
+      this == PromptCondition.conditionBSimRag ||
+      this == PromptCondition.conditionCSimRag;
+
+  bool get isConditionC =>
+      this == PromptCondition.conditionC ||
+      this == PromptCondition.conditionCSimRag;
 
   String get shortDescription => switch (this) {
     PromptCondition.conditionA => 'System prompt only. No dataset.',
-    PromptCondition.conditionB => 'Grounded with local notes / simulated RAG.',
-    PromptCondition.conditionC => 'Strict grounding, 1-3 sentences, and explicit refusal if uncovered.',
+    PromptCondition.conditionB => 'All 10 notes included. No abstention hints.',
+    PromptCondition.conditionC => 'All 10 notes + strict refusal, 1-3 sentences, and behavioural bans.',
+    PromptCondition.conditionBSimRag => 'Fixed top-k notes (retrieval approximation). No abstention hints.',
+    PromptCondition.conditionCSimRag => 'Fixed top-k notes + strict refusal, 1-3 sentences, and behavioural bans.',
   };
 }
 
@@ -71,27 +103,60 @@ class DatasetFact {
   final String text;
 }
 
+class SimulatedRagConfig {
+  const SimulatedRagConfig({
+    this.k = 2,
+    this.retrieval = const {},
+  });
+
+  final int k;
+  final Map<String, List<String>> retrieval;
+
+  factory SimulatedRagConfig.fromJson(Map<String, dynamic> json) {
+    final k = (json['k'] as num?)?.toInt() ?? 2;
+    final retMap = <String, List<String>>{};
+    final rawRetrieval = json['retrieval'];
+    if (rawRetrieval is Map) {
+      for (final entry in rawRetrieval.entries) {
+        if (entry.value is List) {
+          retMap[entry.key.toString()] =
+              (entry.value as List).map((e) => e.toString()).toList();
+        }
+      }
+    }
+    return SimulatedRagConfig(k: k, retrieval: retMap);
+  }
+}
+
 class CatalogData {
   const CatalogData({
     required this.systemPrompt,
     required this.prompts,
     required this.facts,
+    required this.simRagConfig,
   });
 
   final String systemPrompt;
   final List<PromptSpec> prompts;
   final List<DatasetFact> facts;
+  final SimulatedRagConfig simRagConfig;
 }
 
 CatalogData parseCatalog({
   required String systemPrompt,
   required String promptsJson,
   required String datasetJson,
+  String? simRagJson,
 }) {
+  final simRag = simRagJson != null && simRagJson.isNotEmpty
+      ? SimulatedRagConfig.fromJson(jsonDecode(simRagJson) as Map<String, dynamic>)
+      : const SimulatedRagConfig();
+
   return CatalogData(
     systemPrompt: trimSingleTrailingNewline(systemPrompt),
     prompts: parsePrompts(promptsJson),
     facts: parseDataset(datasetJson),
+    simRagConfig: simRag,
   );
 }
 
@@ -159,9 +224,48 @@ const localNotesIntro =
 const standardRefusalStatement =
     'I do not have information about that in the approved notes.';
 
-/// Selects facts for Condition B or C.
-/// When [relevantOnly] is true, uses prompt.relevantFactIds (or keyword matching fallback).
-/// When [relevantOnly] is false, returns all facts.
+/// Selects facts for a condition according to the locked protocol rules:
+/// - Condition A: 0 notes
+/// - Condition B & C: All 10 notes
+/// - Condition B-sim-RAG & C-sim-RAG: Fixed list from [SimulatedRagConfig] ($k=2$).
+///   No keyword-matching fallback: if no list exists, returns 0 notes and logs.
+List<DatasetFact> selectFactsForCondition({
+  required PromptCondition condition,
+  required PromptSpec prompt,
+  required List<DatasetFact> allFacts,
+  required SimulatedRagConfig simRagConfig,
+}) {
+  switch (condition) {
+    case PromptCondition.conditionA:
+      return const [];
+
+    case PromptCondition.conditionB:
+    case PromptCondition.conditionC:
+      // B and C always get all 10 notes as locked
+      return allFacts;
+
+    case PromptCondition.conditionBSimRag:
+    case PromptCondition.conditionCSimRag:
+      final noteIds = simRagConfig.retrieval[prompt.id];
+      if (noteIds == null || noteIds.isEmpty) {
+        // No word-matching fallback: a prompt without a list gets no notes, and this is logged.
+        // ignore: avoid_print
+        print('[sim-RAG] Prompt "${prompt.id}" has no fixed note list; injecting 0 notes.');
+        return const [];
+      }
+      final factMap = {for (final f in allFacts) f.id: f};
+      final selected = <DatasetFact>[];
+      for (final id in noteIds.take(simRagConfig.k)) {
+        final fact = factMap[id];
+        if (fact != null) {
+          selected.add(fact);
+        }
+      }
+      return selected;
+  }
+}
+
+/// Backward compatibility helper for legacy calls.
 List<DatasetFact> selectFacts(
   PromptSpec prompt,
   List<DatasetFact> allFacts, {
@@ -174,21 +278,11 @@ List<DatasetFact> selectFacts(
     final targetIds = prompt.relevantFactIds.toSet();
     return allFacts.where((fact) => targetIds.contains(fact.id)).toList();
   }
-  // If no explicit relevant IDs are set, do basic keyword matching
-  final words = prompt.text
-      .toLowerCase()
-      .split(RegExp(r'\W+'))
-      .where((w) => w.length >= 4)
-      .toSet();
-  final matched = allFacts.where((fact) {
-    final factLower = fact.text.toLowerCase();
-    return words.any((word) => factLower.contains(word));
-  }).toList();
-  return matched;
+  return const [];
 }
 
 /// Builds the system prompt for Condition C, incorporating grounding refusal
-/// boundaries and concise output format constraints.
+/// boundaries, concise output format constraints, and behavioural bans.
 String buildConditionCSystemPrompt(String baseSystemPrompt) {
   return '${trimSingleTrailingNewline(baseSystemPrompt)}\n\n'
       'STRICT GROUNDING & FORM CONSTRAINTS:\n'
@@ -196,17 +290,26 @@ String buildConditionCSystemPrompt(String baseSystemPrompt) {
       '2. If the Local notes do not explicitly provide the information needed to answer the question, '
       'you MUST reply with: "$standardRefusalStatement" Do not guess, extrapolate, or invent details.\n'
       '3. Limit your response to 1 to 3 concise, factual sentences. '
-      'Do not include conversational pleasantries, introductory phrases, or meta-commentary.';
+      'Do not include conversational pleasantries, introductory phrases, or meta-commentary.\n'
+      '4. Do NOT speak as Nature or in the animal\'s first-person voice.\n'
+      '5. Do NOT claim to decode or translate the animal\'s behaviour.\n'
+      '6. Do NOT preach or moralise at the visitor.';
 }
 
-/// Builds the LLM messages for any of the three experimental conditions.
+/// Builds the LLM messages for any experimental condition.
+/// Ensures B variants never hint at abstaining.
 List<LLMMessage> buildConditionMessages({
   required PromptCondition condition,
   required String systemPrompt,
   required PromptSpec prompt,
   required List<DatasetFact> allFacts,
-  bool relevantOnly = true,
+  SimulatedRagConfig simRagConfig = const SimulatedRagConfig(),
+  bool disableThinking = false,
 }) {
+  final userText = disableThinking
+      ? '${prompt.text}\n/no_think'
+      : prompt.text;
+
   switch (condition) {
     case PromptCondition.conditionA:
       return [
@@ -214,17 +317,24 @@ List<LLMMessage> buildConditionMessages({
           role: LLMRole.system,
           content: trimSingleTrailingNewline(systemPrompt),
         ),
-        LLMMessage(role: LLMRole.user, content: prompt.text),
+        LLMMessage(role: LLMRole.user, content: userText),
       ];
 
     case PromptCondition.conditionB:
-      final facts = selectFacts(prompt, allFacts, relevantOnly: relevantOnly);
+    case PromptCondition.conditionBSimRag:
+      final facts = selectFactsForCondition(
+        condition: condition,
+        prompt: prompt,
+        allFacts: allFacts,
+        simRagConfig: simRagConfig,
+      );
       final messages = <LLMMessage>[
         LLMMessage(
           role: LLMRole.system,
           content: trimSingleTrailingNewline(systemPrompt),
         ),
       ];
+      // Nothing in the B variants hints at abstaining!
       if (facts.isNotEmpty) {
         messages.add(
           LLMMessage(
@@ -232,19 +342,18 @@ List<LLMMessage> buildConditionMessages({
             content: localNotesMessage(facts.map((f) => f.text).toList()),
           ),
         );
-      } else {
-        messages.add(
-          LLMMessage(
-            role: LLMRole.user,
-            content: '$localNotesTitle\n\n$localNotesIntro\n(No specific local notes match this query.)',
-          ),
-        );
       }
-      messages.add(LLMMessage(role: LLMRole.user, content: prompt.text));
+      messages.add(LLMMessage(role: LLMRole.user, content: userText));
       return messages;
 
     case PromptCondition.conditionC:
-      final facts = selectFacts(prompt, allFacts, relevantOnly: relevantOnly);
+    case PromptCondition.conditionCSimRag:
+      final facts = selectFactsForCondition(
+        condition: condition,
+        prompt: prompt,
+        allFacts: allFacts,
+        simRagConfig: simRagConfig,
+      );
       final messages = <LLMMessage>[
         LLMMessage(
           role: LLMRole.system,
@@ -262,13 +371,27 @@ List<LLMMessage> buildConditionMessages({
         messages.add(
           LLMMessage(
             role: LLMRole.user,
-            content: '$localNotesTitle\n\n$localNotesIntro\n(No specific local notes match this query.)',
+            content:
+                '$localNotesTitle\n\n$localNotesIntro\n(No specific local notes match this query.)',
           ),
         );
       }
-      messages.add(LLMMessage(role: LLMRole.user, content: prompt.text));
+      messages.add(LLMMessage(role: LLMRole.user, content: userText));
       return messages;
   }
+}
+
+/// Strips reasoning/thinking tags (e.g. `<think>...</think>`) from model outputs.
+String stripThinkingBlocks(String text) {
+  var cleaned = text.replaceAll(
+    RegExp(r'<think>[\s\S]*?</think>', caseSensitive: false),
+    '',
+  );
+  cleaned = cleaned.replaceAll(
+    RegExp(r'<think>[\s\S]*$', caseSensitive: false),
+    '',
+  );
+  return cleaned.trim();
 }
 
 /// Legacy message builder for backward compatibility.
