@@ -89,6 +89,7 @@ class _NoteScreenState extends State<NoteScreen> {
   int? _ttftMs;
   double? _tokensPerSecond;
   int? _evalCount;
+  int? _promptTokenCount;
   Duration? _generationDuration;
   double? _batteryTempCelsius;
   double? _heatTestThrottlePercentage;
@@ -350,7 +351,6 @@ class _NoteScreenState extends State<NoteScreen> {
       prompt: selected,
       allFacts: catalog.facts,
       simRagConfig: catalog.simRagConfig,
-      disableThinking: true,
     );
 
     final initialSnap = MemorySnapshot.capture();
@@ -365,6 +365,7 @@ class _NoteScreenState extends State<NoteScreen> {
       _ttftMs = null;
       _tokensPerSecond = null;
       _evalCount = null;
+      _promptTokenCount = null;
       _generationDuration = null;
       _status = null;
       _firstTokenAt = null;
@@ -446,6 +447,7 @@ class _NoteScreenState extends State<NoteScreen> {
         if (first != null) _ttftMs = first.inMilliseconds;
         _tokensPerSecond = rate;
         _evalCount = chunk.evalCount;
+        _promptTokenCount = chunk.promptEvalCount;
         _generationDuration = generation;
       });
     }
@@ -526,7 +528,8 @@ class _NoteScreenState extends State<NoteScreen> {
       ramBeforeLoadBytes: _ramBeforeLoadBytes,
       ramIdleBytes: _ramIdleBytes,
       ramPeakBytes: _peakRssBytes,
-      promptTokenCount: null,
+      promptTokenCount: _promptTokenCount ??
+          _estimatePromptTokens(_messagesController.text),
       generatedTokenCount: _evalCount,
       ttftMs: _ttftMs,
       generationDurationMs: _generationDuration?.inMilliseconds,
@@ -555,6 +558,9 @@ class _NoteScreenState extends State<NoteScreen> {
 
     completer.complete(record);
   }
+
+  int _estimatePromptTokens(String text) =>
+      text.isEmpty ? 0 : (text.length / 3.8).round();
 
   Future<void> _stop() async {
     _stopRequested = true;

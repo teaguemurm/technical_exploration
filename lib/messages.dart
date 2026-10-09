@@ -304,11 +304,8 @@ List<LLMMessage> buildConditionMessages({
   required PromptSpec prompt,
   required List<DatasetFact> allFacts,
   SimulatedRagConfig simRagConfig = const SimulatedRagConfig(),
-  bool disableThinking = false,
 }) {
-  final userText = disableThinking
-      ? '${prompt.text}\n/no_think'
-      : prompt.text;
+  final userText = prompt.text;
 
   switch (condition) {
     case PromptCondition.conditionA:

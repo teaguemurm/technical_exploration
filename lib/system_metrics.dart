@@ -338,10 +338,13 @@ class RunRecord {
   final bool isHeatTest;
   final bool thinkingDisabled;
 
+  String get loadType => isColdLoad ? 'Cold' : 'Warm';
+
   Map<String, dynamic> toJson() => {
     'runIndex': runIndex,
     'runIndexSinceLoad': runIndexSinceLoad,
     'isColdLoad': isColdLoad,
+    'loadType': loadType,
     'loadDurationMs': loadDurationMs,
     'timestamp': timestamp.toIso8601String(),
     'deviceModel': deviceModel,
@@ -383,7 +386,8 @@ class RunRecord {
     return RunRecord(
       runIndex: (json['runIndex'] as num?)?.toInt() ?? 0,
       runIndexSinceLoad: (json['runIndexSinceLoad'] as num?)?.toInt() ?? 1,
-      isColdLoad: json['isColdLoad'] as bool? ?? false,
+      isColdLoad: (json['loadType'] == 'Cold') ||
+          (json['isColdLoad'] as bool? ?? false),
       loadDurationMs: (json['loadDurationMs'] as num?)?.toInt(),
       timestamp: DateTime.tryParse(json['timestamp']?.toString() ?? '') ??
           DateTime.now(),
@@ -512,7 +516,7 @@ class BenchmarkExporter {
                 .toStringAsFixed(1)
             : '';
         buffer.writeln(
-          '${_escape(r.deviceModel)},${_escape(r.osVersion)},${_escape(r.modelFileName)},${_escape(r.architecture)},${_escape(r.quantization)},${_escape(r.backend)},${r.nGpuLayers},${r.isColdLoad ? "Cold" : "Warm"},${r.loadDurationMs ?? ""},$beforeMb,$idleMb,$overheadMb,${r.timestamp.toIso8601String()}',
+          '${_escape(r.deviceModel)},${_escape(r.osVersion)},${_escape(r.modelFileName)},${_escape(r.architecture)},${_escape(r.quantization)},${_escape(r.backend)},${r.nGpuLayers},${r.loadType},${r.loadDurationMs ?? ""},$beforeMb,$idleMb,$overheadMb,${r.timestamp.toIso8601String()}',
         );
       }
     }
@@ -522,7 +526,7 @@ class BenchmarkExporter {
     // Section 2: Inference Runs
     buffer.writeln('# Tab: Inference');
     buffer.writeln(
-      'Run Index,Run Since Load,Is Cold Load,Timestamp,Device Model,OS Version,Model File,Architecture,Quantization,Backend,Condition,Notes Mode,k,Injected Notes,Prompt ID,Prompt Text,Temperature,Seed,Top-K,Top-P,Repeat Penalty,Max Tokens,Context Size,Prompt Tokens,Gen Tokens,Hit Max Tokens,TTFT (ms),Gen Duration (ms),TPS (tok/s),RAM Peak (MB),Battery Level Before (%),Battery Level After (%),Battery Temp Before (C),Battery Temp After (C),Throttle (%),Is Heat Test,Thinking Disabled,Output',
+      'Run Index,Run Since Load,Load Type,Timestamp,Device Model,OS Version,Model File,Architecture,Quantization,Backend,Condition,Notes Mode,k,Injected Notes,Prompt ID,Prompt Text,Temperature,Seed,Top-K,Top-P,Repeat Penalty,Max Tokens,Context Size,Prompt Tokens,Gen Tokens,Hit Max Tokens,TTFT (ms),Gen Duration (ms),TPS (tok/s),RAM Peak (MB),Battery Level Before (%),Battery Level After (%),Battery Temp Before (C),Battery Temp After (C),Throttle (%),Is Heat Test,Thinking Disabled,Output',
     );
 
     for (final r in runs) {
@@ -545,7 +549,7 @@ class BenchmarkExporter {
       buffer.writeln([
         r.runIndex,
         r.runIndexSinceLoad,
-        r.isColdLoad ? 'Yes' : 'No',
+        r.loadType,
         r.timestamp.toIso8601String(),
         _escape(r.deviceModel),
         _escape(r.osVersion),

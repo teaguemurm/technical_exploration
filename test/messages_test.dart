@@ -257,7 +257,7 @@ void main() {
       ramBeforeLoadBytes: 85 * 1024 * 1024,
       ramIdleBytes: 1320 * 1024 * 1024,
       ramPeakBytes: 1450 * 1024 * 1024,
-      promptTokenCount: null,
+      promptTokenCount: 142,
       generatedTokenCount: 22,
       ttftMs: 320,
       generationDurationMs: 1100,
@@ -279,12 +279,14 @@ void main() {
     expect(deserialized.runIndex, record.runIndex);
     expect(deserialized.runIndexSinceLoad, record.runIndexSinceLoad);
     expect(deserialized.isColdLoad, record.isColdLoad);
+    expect(deserialized.loadType, 'Cold');
     expect(deserialized.loadDurationMs, record.loadDurationMs);
     expect(deserialized.deviceModel, 'Fairphone 5');
     expect(deserialized.modelFileName, 'qwen2.5-1.5b-instruct-q4_k_m.gguf');
     expect(deserialized.architecture, 'qwen2');
     expect(deserialized.quantization, 'Q4_K_M');
     expect(deserialized.condition, 'B');
+    expect(deserialized.promptTokenCount, 142);
     expect(deserialized.injectedNoteIds, ['wisent-herd', 'park']);
     expect(deserialized.decodingSettings.temperature, 0.0);
     expect(deserialized.decodingSettings.seed, 42);
@@ -300,6 +302,9 @@ void main() {
     final csv = BenchmarkExporter.exportCsv([record]);
     expect(csv, contains('# Tab: Load and idle'));
     expect(csv, contains('# Tab: Inference'));
+    expect(csv, contains('Load Type'));
+    expect(csv, isNot(contains('Is Cold Load')));
+    expect(csv, contains('Prompt Tokens'));
     expect(csv, contains('Fairphone 5'));
     expect(csv, contains('qwen2.5-1.5b-instruct-q4_k_m.gguf'));
     expect(csv, contains('Q4_K_M'));
@@ -326,5 +331,120 @@ void main() {
       tokensPerSecond(evalCount: null, generation: const Duration(seconds: 1)),
       isNull,
     );
+  });
+
+  test('exact messages sent for one Condition A, one Condition B, and one Condition C run', () {
+    final promptsFile = File('assets/prompts.json').readAsStringSync();
+    final datasetFile = File('assets/dataset.json').readAsStringSync();
+    final simRagFile = File('assets/simulated_rag.json').readAsStringSync();
+    final systemPrompt = File('assets/system_prompt.txt').readAsStringSync();
+
+    final catalog = parseCatalog(
+      systemPrompt: systemPrompt,
+      promptsJson: promptsFile,
+      datasetJson: datasetFile,
+      simRagJson: simRagFile,
+    );
+
+    final prompt = catalog.prompts.firstWhere((p) => p.id == 'what-animal');
+
+    final aMessages = buildConditionMessages(
+      condition: PromptCondition.conditionA,
+      systemPrompt: catalog.systemPrompt,
+      prompt: prompt,
+      allFacts: catalog.facts,
+      simRagConfig: catalog.simRagConfig,
+    );
+
+    final bMessages = buildConditionMessages(
+      condition: PromptCondition.conditionB,
+      systemPrompt: catalog.systemPrompt,
+      prompt: prompt,
+      allFacts: catalog.facts,
+      simRagConfig: catalog.simRagConfig,
+    );
+
+    final cMessages = buildConditionMessages(
+      condition: PromptCondition.conditionC,
+      systemPrompt: catalog.systemPrompt,
+      prompt: prompt,
+      allFacts: catalog.facts,
+      simRagConfig: catalog.simRagConfig,
+    );
+
+    // Print exact messages sent
+    // ignore: avoid_print
+    print('==================== EXACT MESSAGES: CONDITION A ====================');
+    for (var i = 0; i < aMessages.length; i++) {
+      // ignore: avoid_print
+      print('--- Message ${i + 1} [role: ${aMessages[i].role.name}] ---');
+      // ignore: avoid_print
+      print(aMessages[i].content);
+    }
+
+    // ignore: avoid_print
+    print('==================== EXACT MESSAGES: CONDITION B ====================');
+    for (var i = 0; i < bMessages.length; i++) {
+      // ignore: avoid_print
+      print('--- Message ${i + 1} [role: ${bMessages[i].role.name}] ---');
+      // ignore: avoid_print
+      print(bMessages[i].content);
+    }
+
+    // ignore: avoid_print
+    print('==================== EXACT MESSAGES: CONDITION C ====================');
+    for (var i = 0; i < cMessages.length; i++) {
+      // ignore: avoid_print
+      print('--- Message ${i + 1} [role: ${cMessages[i].role.name}] ---');
+      // ignore: avoid_print
+      print(cMessages[i].content);
+    }
+    // ignore: avoid_print
+    print('====================================================================');
+
+    // Structural assertions
+    // Condition A: 2 messages (system, user prompt)
+    expect(aMessages.length, 2);
+    expect(aMessages[0].role, LLMRole.system);
+    expect(aMessages[0].content, trimSingleTrailingNewline(catalog.systemPrompt));
+    expect(aMessages[1].role, LLMRole.user);
+    expect(aMessages[1].content, prompt.text);
+    expect(aMessages[0].content, isNot(contains('/no_think')));
+    expect(aMessages[1].content, isNot(contains('/no_think')));
+
+    // Condition B: 3 messages (system, local notes with all 10 facts, user prompt)
+    expect(bMessages.length, 3);
+    expect(bMessages[0].role, LLMRole.system);
+    expect(bMessages[0].content, trimSingleTrailingNewline(catalog.systemPrompt));
+    expect(bMessages[1].role, LLMRole.user);
+    for (final fact in catalog.facts) {
+      expect(bMessages[1].content, contains(fact.text));
+    }
+    expect(bMessages[2].role, LLMRole.user);
+    expect(bMessages[2].content, prompt.text);
+    // No refusal or abstention hints in B
+    expect(bMessages[0].content, isNot(contains(standardRefusalStatement)));
+    expect(bMessages[1].content, isNot(contains(standardRefusalStatement)));
+    expect(bMessages[0].content, isNot(contains('/no_think')));
+    expect(bMessages[1].content, isNot(contains('/no_think')));
+    expect(bMessages[2].content, isNot(contains('/no_think')));
+
+    // Condition C: 3 messages (system with constraints + refusal + 3 bans, local notes with all 10 facts, user prompt)
+    expect(cMessages.length, 3);
+    expect(cMessages[0].role, LLMRole.system);
+    expect(cMessages[0].content, contains(standardRefusalStatement));
+    expect(cMessages[0].content, contains('1 to 3 concise, factual sentences'));
+    expect(cMessages[0].content, contains("Do NOT speak as Nature or in the animal's first-person voice."));
+    expect(cMessages[0].content, contains("Do NOT claim to decode or translate the animal's behaviour."));
+    expect(cMessages[0].content, contains('Do NOT preach or moralise at the visitor.'));
+    expect(cMessages[1].role, LLMRole.user);
+    for (final fact in catalog.facts) {
+      expect(cMessages[1].content, contains(fact.text));
+    }
+    expect(cMessages[2].role, LLMRole.user);
+    expect(cMessages[2].content, prompt.text);
+    expect(cMessages[0].content, isNot(contains('/no_think')));
+    expect(cMessages[1].content, isNot(contains('/no_think')));
+    expect(cMessages[2].content, isNot(contains('/no_think')));
   });
 }
