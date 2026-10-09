@@ -257,6 +257,14 @@ class _NoteScreenState extends State<NoteScreen> {
 
     final repo = LlamaCppChatRepository(
       contextSize: _contextSize,
+      batchSize: _contextSize,
+      stopTokens: const [
+        '<end_of_turn>',
+        '<turn|>',
+        '<|end|>',
+        '<|im_end|>',
+        '<|eot_id|>',
+      ],
       nGpuLayers: _nGpuLayers,
     );
     _repo = repo;
@@ -352,6 +360,16 @@ class _NoteScreenState extends State<NoteScreen> {
       allFacts: catalog.facts,
       simRagConfig: catalog.simRagConfig,
     );
+
+    // Pre-flight check: ensure estimated prompt tokens do not overflow context size
+    final promptEstimate = _estimatePromptTokens(formatMessages(messages));
+    if (promptEstimate > _contextSize) {
+      setState(() {
+        _status =
+            'Prompt tokens (~$promptEstimate) exceed context size ($_contextSize).';
+      });
+      return null;
+    }
 
     final initialSnap = MemorySnapshot.capture();
     final batteryLevelBefore = readDeviceBatteryLevel();
@@ -698,6 +716,40 @@ class _NoteScreenState extends State<NoteScreen> {
     }
   }
 
+  void _copyCsvToClipboard() {
+    if (_history.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No runs to copy yet.')),
+      );
+      return;
+    }
+    Clipboard.setData(
+      ClipboardData(text: BenchmarkExporter.exportCsv(_history)),
+    );
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('CSV copied to clipboard (${_history.length} runs)!'),
+      ),
+    );
+  }
+
+  void _copyJsonToClipboard() {
+    if (_history.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No runs to copy yet.')),
+      );
+      return;
+    }
+    Clipboard.setData(
+      ClipboardData(text: BenchmarkExporter.exportJson(_history)),
+    );
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('JSON copied to clipboard (${_history.length} runs)!'),
+      ),
+    );
+  }
+
   Future<void> _exportFiles() async {
     if (_history.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -726,17 +778,21 @@ class _NoteScreenState extends State<NoteScreen> {
             ],
           ),
           actions: [
-            TextButton(
+            TextButton.icon(
+              icon: const Icon(Icons.table_chart, size: 16),
               onPressed: () {
-                Clipboard.setData(
-                  ClipboardData(text: BenchmarkExporter.exportCsv(_history)),
-                );
+                _copyCsvToClipboard();
                 Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('CSV copied to clipboard!')),
-                );
               },
-              child: const Text('Copy CSV'),
+              label: const Text('Copy CSV'),
+            ),
+            TextButton.icon(
+              icon: const Icon(Icons.code, size: 16),
+              onPressed: () {
+                _copyJsonToClipboard();
+                Navigator.pop(context);
+              },
+              label: const Text('Copy JSON'),
             ),
             FilledButton(
               onPressed: () => Navigator.pop(context),
@@ -801,19 +857,9 @@ class _NoteScreenState extends State<NoteScreen> {
           PopupMenuButton<String>(
             onSelected: (val) {
               if (val == 'copyCsv') {
-                Clipboard.setData(
-                  ClipboardData(text: BenchmarkExporter.exportCsv(_history)),
-                );
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('CSV copied to clipboard!')),
-                );
+                _copyCsvToClipboard();
               } else if (val == 'copyJson') {
-                Clipboard.setData(
-                  ClipboardData(text: BenchmarkExporter.exportJson(_history)),
-                );
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('JSON copied to clipboard!')),
-                );
+                _copyJsonToClipboard();
               } else if (val == 'clear') {
                 _clearHistory();
               }
@@ -1077,6 +1123,31 @@ class _NoteScreenState extends State<NoteScreen> {
                 OutlinedButton(
                   onPressed: _running ? _stop : null,
                   child: const Text('Stop'),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 12),
+
+            // Export & Copy Buttons (Mobile Friendly)
+            Wrap(
+              spacing: 12,
+              runSpacing: 8,
+              children: [
+                OutlinedButton.icon(
+                  icon: const Icon(Icons.table_chart, size: 16),
+                  onPressed: _history.isNotEmpty ? _copyCsvToClipboard : null,
+                  label: const Text('Copy CSV'),
+                ),
+                OutlinedButton.icon(
+                  icon: const Icon(Icons.code, size: 16),
+                  onPressed: _history.isNotEmpty ? _copyJsonToClipboard : null,
+                  label: const Text('Copy JSON'),
+                ),
+                OutlinedButton.icon(
+                  icon: const Icon(Icons.file_download, size: 16),
+                  onPressed: _history.isNotEmpty ? _exportFiles : null,
+                  label: const Text('Export Files'),
                 ),
               ],
             ),

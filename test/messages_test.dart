@@ -205,13 +205,29 @@ void main() {
     }
   });
 
-  test('stripThinkingBlocks removes <think> blocks and leaves response text intact', () {
+  test('stripThinkingBlocks removes think, thought, and channel thought blocks', () {
     expect(
       stripThinkingBlocks('<think>Let me reason about this...</think>The herd is wisents.'),
       'The herd is wisents.',
     );
     expect(
+      stripThinkingBlocks('<thought>Gemma internal reasoning...</thought>The herd is wisents.'),
+      'The herd is wisents.',
+    );
+    expect(
+      stripThinkingBlocks('<|thought|>Reasoning inside special tokens...</|thought|>The herd is wisents.'),
+      'The herd is wisents.',
+    );
+    expect(
+      stripThinkingBlocks('<|channel>thought\nInternal channel reflection\n<channel|>The herd is wisents.'),
+      'The herd is wisents.',
+    );
+    expect(
       stripThinkingBlocks('<think>Unclosed thinking block...'),
+      '',
+    );
+    expect(
+      stripThinkingBlocks('<thought>Unclosed thought block...'),
       '',
     );
     expect(
@@ -446,5 +462,52 @@ void main() {
     expect(cMessages[0].content, isNot(contains('/no_think')));
     expect(cMessages[1].content, isNot(contains('/no_think')));
     expect(cMessages[2].content, isNot(contains('/no_think')));
+  });
+
+  test('BenchmarkExporter.exportToFiles saves files locally to /exports directory', () async {
+    final record = RunRecord(
+      runIndex: 1,
+      runIndexSinceLoad: 1,
+      isColdLoad: true,
+      timestamp: DateTime.now(),
+      deviceModel: 'Test Device',
+      osVersion: 'Test OS',
+      modelFileName: 'test-model.gguf',
+      architecture: 'test-arch',
+      quantization: 'Q4_K_M',
+      backend: 'CPU',
+      nGpuLayers: 0,
+      condition: 'A',
+      notesMode: 'none',
+      k: 0,
+      injectedNoteIds: const [],
+      promptId: 'what-animal',
+      promptText: 'What animal is this?',
+      decodingSettings: const DecodingSettings(),
+      systemPrompt: 'System',
+      messagesSent: 'Messages',
+      output: 'Output text',
+      hitMaxTokens: false,
+    );
+
+    final paths = await BenchmarkExporter.exportToFiles([record]);
+    final csvPath = paths['csv']!;
+    final jsonPath = paths['json']!;
+
+    expect(csvPath, contains('exports'));
+    expect(jsonPath, contains('exports'));
+
+    final csvFile = File(csvPath);
+    final jsonFile = File(jsonPath);
+
+    expect(csvFile.existsSync(), isTrue);
+    expect(jsonFile.existsSync(), isTrue);
+
+    expect(csvFile.readAsStringSync(), contains('Test Device'));
+    expect(jsonFile.readAsStringSync(), contains('test-model.gguf'));
+
+    // Clean up test export files
+    if (csvFile.existsSync()) csvFile.deleteSync();
+    if (jsonFile.existsSync()) jsonFile.deleteSync();
   });
 }

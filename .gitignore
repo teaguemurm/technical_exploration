@@ -46,3 +46,11 @@ app.*.map.json
 
 # Widget Preview related
 .widget_preview/
+
+# Benchmark exports
+/exports/
+/exports
+
+# Model weights
+*.gguf
+/models/

@@ -36,5 +36,10 @@ void main() {
     expect(find.text('Run Batch Pass (30 runs)'), findsOneWidget);
     expect(find.text('10-Run Heat Test'), findsOneWidget);
     expect(find.text('Stop'), findsOneWidget);
+
+    // Export & copy buttons
+    expect(find.text('Copy CSV'), findsOneWidget);
+    expect(find.text('Copy JSON'), findsOneWidget);
+    expect(find.text('Export Files'), findsOneWidget);
   });
 }

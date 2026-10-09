@@ -597,12 +597,79 @@ class BenchmarkExporter {
     return encoder.convert(runs.map((r) => r.toJson()).toList());
   }
 
-  /// Writes exports to files in app documents / downloads and returns file paths.
-  static Future<Map<String, String>> exportToFiles(List<RunRecord> runs) async {
-    final dir = await getApplicationDocumentsDirectory();
-    final now = DateTime.now().millisecondsSinceEpoch;
-    final csvFile = File('${dir.path}/technical_exploration_runs_$now.csv');
-    final jsonFile = File('${dir.path}/technical_exploration_runs_$now.json');
+  /// Resolves the exports directory: saves locally to /exports in the project
+  /// root or working directory, falling back to app documents /exports on mobile.
+  static Future<Directory> getExportsDirectory() async {
+    // 1. Locate project root by walking up from the running executable
+    try {
+      final execPath = Platform.resolvedExecutable;
+      if (execPath.isNotEmpty) {
+        var dir = File(execPath).parent;
+        while (dir.parent.path != dir.path) {
+          if (File('${dir.path}/pubspec.yaml').existsSync()) {
+            final exportsDir = Directory('${dir.path}/exports');
+            if (!exportsDir.existsSync()) {
+              exportsDir.createSync(recursive: true);
+            }
+            return exportsDir;
+          }
+          dir = dir.parent;
+        }
+      }
+    } catch (_) {}
+
+    // 2. Locate project root by walking up from current working directory
+    try {
+      var dir = Directory.current;
+      while (dir.parent.path != dir.path) {
+        if (File('${dir.path}/pubspec.yaml').existsSync()) {
+          final exportsDir = Directory('${dir.path}/exports');
+          if (!exportsDir.existsSync()) {
+            exportsDir.createSync(recursive: true);
+          }
+          return exportsDir;
+        }
+        dir = dir.parent;
+      }
+    } catch (_) {}
+
+    // 3. Try relative 'exports' directory if writable
+    try {
+      final localDir = Directory('exports');
+      if (!localDir.existsSync()) {
+        localDir.createSync(recursive: true);
+      }
+      final testFile = File('${localDir.path}/.test_write');
+      testFile.writeAsStringSync('test');
+      testFile.deleteSync();
+      return localDir;
+    } catch (_) {}
+
+    // 4. Fallback for sandboxed mobile devices (e.g. Android)
+    final docDir = await getApplicationDocumentsDirectory();
+    final fallbackDir = Directory('${docDir.path}/exports');
+    if (!fallbackDir.existsSync()) {
+      await fallbackDir.create(recursive: true);
+    }
+    return fallbackDir;
+  }
+
+  /// Writes exports to files in the /exports directory and returns file paths.
+  static Future<Map<String, String>> exportToFiles(
+    List<RunRecord> runs, {
+    Directory? targetDir,
+  }) async {
+    final dir = targetDir ?? await getExportsDirectory();
+    if (!dir.existsSync()) {
+      await dir.create(recursive: true);
+    }
+
+    final now = DateTime.now();
+    final timestamp =
+        '${now.year.toString().padLeft(4, '0')}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}_'
+        '${now.hour.toString().padLeft(2, '0')}${now.minute.toString().padLeft(2, '0')}${now.second.toString().padLeft(2, '0')}';
+    final csvFile = File('${dir.path}/technical_exploration_runs_$timestamp.csv');
+    final jsonFile = File('${dir.path}/technical_exploration_runs_$timestamp.json');
 
     await csvFile.writeAsString(exportCsv(runs));
     await jsonFile.writeAsString(exportJson(runs));

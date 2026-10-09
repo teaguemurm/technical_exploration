@@ -378,14 +378,30 @@ List<LLMMessage> buildConditionMessages({
   }
 }
 
-/// Strips reasoning/thinking tags (e.g. `<think>...</think>`) from model outputs.
+/// Strips reasoning/thinking tags (e.g. `<think>...</think>`, `<thought>...</thought>`,
+/// `<|thought|>...</|thought|>`, and `<|channel>thought...`) from model outputs.
 String stripThinkingBlocks(String text) {
   var cleaned = text.replaceAll(
-    RegExp(r'<think>[\s\S]*?</think>', caseSensitive: false),
+    RegExp(r'<(think|thought)>[\s\S]*?</\1>', caseSensitive: false),
     '',
   );
   cleaned = cleaned.replaceAll(
-    RegExp(r'<think>[\s\S]*$', caseSensitive: false),
+    RegExp(r'<\|thought\|>[\s\S]*?</\|thought\|>', caseSensitive: false),
+    '',
+  );
+  cleaned = cleaned.replaceAll(
+    RegExp(
+      r'<\|channel\>thought[\s\S]*?(<channel\|>|<\|channel\>|$)',
+      caseSensitive: false,
+    ),
+    '',
+  );
+  cleaned = cleaned.replaceAll(
+    RegExp(r'<(think|thought)>[\s\S]*$', caseSensitive: false),
+    '',
+  );
+  cleaned = cleaned.replaceAll(
+    RegExp(r'<\|thought\|>[\s\S]*$', caseSensitive: false),
     '',
   );
   return cleaned.trim();
