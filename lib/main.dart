@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:math' as math;
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +10,7 @@ import 'package:technical_exploration/messages.dart';
 import 'package:technical_exploration/system_metrics.dart';
 import 'package:technical_exploration/widgets/comparison_view.dart';
 import 'package:technical_exploration/widgets/metrics_dashboard.dart';
+
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -93,6 +95,7 @@ class _NoteScreenState extends State<NoteScreen> {
   Duration? _generationDuration;
   double? _batteryTempCelsius;
   double? _heatTestThrottlePercentage;
+  double? _heatTestMaxThrottlePercentage;
   double? _heatTestFirstRunTps;
   String? _status;
 
@@ -410,17 +413,26 @@ class _NoteScreenState extends State<NoteScreen> {
     );
 
     _subscription = stream.listen(
-      _onChunk,
+      (chunk) {
+        _onChunk(
+          chunk,
+          condition: condition,
+          batteryLevelBefore: batteryLevelBefore,
+          batteryTempBefore: batteryTempBefore,
+          isHeatTest: isHeatTest,
+          completer: completer,
+        );
+      },
       onError: (Object error, StackTrace _) {
         if (!mounted) {
-          completer.complete(null);
+          if (!completer.isCompleted) completer.complete(null);
           return;
         }
         setState(() {
           _running = false;
           _status = error.toString();
         });
-        completer.complete(null);
+        if (!completer.isCompleted) completer.complete(null);
       },
       onDone: () {
         _onRunDone(
@@ -436,11 +448,64 @@ class _NoteScreenState extends State<NoteScreen> {
     return completer.future;
   }
 
-  void _onChunk(LLMChunk chunk) {
+  void _onChunk(
+    LLMChunk chunk, {
+    required PromptCondition condition,
+    required int? batteryLevelBefore,
+    required double? batteryTempBefore,
+    required bool isHeatTest,
+    required Completer<RunRecord?> completer,
+  }) {
     final text = chunk.message?.content;
     if (text != null && text.isNotEmpty) {
+      final isFirst = _firstTokenAt == null;
       _firstTokenAt ??= _runWatch?.elapsed;
       _outputController.text += text;
+
+      if (isFirst) {
+        final currentRss = MemorySnapshot.capture().currentRssBytes;
+        if (_peakRssBytes == null || currentRss > _peakRssBytes!) {
+          _peakRssBytes = currentRss;
+        }
+      }
+
+      // Early stop if any stop sequence leaked into the accumulated output
+      for (final stop in stopSequences) {
+        if (_outputController.text.contains(stop)) {
+          unawaited(_subscription?.cancel());
+          _subscription = null;
+          final first = _firstTokenAt;
+          final elapsed = _runWatch?.elapsed;
+          final generation = first == null || elapsed == null
+              ? Duration.zero
+              : elapsed - first;
+
+          final approxTokens =
+              _evalCount ?? (_outputController.text.length / 3.8).round();
+          final rate = tokensPerSecond(
+            evalCount: approxTokens,
+            generation: generation,
+          );
+
+          if (mounted) {
+            setState(() {
+              if (first != null) _ttftMs = first.inMilliseconds;
+              _tokensPerSecond = rate;
+              _evalCount = approxTokens;
+              _generationDuration = generation;
+            });
+          }
+
+          _onRunDone(
+            condition: condition,
+            batteryLevelBefore: batteryLevelBefore,
+            batteryTempBefore: batteryTempBefore,
+            isHeatTest: isHeatTest,
+            completer: completer,
+          );
+          return;
+        }
+      }
     }
 
     final currentRss = MemorySnapshot.capture().currentRssBytes;
@@ -478,9 +543,16 @@ class _NoteScreenState extends State<NoteScreen> {
     required bool isHeatTest,
     required Completer<RunRecord?> completer,
   }) {
+    if (completer.isCompleted) return;
     if (!mounted) {
       completer.complete(null);
       return;
+    }
+
+    // Capture final memory before context cleanup
+    final currentRssFinal = MemorySnapshot.capture().currentRssBytes;
+    if (_peakRssBytes == null || currentRssFinal > _peakRssBytes!) {
+      _peakRssBytes = currentRssFinal;
     }
 
     final batteryLevelAfter = readDeviceBatteryLevel();
@@ -493,16 +565,21 @@ class _NoteScreenState extends State<NoteScreen> {
     if (isHeatTest && _tokensPerSecond != null) {
       _heatTestFirstRunTps ??= _tokensPerSecond;
       if (_heatTestFirstRunTps != null && _heatTestFirstRunTps! > 0) {
-        throttlePercentage =
+        final currentThrottle =
             ((_heatTestFirstRunTps! - _tokensPerSecond!) /
                 _heatTestFirstRunTps!) *
             100.0;
-        _heatTestThrottlePercentage = throttlePercentage;
+        throttlePercentage = currentThrottle;
+        _heatTestThrottlePercentage = currentThrottle;
+        _heatTestMaxThrottlePercentage = math.max(
+          _heatTestMaxThrottlePercentage ?? 0.0,
+          math.max(0.0, currentThrottle),
+        );
       }
     }
 
-    // Clean any thinking blocks from output
-    final cleanedOutput = stripThinkingBlocks(_outputController.text);
+    // Clean any thinking blocks and trailing stop sequences from output
+    final cleanedOutput = sanitizeModelOutput(_outputController.text);
     _outputController.text = cleanedOutput;
 
     final selected = _selected!;
@@ -602,6 +679,9 @@ class _NoteScreenState extends State<NoteScreen> {
   Future<void> _runCompareAll() async {
     if (!_canRun) return;
 
+    _stopRequested = false;
+    setState(() => _comparisonResults.clear());
+
     final conditions = _simulatedRagEnabled
         ? [
             PromptCondition.conditionA,
@@ -629,6 +709,7 @@ class _NoteScreenState extends State<NoteScreen> {
     final catalog = _catalog;
     if (!_canRun || catalog == null || catalog.prompts.isEmpty) return;
 
+    _stopRequested = false;
     final conditions = _simulatedRagEnabled
         ? [
             PromptCondition.conditionA,
@@ -648,7 +729,10 @@ class _NoteScreenState extends State<NoteScreen> {
 
     for (final prompt in catalog.prompts) {
       if (!mounted || _stopRequested) break;
-      setState(() => _selected = prompt);
+      setState(() {
+        _selected = prompt;
+        _comparisonResults.clear();
+      });
 
       for (final condition in conditions) {
         if (!mounted || _stopRequested) break;
@@ -663,11 +747,16 @@ class _NoteScreenState extends State<NoteScreen> {
       }
     }
 
+    final wasStopped = _stopRequested;
     if (mounted) {
       setState(() => _batchProgressStatus = null);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Protocol Batch pass completed ($currentCount runs)!'),
+          content: Text(
+            wasStopped
+                ? 'Protocol Batch pass stopped after $currentCount runs.'
+                : 'Protocol Batch pass completed ($currentCount runs)!',
+          ),
         ),
       );
     }
@@ -684,10 +773,12 @@ class _NoteScreenState extends State<NoteScreen> {
       orElse: () => catalog.prompts.first,
     );
 
+    _stopRequested = false;
     setState(() {
       _selected = targetPrompt;
       _heatTestFirstRunTps = null;
       _heatTestThrottlePercentage = null;
+      _heatTestMaxThrottlePercentage = null;
     });
 
     const totalRuns = 10;
@@ -701,15 +792,18 @@ class _NoteScreenState extends State<NoteScreen> {
       await Future<void>.delayed(const Duration(milliseconds: 200));
     }
 
+    final wasStopped = _stopRequested;
     if (mounted) {
       setState(() => _batchProgressStatus = null);
-      final throttleText = _heatTestThrottlePercentage != null
-          ? '${_heatTestThrottlePercentage!.toStringAsFixed(1)}%'
+      final throttleText = _heatTestMaxThrottlePercentage != null
+          ? '${_heatTestMaxThrottlePercentage!.toStringAsFixed(1)}%'
           : '--';
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            '10-Run Heat Test complete! Max Thermal Throttle: $throttleText',
+            wasStopped
+                ? 'Heat Test stopped. Peak Throttle so far: $throttleText'
+                : '10-Run Heat Test complete! Max Thermal Throttle: $throttleText',
           ),
         ),
       );
@@ -1200,7 +1294,37 @@ class _NoteScreenState extends State<NoteScreen> {
             ],
 
             const SizedBox(height: 24),
-            Text('Messages sent', style: textTheme.titleMedium),
+            Row(
+              children: [
+                Text('Messages sent', style: textTheme.titleMedium),
+                const SizedBox(width: 8),
+                if (_messagesController.text.isNotEmpty)
+                  Text(
+                    '(~${_estimatePromptTokens(_messagesController.text)} tokens)',
+                    style: textTheme.bodySmall?.copyWith(
+                      color: colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                const Spacer(),
+                IconButton(
+                  icon: const Icon(Icons.copy, size: 16),
+                  tooltip: 'Copy full prompt sent',
+                  visualDensity: VisualDensity.compact,
+                  onPressed: _messagesController.text.isNotEmpty
+                      ? () {
+                          Clipboard.setData(
+                            ClipboardData(text: _messagesController.text),
+                          );
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Prompt copied to clipboard'),
+                            ),
+                          );
+                        }
+                      : null,
+                ),
+              ],
+            ),
             const SizedBox(height: 8),
             TextField(
               controller: _messagesController,

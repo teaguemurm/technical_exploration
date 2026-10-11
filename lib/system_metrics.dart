@@ -456,20 +456,63 @@ class RunPersistenceManager {
     }
   }
 
-  /// Loads all saved runs from disk.
+  /// Loads all saved runs from disk, seamlessly merging any legacy sandboxed runs.
   static Future<List<RunRecord>> loadRuns() async {
     try {
       final file = await _getFile();
-      if (!await file.exists()) return [];
-      final lines = await file.readAsLines();
       final records = <RunRecord>[];
-      for (final line in lines) {
-        if (line.trim().isEmpty) continue;
-        try {
-          final map = jsonDecode(line) as Map<String, dynamic>;
-          records.add(RunRecord.fromJson(map));
-        } catch (_) {}
+      if (await file.exists()) {
+        final lines = await file.readAsLines();
+        for (final line in lines) {
+          if (line.trim().isEmpty) continue;
+          try {
+            final map = jsonDecode(line) as Map<String, dynamic>;
+            records.add(RunRecord.fromJson(map));
+          } catch (_) {}
+        }
       }
+
+      // Check legacy sandboxed container path on macOS
+      if (Platform.isMacOS) {
+        final home = Platform.environment['HOME'];
+        if (home != null && home.isNotEmpty) {
+          final sandboxFile = File(
+            '$home/Library/Containers/com.example.technicalExploration/Data/Documents/$_fileName',
+          );
+          if (sandboxFile.path != file.path && await sandboxFile.exists()) {
+            final existingKeys = {
+              for (final r in records)
+                '${r.timestamp.toIso8601String()}_${r.promptId}_${r.condition}',
+            };
+            var migratedCount = 0;
+            final sandboxLines = await sandboxFile.readAsLines();
+            for (final line in sandboxLines) {
+              if (line.trim().isEmpty) continue;
+              try {
+                final map = jsonDecode(line) as Map<String, dynamic>;
+                final rec = RunRecord.fromJson(map);
+                final key =
+                    '${rec.timestamp.toIso8601String()}_${rec.promptId}_${rec.condition}';
+                if (!existingKeys.contains(key)) {
+                  records.add(rec);
+                  existingKeys.add(key);
+                  migratedCount++;
+                }
+              } catch (_) {}
+            }
+            if (migratedCount > 0) {
+              records.sort((a, b) => a.timestamp.compareTo(b.timestamp));
+              // Rewrite primary file with merged history
+              final buffer = StringBuffer();
+              for (final r in records) {
+                buffer.writeln(jsonEncode(r.toJson()));
+              }
+              await file.writeAsString(buffer.toString(), flush: true);
+            }
+          }
+        }
+      }
+
       return records;
     } catch (_) {
       return [];

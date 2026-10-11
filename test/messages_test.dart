@@ -510,4 +510,38 @@ void main() {
     if (csvFile.existsSync()) csvFile.deleteSync();
     if (jsonFile.existsSync()) jsonFile.deleteSync();
   });
+
+  test('sanitizeModelOutput truncates at stop sequences and strips thinking blocks', () {
+    expect(
+      sanitizeModelOutput('The wisents live here.<|im_end|>'),
+      'The wisents live here.',
+    );
+    expect(
+      sanitizeModelOutput(
+        'The wisents live here.<|im_end|>\n<|im_start|>user\nWho are they?<|im_start|>assistant\nThey are wild bison.',
+      ),
+      'The wisents live here.',
+    );
+    expect(
+      sanitizeModelOutput(
+        '<think>Thinking about wisents...</think>The herd is wisents.<end_of_turn>',
+      ),
+      'The herd is wisents.',
+    );
+    expect(
+      sanitizeModelOutput('Clean response without stop markers.'),
+      'Clean response without stop markers.',
+    );
+    expect(
+      sanitizeModelOutput('Sentence one.<|eot_id|>Sentence two.<|end|><turn|>'),
+      'Sentence one.',
+    );
+  });
+
+  test('RunPersistenceManager.loadRuns loads persisted runs', () async {
+    final runs = await RunPersistenceManager.loadRuns();
+    // Should be able to query without throwing
+    expect(runs, isA<List<RunRecord>>());
+  });
 }
+

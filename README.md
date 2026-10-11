@@ -2,7 +2,7 @@
 
 Offline Flutter application for running the local on-device LLM evaluation protocol across 10 prompts, 10 local dataset notes, and 3 experimental conditions (plus an optional retrieval approximation pass).
 
-Outputs are scored by hand post-hoc; non-functional metrics (timings, token rates, memory, thermal throttling, and battery) export directly into the evaluation measurement sheet.
+Outputs are scored by hand post-hoc; non-functional metrics (timings, token rates, memory, thermal throttling, and battery) export directly into the evaluation measurement sheet and benchmark reports.
 
 ---
 
@@ -14,9 +14,9 @@ The protocol uses the locked prompts and notes in the `assets/` directory:
 - **`assets/simulated_rag.json`**: Locked fixed top-$k$ note rankings ($k=2$) approximating retrieval, including near misses (`no-feeding` for `morning-meal`, `other-grazers` for `what-animal`).
 - **`assets/system_prompt.txt`**: Base park visitor persona.
 
-### Conditions
-- **Condition A (Base only)**: System prompt only. No dataset notes.
-- **Condition B (Dataset)**: System prompt + all 10 dataset notes. No abstention hints.
+### Experimental Conditions
+- **Condition A (Base only)**: System prompt only. No dataset notes are injected.
+- **Condition B (Dataset)**: System prompt + all 10 dataset notes injected into context. No abstention hints.
 - **Condition C (Constraints)**: System prompt + all 10 dataset notes + strict grounding + exact refusal rule (`"I do not have information about that in the approved notes."`) + 1–3 sentence limit + behavioural bans:
   1. Ban on speaking as Nature or in the animal's first-person voice.
   2. Ban on claiming to decode or translate the animal's behaviour.
@@ -24,74 +24,176 @@ The protocol uses the locked prompts and notes in the `assets/` directory:
 - **Simulated RAG Variants** (`B-sim-RAG` and `C-sim-RAG`):
   - Labelled as **"simulated RAG (fixed note selection)"**.
   - Off by default. When enabled, Condition B and C inject only the fixed top-$k$ notes ($k=2$) from `assets/simulated_rag.json`.
-  - Nothing in the B variants hints at abstaining. Prompts without a list receive 0 notes (no keyword-matching fallback).
+  - Prompts without a retrieval mapping receive 0 notes (no keyword-matching fallback).
 
 ### Reproducible Decoding Settings (Locked Protocol Defaults)
-- **Temperature**: `0.0` (greedy, deterministic decoding; any sampled pass is a separate, explicitly labelled option)
+All runs execute with deterministic decoding settings to eliminate stochastic variance across passes:
+- **Temperature**: `0.0` (greedy, deterministic decoding)
 - **Seed**: `42`
 - **Top-K**: `40`
 - **Top-P**: `0.9`
 - **Repeat Penalty**: `1.1`
 - **Max Tokens**: `256`
 - **Context Size**: `2048`
-- **Reasoning / Thinking**: Suppressed for Qwen3 / reasoning fallback models (`/no_think` appended, `<think>` blocks stripped).
+- **Reasoning / Thinking**: Suppressed for Qwen3 / reasoning models (`/no_think` directive and `<think>` block stripping).
 
 ---
 
-## 2. Step-by-Step Protocol Execution
+## 2. Measurement Methodology & Telemetry Formulas
 
-### Step 1: Cold Model Load
-1. Launch the app.
-2. Tap **Pick GGUF** (or enter the path directly in device storage).
-3. Tap **Load**.
-4. The first load after launching the app is recorded as **Cold Load** (`isColdLoad = true`).
-5. The app measures absolute Process RSS memory before load, load duration in milliseconds, and idle RAM overhead with the model loaded.
-6. *Note*: If you load another model later, the app first unloads and disposes the current model, pauses briefly for memory settling, measures pre-load RAM, and records the load as **Warm Load** (`isColdLoad = false`).
+This section provides the exact technical definitions, instrumentation hooks, and mathematical formulas used for all recorded metrics. You can cite or adapt these directly for technical reporting and research papers.
 
-### Step 2: Running the Protocol Batch
+### 2.1 Time to First Token (TTFT)
+* **Definition**: Latency in milliseconds from the moment prompt inference begins until the model produces its very first content token chunk.
+* **Instrumentation**: Measured using Dart's high-resolution `Stopwatch` (`Stopwatch()..start()`). The timestamp is captured when the first non-empty text chunk arrives on the inference stream:
+  $$\text{TTFT (ms)} = t_{\text{first\_token}} - t_{\text{inference\_start}}$$
+* **Scope**: Includes model context initialization, prompt tokenization (`llama_tokenize`), prompt prefill / evaluation batching (`llama_decode`), and sampling the initial token.
 
-#### Core Protocol Pass (30 runs: 10 prompts × A/B/C)
-1. Ensure the **"Simulated RAG (fixed note selection)"** toggle is **OFF**.
-2. Tap **"Run Batch Pass (30 runs)"**.
-3. The app executes all 10 prompts in locked sequence, grouped by prompt:
-   $$\text{Prompt } i \longrightarrow \text{Condition A} \longrightarrow \text{Condition B} \longrightarrow \text{Condition C}$$
-4. Every run record is persisted to disk immediately as it finishes. Live progress and a **Stop** button are displayed.
+### 2.2 Tokens Per Second (TPS / Decoding Rate)
+* **Definition**: Generation throughput in tokens per second, measuring purely the autoregressive decoding phase.
+* **Formula**:
+  $$\text{TPS} = \frac{\text{evalCount}}{\Delta t_{\text{generation}}} = \frac{\text{evalCount}}{(t_{\text{done}} - t_{\text{first\_token}})}$$
+* **Notes**:
+  - TTFT / prompt evaluation latency is strictly excluded from $\Delta t_{\text{generation}}$ so that prompt length does not artificially penalize the generation speed metric.
+  - If generation is completed or proactively stopped on a stop delimiter, the interval is measured up to the stopping point.
 
-#### Extended Protocol Pass with Simulated RAG (50 runs)
-1. Toggle **ON** **"Simulated RAG (fixed note selection)"**.
-2. Tap **"Run Batch Pass (50 runs)"**.
-3. The app executes all 10 prompts in prompt-grouped order:
-   $$\text{Prompt } i \longrightarrow \text{A} \longrightarrow \text{B} \longrightarrow \text{B-sim-RAG} \longrightarrow \text{C} \longrightarrow \text{C-sim-RAG}$$
-4. All records save with condition tags `B-sim-RAG` and `C-sim-RAG`, notes mode `sim-rag`, and retrieval $k=2$.
+### 2.3 Memory & Resident Set Size (RSS)
+Physical RAM consumption is sampled at multiple points using native OS interfaces:
+* **Operating System Hooks**:
+  - **Linux / Android**: Read directly from the kernel procfs:
+    - `/proc/self/status` $\rightarrow$ `VmRSS` (instantaneous physical memory resident in RAM)
+    - `/proc/self/status` $\rightarrow$ `VmHWM` (High Water Mark / peak physical memory tracked by the Linux kernel)
+    - `/proc/meminfo` $\rightarrow$ `MemTotal` and `MemAvailable` (total and free system RAM)
+  - **macOS / iOS**: Read via `ProcessInfo.currentRss` and `ProcessInfo.maxRss` (`getrusage` system call).
+* **Tracked Metrics**:
+  - **Baseline RAM (`ramBeforeLoadBytes`)**: Process RSS measured immediately before the model is loaded into memory.
+  - **Idle Model RAM (`ramIdleBytes`)**: Process RSS measured after model loading and initial context allocation, following a settling pause.
+  - **Model Memory Overhead**: $\Delta \text{RAM}_{\text{idle}} = \text{RAM}_{\text{idle}} - \text{RAM}_{\text{baseline}}$
+  - **Peak RAM (`ramPeakBytes`)**: Peak resident memory sampled across the full inference lifecycle (sampled at inference start, at TTFT prefill completion, on each streamed token chunk, and at run finalization).
 
-### Step 3: Running the 10-Run Heat Test
-To measure sustained thermal throttling and SoC battery draw:
-1. Load the model (warm load).
-2. Tap **"10-Run Heat Test"**.
-3. The app executes the same prompt and condition (`who-manages`, Condition `B`) 10 times back to back.
-4. Battery level (%) and battery temperature (°C) are captured before and after each run.
-5. Thermal throttle percentage is calculated as token rate relative to Run 1 of that heat test:
-   $$\text{Throttle } \% = \frac{\text{TPS}_{\text{Run 1}} - \text{TPS}_{\text{Current}}}{\text{TPS}_{\text{Run 1}}} \times 100$$
-   *(Throttle % is computed strictly within this heat test, never across the protocol batch).*
+### 2.4 Thermal Throttling (%)
+* **Definition**: Relative drop in generation throughput observed during sustained execution, indicating SoC hardware thermal throttling.
+* **Instrumentation**: Measured exclusively during the dedicated 10-Run Heat Test (`who-manages`, Condition B) relative to Run 1:
+  $$\text{Throttle}_i (\%) = \frac{\text{TPS}_{\text{Run 1}} - \text{TPS}_i}{\text{TPS}_{\text{Run 1}}} \times 100$$
+* **Max Thermal Throttle**: The maximum sustained performance drop recorded across the entire 10-run session:
+  $$\text{Max Throttle} (\%) = \max_{i \in [1, 10]} \left( \max(0, \text{Throttle}_i) \right)$$
+  *(Speedups where $\text{TPS}_i > \text{TPS}_1$ yield $0\%$ throttle rather than negative percentages).*
+
+### 2.5 Battery Level & SoC Temperature
+* **Battery Level (%)**: Read directly from device sysfs:
+  - `/sys/class/power_supply/battery/capacity` or `/sys/class/power_supply/BAT0/capacity`.
+* **Battery / SoC Temperature (°C)**: Read in millidegrees Celsius and converted to °C:
+  - `/sys/class/power_supply/battery/temp` or `/sys/class/thermal/thermal_zone0/temp`.
+* Captured immediately before (`batteryLevelBefore`, `batteryTempBeforeCelsius`) and after each run (`batteryLevelAfter`, `batteryTempAfterCelsius`).
+
+### 2.6 Token Counting & Context Tracking
+* **`promptTokenCount`**: Exact number of input tokens tokenized by the model's native vocabulary via `llama_tokenize`.
+* **`generatedTokenCount` (`evalCount`)**: Exact number of output tokens produced during generation, reported by llama.cpp.
+* **`hitMaxTokens`**: Boolean flag set to `true` if `evalCount >= maxTokens (256)`, indicating the generation hit the protocol ceiling rather than an end-of-turn token.
 
 ---
 
-## 3. Telemetry & Exporting Results
+## 3. How Application Features Work
 
-Every run saves to disk immediately in `runs_history.jsonl` within the application documents directory and survives closing the app.
+### 3.1 Single Condition Execution
+1. Select a prompt from the catalog dropdown dialog.
+2. Select an experimental condition (A, B, or C).
+3. Tap **Run (<Condition>)**.
+4. The app builds the condition messages, streams inference chunks into the live output card, samples memory, computes TTFT and TPS, and appends the result to history.
 
-### Exporting Files
-Tap the download icon in the AppBar:
-- **Export to Files (CSV & JSON)**: Writes `technical_exploration_runs_<timestamp>.csv` and `.json` to device storage.
-- **Copy CSV to Clipboard**: Copies complete CSV data formatted to paste directly into the evaluation spreadsheet:
-  - **Tab 1: Load and idle**: Device Model, OS Version, Model File, Architecture, Quantization, Backend, GPU Layers, Load Type, Load Time (ms), RAM Before Load (MB), RAM Idle Model (MB), RAM Overhead (MB), Timestamp.
-  - **Tab 2: Inference**: Run Index, Run Since Load, Is Cold Load, Timestamp, Device Model, OS Version, Model File, Architecture, Quantization, Backend, Condition, Notes Mode, k, Injected Notes, Prompt ID, Prompt Text, Temperature, Seed, Top-K, Top-P, Repeat Penalty, Max Tokens, Context Size, Prompt Tokens, Gen Tokens, Hit Max Tokens, TTFT (ms), Gen Duration (ms), TPS (tok/s), RAM Peak (MB), Battery Level Before (%), Battery Level After (%), Battery Temp Before (°C), Battery Temp After (°C), Throttle (%), Is Heat Test, Thinking Disabled, Output.
-- **Copy JSON to Clipboard**: Copies raw structured JSON.
-- **Clear History**: Clears the persisted disk log for a fresh session.
+### 3.2 Compare All (A vs B vs C / All 5)
+- Executes all active conditions for the currently selected prompt sequentially.
+- Automatically clears prior comparison cards at the start so only the current prompt's outputs are shown.
+- Renders a multi-tab comparison card (`ComparisonView`) with side-by-side metrics (TTFT, TPS, Tokens, Peak RAM) and one-click copy buttons for prompt and response comparison.
+
+### 3.3 Protocol Batch Pass (30 runs or 50 runs)
+Designed for hands-off, automated protocol data collection:
+- **Core Mode (30 runs)**: 10 prompts × 3 conditions (A $\rightarrow$ B $\rightarrow$ C).
+- **Extended Mode (50 runs)**: 10 prompts × 5 conditions (A $\rightarrow$ B $\rightarrow$ B-sim $\rightarrow$ C $\rightarrow$ C-sim).
+- **Execution Workflow**:
+  ```mermaid
+  flowchart TD
+      A["Start Batch Pass"] --> B["Select Prompt i"]
+      B --> C["Clear Comparison Cache"]
+      C --> D["Run Condition A"]
+      D --> E["Run Condition B"]
+      E --> F["Run Condition C"]
+      F --> G{"More Prompts?"}
+      G -- Yes --> B
+      G -- No --> H["Batch Complete"]
+  ```
+- **Context Isolation**: Every individual run initializes a fresh `llama_context` in the persistent worker isolate, preventing KV-cache leakage or prompt contamination between runs.
+- **Inter-run Stabilisation**: A 300 ms pause is inserted between runs to allow memory reclamation and thermal stabilization.
+- **Clean Interruption**: Tapping **Stop** immediately cancels the active inference stream, safely stops the batch loop, and reports the exact number of completed runs.
+
+### 3.4 10-Run Heat Test
+- Dedicated thermal stress test executing the identical prompt and condition (`who-manages`, Condition `B`) 10 times consecutively with a brief 200 ms interval.
+- Isolates thermal and battery degradation under sustained load on mobile SoCs (e.g. Fairphone 5 or Samsung Galaxy Fold).
+- Computes per-run throttle and displays the **Peak Max Thermal Throttle** observed across the test.
+
+### 3.5 Stop Token Handling & Output Sanitization
+- Models emitting split multi-token stop sequences (such as `<|im_end|>`, `<end_of_turn>`, `<|eot_id|>`, `<turn|>`, or `<|im_start|>`) are proactively intercepted during streaming.
+- Generation is stopped early when a delimiter appears, preventing runaway synthetic multi-turn dialogs (e.g., generating fake user and assistant turns).
+- Output is sanitized via `sanitizeModelOutput()`, which strips reasoning tags and truncates cleanly at the first stop delimiter.
+
+### 3.6 Persistence & History Migration
+- Runs are immediately appended to `runs_history.jsonl` on disk as each inference completes.
+- On macOS, `RunPersistenceManager.loadRuns()` automatically checks for legacy runs recorded under previous sandboxed container paths (`~/Library/Containers/...`) and merges them into the active `~/Documents/runs_history.jsonl`, deduplicating records by timestamp.
 
 ---
 
-## 4. Building and Running on Devices
+## 4. Telemetry Export & Spreadsheet Column Mapping
+
+Tapping the download icon in the AppBar provides instant export:
+- **Export Files (CSV & JSON)**: Saves timestamped files to the `/exports` directory.
+- **Copy CSV to Clipboard**: Formatted for direct pasting into the evaluation spreadsheet.
+- **Copy JSON to Clipboard**: Complete raw structured JSON.
+
+### CSV Column Reference Dictionary
+| Column Name | Type | Description |
+|---|---|---|
+| `Run Index` | int | Monotonic run index across the entire session |
+| `Run Since Load` | int | Counter of runs executed since the current model was loaded |
+| `Load Type` | string | `Cold` (initial app launch load) or `Warm` (subsequent load) |
+| `Timestamp` | ISO8601 | Exact local timestamp of run completion |
+| `Device Model` | string | Hardware identifier (e.g. `Fairphone 5`, `Mac14,6`) |
+| `OS Version` | string | Operating system name and kernel/build version |
+| `Model File` | string | GGUF file name |
+| `Architecture` | string | Model architecture from GGUF metadata (e.g. `qwen2`, `gemma4`) |
+| `Quantization` | string | Quantization type (e.g. `Q4_K_M`, `Q3_K_M`) |
+| `Backend` | string | Compute backend (`GPU` or `CPU`) |
+| `Condition` | string | Condition code (`A`, `B`, `C`, `B-sim-RAG`, `C-sim-RAG`) |
+| `Notes Mode` | string | Dataset injection mode (`none`, `all`, `sim-rag`) |
+| `k` | int | Retrieval note count ($k=0$ for A/B/C; $k=2$ for sim-RAG) |
+| `Injected Notes` | string | Semicolon-delimited list of injected note IDs |
+| `Prompt ID` | string | Identifier from `prompts.json` (e.g. `speak-as`, `who-manages`) |
+| `Prompt Text` | string | Full visitor question submitted to the model |
+| `Temperature` | double | Decoding temperature (`0.0`) |
+| `Seed` | int | Deterministic seed (`42`) |
+| `Top-K` | int | Top-K sampling threshold (`40`) |
+| `Top-P` | double | Top-P nucleus sampling threshold (`0.9`) |
+| `Repeat Penalty`| double | Repetition penalty (`1.1`) |
+| `Max Tokens` | int | Protocol maximum output token limit (`256`) |
+| `Context Size` | int | Context window size (`2048`) |
+| `Prompt Tokens` | int | Exact count of prompt tokens evaluated |
+| `Gen Tokens` | int | Exact count of response tokens generated (`evalCount`) |
+| `Hit Max Tokens`| string | `Yes` if output reached 256 tokens; `No` if stopped normally |
+| `TTFT (ms)` | int | Time to first token in milliseconds |
+| `Gen Duration (ms)`| int | Duration of token generation phase excluding TTFT |
+| `TPS (tok/s)` | double | Generation rate in tokens per second |
+| `RAM Peak (MB)` | double | Peak resident memory during inference in megabytes |
+| `Battery Before (%)`| int | Device battery level before run (mobile) |
+| `Battery After (%)` | int | Device battery level after run (mobile) |
+| `Temp Before (°C)`| double | Battery/SoC temperature before run |
+| `Temp After (°C)` | double | Battery/SoC temperature after run |
+| `Throttle (%)` | double | Thermal throttle percentage (Heat Test only) |
+| `Is Heat Test` | string | `Yes` if part of 10-run heat test; `No` otherwise |
+| `Thinking Disabled`| string | `Yes` (reasoning suppressed/stripped) |
+| `Output` | string | Sanitized model response text |
+
+---
+
+## 5. Building and Running on Devices
 
 ### macOS / Desktop
 ```bash
@@ -100,7 +202,7 @@ flutter run -d macos --release
 
 ### Android (Fairphone 5 & Galaxy Fold)
 The Android application uses the package ID `nl.wisent.technicalexploration`.
-Storage access uses `FileType.any` with `READ_EXTERNAL_STORAGE` (SDK $\le$ 32), allowing `.gguf` files to be selected directly from the `Downloads` directory without being hidden.
+Storage access uses `FileType.any` with user file selection, allowing `.gguf` files to be selected directly from device storage.
 
 1. **Build APK**:
    ```bash

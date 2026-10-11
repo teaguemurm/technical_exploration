@@ -407,6 +407,40 @@ String stripThinkingBlocks(String text) {
   return cleaned.trim();
 }
 
+/// Recognized end-of-turn or role boundary markers across model families.
+const stopSequences = [
+  '<|im_end|>',
+  '<end_of_turn>',
+  '<|eot_id|>',
+  '<turn|>',
+  '<|end|>',
+  '<|im_start|>',
+  '<start_of_turn>',
+];
+
+/// Sanitizes model output by stripping reasoning/thinking blocks and truncating
+/// at the earliest occurrence of any stop sequence or role boundary marker.
+String sanitizeModelOutput(String text) {
+  var cleaned = stripThinkingBlocks(text);
+
+  int? earliestStop;
+  for (final stop in stopSequences) {
+    final idx = cleaned.indexOf(stop);
+    if (idx != -1) {
+      if (earliestStop == null || idx < earliestStop) {
+        earliestStop = idx;
+      }
+    }
+  }
+
+  if (earliestStop != null) {
+    cleaned = cleaned.substring(0, earliestStop);
+  }
+
+  return cleaned.trim();
+}
+
+
 /// Legacy message builder for backward compatibility.
 List<LLMMessage> buildMessages({
   required String systemPrompt,
