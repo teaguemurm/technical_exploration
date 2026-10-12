@@ -543,5 +543,134 @@ void main() {
     // Should be able to query without throwing
     expect(runs, isA<List<RunRecord>>());
   });
+
+  test('isColdLoad and loadType behavior across first and subsequent runs', () {
+    final run1 = RunRecord(
+      runIndex: 1,
+      runIndexSinceLoad: 1,
+      isColdLoad: true,
+      timestamp: DateTime.now(),
+      deviceModel: 'Test Device',
+      osVersion: 'Test OS',
+      modelFileName: 'model.gguf',
+      architecture: 'gemma',
+      quantization: 'Q4_K_M',
+      backend: 'CPU',
+      nGpuLayers: 0,
+      condition: 'A',
+      notesMode: 'none',
+      k: 0,
+      injectedNoteIds: const [],
+      promptId: 'what-animal',
+      promptText: 'What animal is this?',
+      decodingSettings: const DecodingSettings(),
+      systemPrompt: 'System',
+      messagesSent: 'Msg',
+      output: 'Output',
+      hitMaxTokens: false,
+    );
+
+    final run2 = RunRecord(
+      runIndex: 2,
+      runIndexSinceLoad: 2,
+      isColdLoad: false,
+      timestamp: DateTime.now(),
+      deviceModel: 'Test Device',
+      osVersion: 'Test OS',
+      modelFileName: 'model.gguf',
+      architecture: 'gemma',
+      quantization: 'Q4_K_M',
+      backend: 'CPU',
+      nGpuLayers: 0,
+      condition: 'A',
+      notesMode: 'none',
+      k: 0,
+      injectedNoteIds: const [],
+      promptId: 'what-animal',
+      promptText: 'What animal is this?',
+      decodingSettings: const DecodingSettings(),
+      systemPrompt: 'System',
+      messagesSent: 'Msg',
+      output: 'Output',
+      hitMaxTokens: false,
+    );
+
+    expect(run1.isColdLoad, isTrue);
+    expect(run1.loadType, 'Cold');
+    expect(run2.isColdLoad, isFalse);
+    expect(run2.loadType, 'Warm');
+  });
+
+  test('thinkingDisabled is null/N/A when no toggle applied, and true/Yes when applied', () {
+    final recordNoToggle = RunRecord(
+      runIndex: 1,
+      runIndexSinceLoad: 1,
+      isColdLoad: true,
+      timestamp: DateTime.now(),
+      deviceModel: 'Test Device',
+      osVersion: 'Test OS',
+      modelFileName: 'gemma-4.gguf',
+      architecture: 'gemma',
+      quantization: 'Q4_K_M',
+      backend: 'CPU',
+      nGpuLayers: 0,
+      condition: 'A',
+      notesMode: 'none',
+      k: 0,
+      injectedNoteIds: const [],
+      promptId: 'what-animal',
+      promptText: 'What animal is this?',
+      decodingSettings: const DecodingSettings(),
+      systemPrompt: 'System',
+      messagesSent: 'Msg',
+      output: 'Output',
+      hitMaxTokens: false,
+      thinkingDisabled: null,
+    );
+
+    final recordWithToggle = RunRecord(
+      runIndex: 2,
+      runIndexSinceLoad: 2,
+      isColdLoad: false,
+      timestamp: DateTime.now(),
+      deviceModel: 'Test Device',
+      osVersion: 'Test OS',
+      modelFileName: 'qwen3.gguf',
+      architecture: 'qwen3',
+      quantization: 'Q4_K_M',
+      backend: 'CPU',
+      nGpuLayers: 0,
+      condition: 'A',
+      notesMode: 'none',
+      k: 0,
+      injectedNoteIds: const [],
+      promptId: 'what-animal',
+      promptText: 'What animal is this?',
+      decodingSettings: const DecodingSettings(),
+      systemPrompt: 'System',
+      messagesSent: 'Msg',
+      output: 'Output',
+      hitMaxTokens: false,
+      thinkingDisabled: true,
+    );
+
+    expect(recordNoToggle.thinkingDisabled, isNull);
+    final jsonNoToggle = recordNoToggle.toJson();
+    expect(jsonNoToggle['thinkingDisabled'], isNull);
+    final roundTrippedNoToggle = RunRecord.fromJson(jsonNoToggle);
+    expect(roundTrippedNoToggle.thinkingDisabled, isNull);
+
+    final csvNoToggle = BenchmarkExporter.exportCsv([recordNoToggle]);
+    expect(csvNoToggle, contains('N/A'));
+
+    expect(recordWithToggle.thinkingDisabled, isTrue);
+    final jsonWithToggle = recordWithToggle.toJson();
+    expect(jsonWithToggle['thinkingDisabled'], isTrue);
+    final roundTrippedWithToggle = RunRecord.fromJson(jsonWithToggle);
+    expect(roundTrippedWithToggle.thinkingDisabled, isTrue);
+
+    final csvWithToggle = BenchmarkExporter.exportCsv([recordWithToggle]);
+    expect(csvWithToggle, contains('Yes'));
+  });
 }
 

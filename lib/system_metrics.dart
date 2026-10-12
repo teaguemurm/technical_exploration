@@ -290,7 +290,7 @@ class RunRecord {
     this.batteryTempAfterCelsius,
     this.throttlePercentage,
     this.isHeatTest = false,
-    this.thinkingDisabled = true,
+    this.thinkingDisabled,
   });
 
   final int runIndex;
@@ -336,7 +336,7 @@ class RunRecord {
 
   final double? throttlePercentage; // populated only during heat test
   final bool isHeatTest;
-  final bool thinkingDisabled;
+  final bool? thinkingDisabled;
 
   String get loadType => isColdLoad ? 'Cold' : 'Warm';
 
@@ -430,7 +430,7 @@ class RunRecord {
           (json['batteryTempAfterCelsius'] as num?)?.toDouble(),
       throttlePercentage: (json['throttlePercentage'] as num?)?.toDouble(),
       isHeatTest: json['isHeatTest'] as bool? ?? false,
-      thinkingDisabled: json['thinkingDisabled'] as bool? ?? true,
+      thinkingDisabled: json['thinkingDisabled'] as bool?,
     );
   }
 }
@@ -626,7 +626,9 @@ class BenchmarkExporter {
         tempA,
         throttle,
         r.isHeatTest ? 'Yes' : 'No',
-        r.thinkingDisabled ? 'Yes' : 'No',
+        r.thinkingDisabled == null
+            ? 'N/A'
+            : (r.thinkingDisabled! ? 'Yes' : 'No'),
         _escape(r.output),
       ].join(','));
     }

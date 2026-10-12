@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:llm_llamacpp/llm_llamacpp.dart';
 import 'package:technical_exploration/messages.dart';
+import 'package:technical_exploration/prompt_tokens.dart';
 import 'package:technical_exploration/system_metrics.dart';
 import 'package:technical_exploration/widgets/comparison_view.dart';
 import 'package:technical_exploration/widgets/metrics_dashboard.dart';
@@ -378,6 +379,14 @@ class _NoteScreenState extends State<NoteScreen> {
     final batteryLevelBefore = readDeviceBatteryLevel();
     final batteryTempBefore = readDeviceTemperatureCelsius();
 
+    // ignore: deprecated_member_use
+    final modelRef = repo.model;
+    final nativeTokens = countPromptTokens(
+      model: modelRef?.pointer,
+      vocab: modelRef?.vocab,
+      messages: messages,
+    );
+
     setState(() {
       _selectedCondition = condition;
       _running = true;
@@ -386,7 +395,7 @@ class _NoteScreenState extends State<NoteScreen> {
       _ttftMs = null;
       _tokensPerSecond = null;
       _evalCount = null;
-      _promptTokenCount = null;
+      _promptTokenCount = nativeTokens;
       _generationDuration = null;
       _status = null;
       _firstTokenAt = null;
@@ -530,7 +539,7 @@ class _NoteScreenState extends State<NoteScreen> {
         if (first != null) _ttftMs = first.inMilliseconds;
         _tokensPerSecond = rate;
         _evalCount = chunk.evalCount;
-        _promptTokenCount = chunk.promptEvalCount;
+        _promptTokenCount ??= chunk.promptEvalCount;
         _generationDuration = generation;
       });
     }
@@ -592,11 +601,21 @@ class _NoteScreenState extends State<NoteScreen> {
     );
 
     final hitMax = _evalCount != null && _evalCount! >= _maxTokens;
+    final isColdForThisRun = _isColdLoad && _runIndexSinceLoad == 1;
+
+    final archLower = _architecture.toLowerCase();
+    final fileLower = (_modelFileName ?? '').toLowerCase();
+    final isThinkingModel = archLower.contains('qwen3') ||
+        fileLower.contains('qwen3') ||
+        archLower.contains('qwq') ||
+        fileLower.contains('qwq') ||
+        fileLower.contains('deepseek-r1');
+    final bool? thinkingDisabledValue = isThinkingModel ? true : null;
 
     final record = RunRecord(
       runIndex: _sessionRunCount,
       runIndexSinceLoad: _runIndexSinceLoad,
-      isColdLoad: _isColdLoad,
+      isColdLoad: isColdForThisRun,
       loadDurationMs: _loadDurationMs,
       timestamp: DateTime.now(),
       deviceModel: readDeviceModel(),
@@ -635,7 +654,7 @@ class _NoteScreenState extends State<NoteScreen> {
       batteryTempAfterCelsius: batteryTempAfter,
       throttlePercentage: throttlePercentage,
       isHeatTest: isHeatTest,
-      thinkingDisabled: true,
+      thinkingDisabled: thinkingDisabledValue,
     );
 
     _history.add(record);
