@@ -6,6 +6,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:llm_llamacpp/llm_llamacpp.dart';
+import 'package:technical_exploration/build_variant.dart';
 import 'package:technical_exploration/device_probe.dart';
 import 'package:technical_exploration/kernel_diag.dart';
 import 'package:technical_exploration/kleidi_sme.dart';
@@ -62,11 +63,11 @@ class _NoteScreenState extends State<NoteScreen> {
   String _quantization = 'unknown';
   String _backend = 'CPU';
   int _nGpuLayers = 0;
-  final bool _useMemoryMap = true;
+  final bool _useMemoryMap = !noMmapBuild;
 
   /// Passed to [LlamaCppChatRepository]. Null means the package does not
   /// assign `n_threads`. The kernel line logs this same value.
-  final int? _threads = null;
+  final int? _threads = threadsFromBuildDefine();
   bool _sanityOk = false;
   bool _sanityRan = false;
   bool _skipSanityRequested = false;
@@ -133,7 +134,8 @@ class _NoteScreenState extends State<NoteScreen> {
   void initState() {
     super.initState();
     _currentRssBytes = MemorySnapshot.capture().currentRssBytes;
-    _nGpuLayers = BackendDetector.getRecommendedGpuLayers();
+    _nGpuLayers =
+        gpuLayersFromBuildDefine() ?? BackendDetector.getRecommendedGpuLayers();
     _backend = _nGpuLayers > 0 ? 'GPU' : 'CPU';
     unawaited(refreshDeviceIdentity());
     unawaited(_initApp());

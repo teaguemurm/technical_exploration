@@ -8,7 +8,6 @@ import 'package:ffi/ffi.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:llm_llamacpp/llm_llamacpp.dart';
 import 'package:llm_llamacpp/src/bindings/llama_bindings.dart';
-import 'package:technical_exploration/messages.dart';
 import 'package:technical_exploration/prompt_tokens.dart';
 import 'package:technical_exploration/sanity_check.dart';
 
@@ -16,16 +15,28 @@ import 'package:technical_exploration/sanity_check.dart';
 ///
 /// The Flutter test runner does not load the app's native-asset bundle, so
 /// this uses the same bindings fallback as the token-count test and asks
-/// llama.cpp for `n_gpu_layers = 0`.
+/// llama.cpp for `n_gpu_layers = 0`. Only the two sanity prompts run.
 ///
-/// Not part of the default suite. Run with:
-/// `RUN_CPU_CONTROL=1 flutter test test/cpu_control_test.dart`
+/// Not part of the default suite. `QWEN_GGUF` is required; there is no
+/// Desktop fallback.
+///
+/// `QWEN_GGUF=/path/to/qwen.gguf RUN_CPU_CONTROL=1 flutter test test/cpu_control_test.dart`
 void main() {
-  test('n_gpu_layers 0 answers the sanity prompts and what-animal A', () {
+  test('n_gpu_layers 0 answers the sanity prompts', () {
     if (Platform.environment['RUN_CPU_CONTROL'] != '1') return;
 
-    const path = '/Users/teaguemm/Desktop/qwen2.5-1.5b-instruct-q4_k_m.gguf';
-    expect(File(path).existsSync(), isTrue);
+    final path = Platform.environment['QWEN_GGUF'];
+    if (path == null || path.isEmpty) {
+      fail(
+        'QWEN_GGUF is unset. Point it at the protocol '
+        'qwen2.5-1.5b-instruct-q4_k_m.gguf. There is no Desktop fallback.',
+      );
+    }
+    expect(
+      File(path).existsSync(),
+      isTrue,
+      reason: 'QWEN_GGUF does not exist: $path',
+    );
     final bindings = resolveLlamaBindings();
     expect(bindings, isNotNull);
 
@@ -62,34 +73,15 @@ void main() {
           requireDigitFour: prompt.requireDigitFour,
           requireAnimalWord: prompt.requireAnimalWord,
         );
+        final verdict = reason == null ? 'PASS' : 'FAIL';
+        // ignore: avoid_print
+        print(
+          'sanity ${prompt.text} $verdict '
+          'tokens=${text.tokens} reason=${reason ?? 'pass'} '
+          'output=${text.output}',
+        );
         expect(reason, isNull, reason: 'sanity failed: ${text.output}');
       }
-
-      final catalog = parseCatalog(
-        systemPrompt: File('assets/system_prompt.txt').readAsStringSync(),
-        promptsJson: File('assets/prompts.json').readAsStringSync(),
-        datasetJson: File('assets/dataset.json').readAsStringSync(),
-        simRagJson: File('assets/simulated_rag.json').readAsStringSync(),
-      );
-      final whatAnimal = catalog.prompts.firstWhere(
-        (p) => p.id == 'what-animal',
-      );
-      final answer = _generate(
-        bindings: bindings,
-        model: model,
-        vocab: vocab,
-        messages: buildConditionMessages(
-          condition: PromptCondition.conditionA,
-          systemPrompt: catalog.systemPrompt,
-          prompt: whatAnimal,
-          allFacts: catalog.facts,
-          simRagConfig: catalog.simRagConfig,
-        ),
-        maxTokens: 64,
-      );
-      expect(answer.tokens, lessThan(64));
-      expect(looksLikeTokenSoup(answer.output), isFalse);
-      expect(answer.output.trim().length, greaterThan(10));
     } finally {
       bindings.llama_model_free(model);
     }

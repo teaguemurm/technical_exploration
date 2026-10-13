@@ -25,6 +25,10 @@ private fun Project.decodedDartDefines(): Map<String, String> {
 val dartDefines = decodedDartDefines()
 val excludeArmv92 = dartDefines["EXCLUDE_ARMV92"] == "1"
 val kleidiSmeOff = dartDefines["GGML_KLEIDIAI_SME"] == "0"
+val cpuArmv8 = dartDefines["CPU_LIBS"] == "armv8"
+val threads4 = dartDefines["N_THREADS"] == "4"
+val noMmap = dartDefines["NO_MMAP"] == "true"
+val vulkan99 = dartDefines["N_GPU_LAYERS"] == "99"
 
 android {
     namespace = "nl.wisent.technicalexploration"
@@ -64,6 +68,11 @@ android {
             if (excludeArmv92) {
                 excludes += "**/libggml-cpu-android_armv9.2_*.so"
             }
+            if (cpuArmv8) {
+                excludes += "**/libggml-cpu-android_armv8.6_*.so"
+                excludes += "**/libggml-cpu-android_armv9.0_*.so"
+                excludes += "**/libggml-cpu-android_armv9.2_*.so"
+            }
         }
     }
 }
@@ -84,6 +93,10 @@ afterEvaluate {
     tasks.named("assembleRelease").configure {
         doLast {
             val destName = when {
+                cpuArmv8 && threads4 -> "app-armv8-threads4-release.apk"
+                cpuArmv8 -> "app-armv8-release.apk"
+                noMmap -> "app-nommap-release.apk"
+                vulkan99 -> "app-vulkan99-release.apk"
                 excludeArmv92 -> "app-no-armv92-release.apk"
                 kleidiSmeOff -> "app-sme0-release.apk"
                 else -> return@doLast

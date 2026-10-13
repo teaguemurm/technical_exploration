@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:technical_exploration/build_variant.dart';
 import 'package:technical_exploration/device_probe.dart';
 import 'package:technical_exploration/kernel_diag.dart';
 import 'package:technical_exploration/kleidi_sme.dart';
@@ -138,6 +139,24 @@ void main() {
     expect(line, contains('mmap=true'));
     expect(line, contains('nGpuLayers=0'));
     expect(line, contains('vulkan=registered'));
+  });
+
+  test('registered library names are basenames', () {
+    expect(
+      formatRegisteredLibraries([
+        '/data/app/lib/arm64/libggml-cpu-android_armv8.2_1.so',
+        r'C:\libs\libggml-cpu-android_armv9.2_2.so',
+      ]),
+      'libggml-cpu-android_armv8.2_1.so;libggml-cpu-android_armv9.2_2.so',
+    );
+    expect(formatRegisteredLibraries(const <String>[]), 'none');
+    expect(
+      libraryBasename('libggml-cpu-android_armv8.0_1.so'),
+      'libggml-cpu-android_armv8.0_1.so',
+    );
+    expect(threadsFromBuildDefine(), isNull);
+    expect(gpuLayersFromBuildDefine(), isNull);
+    expect(noMmapBuild, isFalse);
   });
 
   test('a different hash of the protocol qwen file is a mismatch', () {
