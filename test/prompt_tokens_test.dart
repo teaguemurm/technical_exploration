@@ -34,7 +34,10 @@ void main() {
       simRagConfig: catalog.simRagConfig,
     );
 
-    expect(factsSinceWhen.map((f) => f.id).toList(), ['arrival', 'wisent-herd']);
+    expect(factsSinceWhen.map((f) => f.id).toList(), [
+      'arrival',
+      'wisent-herd',
+    ]);
     expect(factsCalves.map((f) => f.id).toList(), ['arrival', 'wisent-herd']);
 
     List<LLMMessage> messagesFor(PromptSpec prompt, PromptCondition condition) {
@@ -47,7 +50,10 @@ void main() {
       );
     }
 
-    final sinceWhenBsim = messagesFor(pSinceWhen, PromptCondition.conditionBSimRag);
+    final sinceWhenBsim = messagesFor(
+      pSinceWhen,
+      PromptCondition.conditionBSimRag,
+    );
     final calvesBsim = messagesFor(pCalves, PromptCondition.conditionBSimRag);
     expect(sinceWhenBsim[0].content, calvesBsim[0].content);
     expect(sinceWhenBsim[1].content, calvesBsim[1].content);
@@ -55,8 +61,13 @@ void main() {
     final bindings = resolveLlamaBindings();
     expect(bindings, isNotNull, reason: 'llama bindings are required');
 
-    final gemmaPath = '/Users/teaguemm/Desktop/gemma-4-E2B-it-Q3_K_M.gguf';
-    if (File(gemmaPath).existsSync()) {
+    // Model paths come from the environment. A missing variable or file skips
+    // that model's token counts; the message checks above still run.
+    // GEMMA_GGUF, QWEN_GGUF
+    final gemmaPath = Platform.environment['GEMMA_GGUF'];
+    if (gemmaPath != null &&
+        gemmaPath.isNotEmpty &&
+        File(gemmaPath).existsSync()) {
       final counts = _countsFor(bindings!, gemmaPath, {
         'since-when-bsim': sinceWhenBsim,
         'calves-bsim': calvesBsim,
@@ -74,9 +85,13 @@ void main() {
       expect(sinceWhen, greaterThan(conditionA + 15));
     }
 
-    final qwenPath = '/Users/teaguemm/Desktop/qwen2.5-1.5b-instruct-q4_k_m.gguf';
-    if (File(qwenPath).existsSync()) {
-      final whatAnimal = catalog.prompts.firstWhere((p) => p.id == 'what-animal');
+    final qwenPath = Platform.environment['QWEN_GGUF'];
+    if (qwenPath != null &&
+        qwenPath.isNotEmpty &&
+        File(qwenPath).existsSync()) {
+      final whatAnimal = catalog.prompts.firstWhere(
+        (p) => p.id == 'what-animal',
+      );
       final counts = _countsFor(bindings!, qwenPath, {
         'A': messagesFor(whatAnimal, PromptCondition.conditionA),
         'B': messagesFor(whatAnimal, PromptCondition.conditionB),

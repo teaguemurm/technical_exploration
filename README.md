@@ -153,7 +153,7 @@ Tapping the download icon in the AppBar provides instant export:
 |---|---|---|
 | `Run Index` | int | Monotonic run index across the entire session |
 | `Run Since Load` | int | Counter of runs executed since the current model was loaded |
-| `Load Type` | string | `Cold` (initial app launch load) or `Warm` (subsequent load) |
+| `Load Type` | string | `Cold` only for protocol run 1 after a cold load when sanity did not run. When the sanity prompts ran, every protocol row is `Warm`, including run 1. |
 | `Timestamp` | ISO8601 | Exact local timestamp of run completion |
 | `Device Model` | string | Hardware identifier (e.g. `Fairphone 5`, `Mac14,6`) |
 | `OS Version` | string | Operating system name and kernel/build version |
@@ -196,7 +196,11 @@ Tapping the download icon in the AppBar provides instant export:
 
 Gemma 4 E2B runs on a ChatML fallback, not its real chat template. The GGUF ships an 18 KB Jinja template (`<|turn|>` / `<turn|>`). `llama_chat_apply_template` is not a Jinja parser and does not recognise that template, and this build does not link `common/jinja`, so both the token counter and the inference isolate fall back to ChatML. Qwen is unaffected: its template is ChatML and the logged prompt lengths match the Mac batch. The fallback can change how Gemma follows the visitor notes, and it may explain some of Gemma's over-refusals. It is a validity limitation of the 11 Oct Gemma batch. Protocol message text is unchanged. Switching Gemma onto its real template would make new Gemma answers incomparable with that batch, so this round does not do it.
 
-After every load the app runs two fixed sanity prompts ("Name one European wild animal in three words." and "What is 2+2?", the latter must contain 4). A failure blocks the protocol batch. The CPU configuration for a batch (winning backend, KleidiAI SME, threads, KV type, flash attention, mmap, GPU layers) is printed to logcat and shown under the model line. It is not a new export column.
+After every load the app runs two fixed sanity prompts ("Name one European wild animal in three words." and "What is 2+2?"). The animal answer must contain a recognisable animal word, so Latin-script soup fails as well as mixed-script soup. The math answer must contain 4. A failure blocks the protocol batch. Those prompts exercise the loaded model, so when they ran every protocol row is `Warm` (`isColdLoad` false), including run 1. A Mac-only "Skip sanity check" toggle, off by default, skips them so the first protocol run after a cold load can still be `Cold`. The toggle is ignored on Android.
+
+Load does not hash the GGUF. Hashing reads the whole file and warms the page cache, which makes the following load time incomparable. "Verify model" hashes once and stores the result in `model_sha256_cache.json` in the exports directory, keyed by path, size, and mtime. A later load of that same file reuses the stored hash and still blocks a known-Qwen mismatch. An unverified file loads and is logged as `sha256=unverified`. Verifying and then immediately loading still warms the cache.
+
+The CPU configuration for a batch (winning backend, KleidiAI SME, threads, KV type, flash attention, mmap, GPU layers) is printed to logcat and shown under the model line. It is not a new export column. Threads, KV type, and flash attention are the values this app's repository passes. It does not pass them, so the line says `unset`. It does not read `llama_context_default_params`. `sme=` is the value this process set with `setenv` before backend init, or `unset`.
 
 ## 6. Building and Running on Devices
 
@@ -214,6 +218,20 @@ Storage access uses `FileType.any` with user file selection, allowing `.gguf` fi
    flutter build apk --release
    ```
    Output: `build/app/outputs/flutter-apk/app-release.apk`
+
+   Two extra release builds for the Fold. Each also writes `app-release.apk`; keep the distinctly named copy, because the next build overwrites `app-release.apk`.
+
+   KleidiAI SME off. `GGML_KLEIDIAI_SME=0` is set with `setenv` before backend init:
+   ```bash
+   flutter build apk --release --dart-define=GGML_KLEIDIAI_SME=0
+   ```
+   Output: `build/app/outputs/flutter-apk/app-sme0-release.apk`
+
+   No `libggml-cpu-android_armv9.2_*.so` (the armv9.0 backend and the others stay in the APK):
+   ```bash
+   flutter build apk --release --dart-define=EXCLUDE_ARMV92=1
+   ```
+   Output: `build/app/outputs/flutter-apk/app-no-armv92-release.apk`
 
 2. **Push GGUF Model to Phone**:
    ```bash

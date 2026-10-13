@@ -4,8 +4,8 @@ import 'dart:ffi' as ffi;
 import 'dart:io';
 
 import 'package:ffi/ffi.dart';
-import 'package:llm_llamacpp/src/bindings/llama_bindings.dart';
 import 'package:llm_llamacpp/src/loader/loader.dart';
+import 'package:technical_exploration/kleidi_sme.dart';
 import 'package:technical_exploration/prompt_tokens.dart';
 
 /// One-line record of the CPU configuration that will run a batch.
@@ -33,18 +33,30 @@ class KernelReport {
   final String detail;
 }
 
-/// Reads the backends ggml actually registered and the context defaults the
-/// isolate uses when the app does not override threads, KV type, or flash
-/// attention.
+/// Threads, KV type, and flash attention as this app's repository passes them.
+///
+/// `llm_llamacpp` writes `n_threads` only when [threads] is non-null. It never
+/// writes the KV cache type or flash attention. Those stay `unset` here.
+/// This does not call `llama_context_default_params`.
+({String threads, String kvType, String flashAttention})
+repositoryContextFields({int? threads}) {
+  return (
+    threads: threads == null ? 'unset' : '$threads',
+    kvType: 'unset',
+    flashAttention: 'unset',
+  );
+}
+
+/// Reads the backends ggml actually registered, plus the context fields the
+/// repository passes. See [repositoryContextFields].
 KernelReport collectKernelReport({
   required bool useMemoryMap,
   required int nGpuLayers,
+  int? threads,
 }) {
   final bindings = resolveLlamaBindings();
+  final context = repositoryContextFields(threads: threads);
   var variant = 'unknown';
-  var threads = 'default';
-  var kvType = 'default';
-  var flash = 'default';
   var vulkan = 'unknown';
   var detail = 'kernel-detail: unavailable';
 
@@ -60,34 +72,25 @@ KernelReport collectKernelReport({
     }
 
     try {
-      final params = bindings.llama_context_default_params();
-      threads = '${params.n_threads}';
-      kvType = '${_typeName(params.type_k)}/${_typeName(params.type_v)}';
-      flash = _flashName(params.flash_attn_type);
-    } catch (error) {
-      threads = 'default ($error)';
-    }
-
-    try {
       final infoPtr = bindings.llama_print_system_info();
       final info = infoPtr.address == 0
           ? ''
           : infoPtr.cast<Utf8>().toDartString().replaceAll('\n', ' | ');
       final features = _cpuFeatures();
-      detail = 'kernel-detail: system=${info.trim()} features=${features ?? 'n/a'}';
+      detail =
+          'kernel-detail: system=${info.trim()} features=${features ?? 'n/a'}';
     } catch (error) {
       detail = 'kernel-detail: system-info-failed ($error)';
     }
   }
 
-  final sme = Platform.environment['GGML_KLEIDIAI_SME'] ?? 'unset';
   return KernelReport(
     line: formatKernelDiagnostic(
       cpuVariant: variant,
-      kleidiAiSme: sme,
-      threads: threads,
-      kvType: kvType,
-      flashAttention: flash,
+      kleidiAiSme: kleidiAiSmeForLog(),
+      threads: context.threads,
+      kvType: context.kvType,
+      flashAttention: context.flashAttention,
       useMemoryMap: useMemoryMap,
       nGpuLayers: nGpuLayers,
       vulkanBackend: vulkan,
@@ -104,8 +107,9 @@ class _Devices {
 }
 
 _Devices _deviceLines(ffi.DynamicLibrary lib) {
-  final count = lib
-      .lookupFunction<ffi.Size Function(), int Function()>('ggml_backend_dev_count');
+  final count = lib.lookupFunction<ffi.Size Function(), int Function()>(
+    'ggml_backend_dev_count',
+  );
   final get = lib
       .lookupFunction<
         ffi.Pointer<ffi.Void> Function(ffi.Size),
@@ -146,14 +150,6 @@ String _cstr(ffi.Pointer<ffi.Char> ptr) {
   if (ptr.address == 0) return '';
   return ptr.cast<Utf8>().toDartString();
 }
-
-String _typeName(ggml_type type) => type.name.replaceFirst('GGML_TYPE_', '');
-
-String _flashName(llama_flash_attn_type type) => switch (type) {
-  llama_flash_attn_type.LLAMA_FLASH_ATTN_TYPE_AUTO => 'AUTO',
-  llama_flash_attn_type.LLAMA_FLASH_ATTN_TYPE_DISABLED => 'DISABLED',
-  llama_flash_attn_type.LLAMA_FLASH_ATTN_TYPE_ENABLED => 'ENABLED',
-};
 
 String? _cpuFeatures() {
   if (!Platform.isAndroid && !Platform.isLinux) return null;

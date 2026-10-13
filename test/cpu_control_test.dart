@@ -29,14 +29,20 @@ void main() {
     final bindings = resolveLlamaBindings();
     expect(bindings, isNotNull);
 
-    final info = bindings!.llama_print_system_info().cast<Utf8>().toDartString();
+    final info = bindings!
+        .llama_print_system_info()
+        .cast<Utf8>()
+        .toDartString();
     // ignore: avoid_print
     print('cpu-control system: ${info.replaceAll('\n', ' | ')}');
 
     final modelParams = bindings.llama_model_default_params();
     modelParams.n_gpu_layers = 0;
     final pathPtr = path.toNativeUtf8();
-    final model = bindings.llama_model_load_from_file(pathPtr.cast(), modelParams);
+    final model = bindings.llama_model_load_from_file(
+      pathPtr.cast(),
+      modelParams,
+    );
     calloc.free(pathPtr);
     expect(model.address, isNot(0));
     final vocab = bindings.llama_model_get_vocab(model);
@@ -54,6 +60,7 @@ void main() {
           output: text.output,
           hitMaxTokens: text.tokens >= sanityMaxTokens,
           requireDigitFour: prompt.requireDigitFour,
+          requireAnimalWord: prompt.requireAnimalWord,
         );
         expect(reason, isNull, reason: 'sanity failed: ${text.output}');
       }
@@ -64,7 +71,9 @@ void main() {
         datasetJson: File('assets/dataset.json').readAsStringSync(),
         simRagJson: File('assets/simulated_rag.json').readAsStringSync(),
       );
-      final whatAnimal = catalog.prompts.firstWhere((p) => p.id == 'what-animal');
+      final whatAnimal = catalog.prompts.firstWhere(
+        (p) => p.id == 'what-animal',
+      );
       final answer = _generate(
         bindings: bindings,
         model: model,
@@ -135,7 +144,14 @@ _Gen _generate({
       while (generated < maxTokens) {
         final id = bindings.llama_sampler_sample(sampler, ctx, -1);
         if (bindings.llama_vocab_is_eog(vocab, id)) break;
-        final n = bindings.llama_token_to_piece(vocab, id, pieceBuf, 256, 0, true);
+        final n = bindings.llama_token_to_piece(
+          vocab,
+          id,
+          pieceBuf,
+          256,
+          0,
+          true,
+        );
         if (n > 0) {
           bytes.addAll(pieceBuf.cast<ffi.Uint8>().asTypedList(n));
         }
@@ -150,7 +166,10 @@ _Gen _generate({
       calloc.free(pieceBuf);
       calloc.free(one);
     }
-    final output = utf8.decode(bytes, allowMalformed: true).split('<|im_end|>').first;
+    final output = utf8
+        .decode(bytes, allowMalformed: true)
+        .split('<|im_end|>')
+        .first;
     // ignore: avoid_print
     print('cpu-control tokens=$generated text=$output');
     return _Gen(output.trim(), generated);
@@ -167,8 +186,14 @@ ffi.Pointer<llama_sampler> _sampler(
 ) {
   final params = bindings.llama_sampler_chain_default_params();
   final sampler = bindings.llama_sampler_chain_init(params);
-  bindings.llama_sampler_chain_add(sampler, bindings.llama_sampler_init_temp(0));
-  bindings.llama_sampler_chain_add(sampler, bindings.llama_sampler_init_top_k(40));
+  bindings.llama_sampler_chain_add(
+    sampler,
+    bindings.llama_sampler_init_temp(0),
+  );
+  bindings.llama_sampler_chain_add(
+    sampler,
+    bindings.llama_sampler_init_top_k(40),
+  );
   bindings.llama_sampler_chain_add(
     sampler,
     bindings.llama_sampler_init_top_p(0.9, 1),
@@ -183,7 +208,10 @@ ffi.Pointer<llama_sampler> _sampler(
       0,
     ),
   );
-  bindings.llama_sampler_chain_add(sampler, bindings.llama_sampler_init_dist(42));
+  bindings.llama_sampler_chain_add(
+    sampler,
+    bindings.llama_sampler_init_dist(42),
+  );
   return sampler;
 }
 

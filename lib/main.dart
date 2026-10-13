@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:llm_llamacpp/llm_llamacpp.dart';
 import 'package:technical_exploration/device_probe.dart';
 import 'package:technical_exploration/kernel_diag.dart';
+import 'package:technical_exploration/kleidi_sme.dart';
 import 'package:technical_exploration/messages.dart';
 import 'package:technical_exploration/model_integrity.dart';
 import 'package:technical_exploration/prompt_tokens.dart';
@@ -17,9 +18,9 @@ import 'package:technical_exploration/system_metrics.dart';
 import 'package:technical_exploration/widgets/comparison_view.dart';
 import 'package:technical_exploration/widgets/metrics_dashboard.dart';
 
-
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  applyKleidiAiSmeBeforeBackendInit();
   runApp(const TechnicalExplorationApp());
 }
 
@@ -62,9 +63,16 @@ class _NoteScreenState extends State<NoteScreen> {
   String _backend = 'CPU';
   int _nGpuLayers = 0;
   final bool _useMemoryMap = true;
+
+  /// Passed to [LlamaCppChatRepository]. Null means the package does not
+  /// assign `n_threads`. The kernel line logs this same value.
+  final int? _threads = null;
   bool _sanityOk = false;
+  bool _sanityRan = false;
+  bool _skipSanityRequested = false;
   String? _sanityFailure;
   String? _kernelLine;
+  ModelHashStore? _hashStore;
   bool _finalizingRun = false;
 
   bool _hasLoadedEver = false;
@@ -133,11 +141,85 @@ class _NoteScreenState extends State<NoteScreen> {
 
   Future<void> _initApp() async {
     await _reloadCatalog();
+    await _loadHashStore();
     final saved = await RunPersistenceManager.loadRuns();
     if (mounted && saved.isNotEmpty) {
       setState(() {
         _history.addAll(saved);
         _sessionRunCount = saved.length;
+      });
+    }
+  }
+
+  Future<void> _loadHashStore() async {
+    try {
+      _hashStore = await _ensureHashStore();
+    } catch (error) {
+      // ignore: avoid_print
+      print('[technical_exploration] model hash cache unavailable: $error');
+    }
+  }
+
+  Future<ModelHashStore> _ensureHashStore() async {
+    final existing = _hashStore;
+    if (existing != null) return existing;
+    final exports = await BenchmarkExporter.getExportsDirectory();
+    final store = ModelHashStore(
+      File('${exports.path}/$modelHashCacheFileName'),
+    );
+    await store.load();
+    _hashStore = store;
+    return store;
+  }
+
+  /// Hashes the selected GGUF and stores path+size+mtime. Load does not.
+  Future<void> _verifyModel() async {
+    final path = _modelPath;
+    if (path == null || _loading || _running) return;
+
+    setState(() {
+      _loading = true;
+      _loadError = null;
+      _status = 'Checking GGUF sha256...';
+    });
+
+    try {
+      final store = await _ensureHashStore();
+      final report = await inspectModelFile(
+        path,
+        cache: store.cache,
+        force: true,
+      );
+      await store.save();
+      // ignore: avoid_print
+      print('[technical_exploration] verify ${report.logLine}');
+      if (!mounted) return;
+      if (report.hashMismatch) {
+        _repo?.dispose();
+        _repo = null;
+        setState(() {
+          _loading = false;
+          _loaded = false;
+          _sanityOk = false;
+          _sanityRan = false;
+          _status = report.mismatchMessage;
+          _loadError = report.mismatchMessage;
+        });
+        return;
+      }
+      setState(() {
+        _loading = false;
+        _loadError = null;
+        _status =
+            'Verified ${report.fileName} sha256=${report.sha256} '
+            'knownQwenMatch=${report.matchesKnownQwen}.';
+      });
+    } catch (error) {
+      if (!mounted) return;
+      setState(() {
+        _loading = false;
+        _loadError = 'Could not hash the GGUF: $error';
+        _status = 'Could not hash the GGUF: $error';
       });
     }
   }
@@ -154,6 +236,9 @@ class _NoteScreenState extends State<NoteScreen> {
 
   bool get _canLoad =>
       _modelPath != null && _modelPath!.isNotEmpty && !_loading && !_running;
+
+  /// Mac-only. Android always runs the sanity prompts.
+  bool get _skipSanityEffective => _skipSanityRequested && !Platform.isAndroid;
 
   bool get _canRun =>
       _loaded &&
@@ -203,8 +288,9 @@ class _NoteScreenState extends State<NoteScreen> {
         _catalog = catalog;
         _catalogError = null;
         if (_selected != null) {
-          final match =
-              catalog.prompts.where((prompt) => prompt.id == _selected!.id);
+          final match = catalog.prompts.where(
+            (prompt) => prompt.id == _selected!.id,
+          );
           _selected = match.isEmpty ? null : match.first;
         } else if (catalog.prompts.isNotEmpty) {
           _selected = catalog.prompts.first;
@@ -248,9 +334,10 @@ class _NoteScreenState extends State<NoteScreen> {
       _loadError = null;
       _loaded = false;
       _sanityOk = false;
+      _sanityRan = false;
       _sanityFailure = null;
       _kernelLine = null;
-      _status = 'Checking GGUF sha256...';
+      _status = 'Checking cached model hash...';
     });
 
     // If another model is currently loaded, unload it first
@@ -263,13 +350,14 @@ class _NoteScreenState extends State<NoteScreen> {
 
     final ModelFileReport fileReport;
     try {
-      fileReport = await inspectModelFile(path);
+      final store = await _ensureHashStore();
+      fileReport = await lookupCachedModelFile(path, store.cache);
     } catch (error) {
       if (!mounted) return;
       setState(() {
         _loading = false;
         _status = null;
-        _loadError = 'Could not hash the GGUF: $error';
+        _loadError = 'Could not check the cached GGUF hash: $error';
       });
       return;
     }
@@ -314,6 +402,7 @@ class _NoteScreenState extends State<NoteScreen> {
     final repo = LlamaCppChatRepository(
       contextSize: _contextSize,
       batchSize: _contextSize,
+      threads: _threads,
       stopTokens: const [
         '<end_of_turn>',
         '<turn|>',
@@ -348,12 +437,21 @@ class _NoteScreenState extends State<NoteScreen> {
         if (isCold) _coldLoadMs = duration;
         _ramIdleBytes = postSnap.currentRssBytes;
         _currentRssBytes = postSnap.currentRssBytes;
-        _status = 'Running sanity check...';
+        _status = _skipSanityEffective
+            ? 'Sanity check skipped.'
+            : 'Running sanity check...';
       });
-      await _runSanityChecks();
+      if (_skipSanityEffective) {
+        _sanityRan = false;
+        _sanityOk = true;
+        _sanityFailure = null;
+      } else {
+        await _runSanityChecks();
+      }
       final kernel = collectKernelReport(
         useMemoryMap: _useMemoryMap,
         nGpuLayers: _nGpuLayers,
+        threads: _threads,
       );
       // ignore: avoid_print
       print('[technical_exploration] after load ${kernel.line}');
@@ -363,9 +461,12 @@ class _NoteScreenState extends State<NoteScreen> {
       setState(() {
         _loading = false;
         _kernelLine = kernel.line;
-        _status = _sanityOk
-            ? 'Sanity check passed.'
-            : (_sanityFailure ?? 'Sanity check failed. Batch not started.');
+        _status = _skipSanityEffective
+            ? 'Sanity check skipped. The first protocol run can be a cold load.'
+            : (_sanityOk
+                  ? 'Sanity check passed.'
+                  : (_sanityFailure ??
+                        'Sanity check failed. Batch not started.'));
       });
     } catch (error) {
       watch.stop();
@@ -388,12 +489,14 @@ class _NoteScreenState extends State<NoteScreen> {
     final fileName = _modelFileName;
     if (repo == null || fileName == null) {
       _sanityOk = false;
-      _sanityFailure = 'Sanity check did not run because the model is not loaded.';
+      _sanityFailure =
+          'Sanity check did not run because the model is not loaded.';
       return;
     }
 
     final transcript = StringBuffer();
     final failures = <String>[];
+    _sanityRan = true;
     for (var i = 0; i < sanityPrompts.length; i++) {
       final prompt = sanityPrompts[i];
       if (mounted) {
@@ -411,6 +514,7 @@ class _NoteScreenState extends State<NoteScreen> {
           output: result.text,
           hitMaxTokens: result.hitMax,
           requireDigitFour: prompt.requireDigitFour,
+          requireAnimalWord: prompt.requireAnimalWord,
         );
         transcript.writeln('sanity ${i + 1}: ${prompt.text}');
         transcript.writeln(result.text.isEmpty ? '(empty)' : result.text);
@@ -473,6 +577,7 @@ class _NoteScreenState extends State<NoteScreen> {
     final report = collectKernelReport(
       useMemoryMap: _useMemoryMap,
       nGpuLayers: _nGpuLayers,
+      threads: _threads,
     );
     // ignore: avoid_print
     print('[technical_exploration] $when ${report.line}');
@@ -533,7 +638,8 @@ class _NoteScreenState extends State<NoteScreen> {
     }
     if (!_sanityOk) {
       setState(() {
-        _status = _sanityFailure ?? 'Sanity check has not passed. Run not started.';
+        _status =
+            _sanityFailure ?? 'Sanity check has not passed. Run not started.';
       });
       return null;
     }
@@ -800,6 +906,7 @@ class _NoteScreenState extends State<NoteScreen> {
     final coldForThisRun = isColdForThisRun(
       loadWasCold: _isColdLoad,
       runIndexSinceLoad: _runIndexSinceLoad,
+      sanityRan: _sanityRan,
     );
     // No thinking toggle is applied for any model.
     final bool? thinkingDisabledValue = thinkingDisabledForRun(
@@ -836,8 +943,8 @@ class _NoteScreenState extends State<NoteScreen> {
       ramBeforeLoadBytes: _ramBeforeLoadBytes,
       ramIdleBytes: _ramIdleBytes,
       ramPeakBytes: _peakRssBytes,
-      promptTokenCount: _promptTokenCount ??
-          _estimatePromptTokens(_messagesController.text),
+      promptTokenCount:
+          _promptTokenCount ?? _estimatePromptTokens(_messagesController.text),
       generatedTokenCount: _evalCount,
       ttftMs: _ttftMs,
       generationDurationMs: _generationDuration?.inMilliseconds,
@@ -1001,7 +1108,8 @@ class _NoteScreenState extends State<NoteScreen> {
     for (var i = 1; i <= totalRuns; i++) {
       if (!mounted || _stopRequested) break;
       setState(() {
-        _batchProgressStatus = 'Heat Test: Run $i/$totalRuns (who-manages, Cond B)';
+        _batchProgressStatus =
+            'Heat Test: Run $i/$totalRuns (who-manages, Cond B)';
       });
 
       await _runCondition(PromptCondition.conditionB, isHeatTest: true);
@@ -1028,9 +1136,9 @@ class _NoteScreenState extends State<NoteScreen> {
 
   void _copyCsvToClipboard() {
     if (_history.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('No runs to copy yet.')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('No runs to copy yet.')));
       return;
     }
     Clipboard.setData(
@@ -1045,9 +1153,9 @@ class _NoteScreenState extends State<NoteScreen> {
 
   void _copyJsonToClipboard() {
     if (_history.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('No runs to copy yet.')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('No runs to copy yet.')));
       return;
     }
     Clipboard.setData(
@@ -1062,9 +1170,9 @@ class _NoteScreenState extends State<NoteScreen> {
 
   Future<void> _exportFiles() async {
     if (_history.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('No runs to export yet.')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('No runs to export yet.')));
       return;
     }
 
@@ -1184,10 +1292,7 @@ class _NoteScreenState extends State<NoteScreen> {
                 child: Text('Copy JSON to Clipboard'),
               ),
               const PopupMenuDivider(),
-              const PopupMenuItem(
-                value: 'clear',
-                child: Text('Clear History'),
-              ),
+              const PopupMenuItem(value: 'clear', child: Text('Clear History')),
             ],
           ),
         ],
@@ -1200,7 +1305,8 @@ class _NoteScreenState extends State<NoteScreen> {
             MetricsDashboard(
               coldLoadMs: _coldLoadMs,
               baselineRssBytes: _ramBeforeLoadBytes,
-              idleModelRssBytes: _ramIdleBytes != null && _ramBeforeLoadBytes != null
+              idleModelRssBytes:
+                  _ramIdleBytes != null && _ramBeforeLoadBytes != null
                   ? (_ramIdleBytes! - _ramBeforeLoadBytes!)
                   : null,
               peakRssBytes: _peakRssBytes,
@@ -1221,8 +1327,9 @@ class _NoteScreenState extends State<NoteScreen> {
             Text(
               _modelFileName ?? 'No file selected',
               style: TextStyle(
-                fontWeight:
-                    _modelFileName != null ? FontWeight.w600 : FontWeight.normal,
+                fontWeight: _modelFileName != null
+                    ? FontWeight.w600
+                    : FontWeight.normal,
               ),
             ),
             if (_loaded) ...[
@@ -1263,6 +1370,10 @@ class _NoteScreenState extends State<NoteScreen> {
                   onPressed: _canLoad ? _loadModel : null,
                   child: Text(_loaded ? 'Reload Model' : 'Load'),
                 ),
+                FilledButton.tonal(
+                  onPressed: _canLoad ? _verifyModel : null,
+                  child: const Text('Verify model'),
+                ),
                 if (_loading)
                   const SizedBox(
                     width: 24,
@@ -1279,6 +1390,20 @@ class _NoteScreenState extends State<NoteScreen> {
               const SizedBox(height: 6),
               Text(_loadError!, style: TextStyle(color: colorScheme.error)),
             ],
+            SwitchListTile(
+              contentPadding: EdgeInsets.zero,
+              title: const Text('Skip sanity check'),
+              subtitle: Text(
+                Platform.isAndroid
+                    ? 'Ignored on Android. Sanity always runs before a protocol batch.'
+                    : 'Off by default. On: sanity does not run, so the first protocol run after a cold load stays cold.',
+                style: textTheme.bodySmall,
+              ),
+              value: _skipSanityEffective,
+              onChanged: Platform.isAndroid || _running || _loading
+                  ? null
+                  : (value) => setState(() => _skipSanityRequested = value),
+            ),
 
             const Divider(height: 32),
 
@@ -1316,15 +1441,16 @@ class _NoteScreenState extends State<NoteScreen> {
                 ButtonSegment(
                   value: PromptCondition.conditionC,
                   label: Text('C: Constraints'),
-                  tooltip: 'Strict grounding, 1-3 sentences, and behavioural bans',
+                  tooltip:
+                      'Strict grounding, 1-3 sentences, and behavioural bans',
                 ),
               ],
               selected: {
                 _selectedCondition == PromptCondition.conditionBSimRag
                     ? PromptCondition.conditionB
                     : (_selectedCondition == PromptCondition.conditionCSimRag
-                        ? PromptCondition.conditionC
-                        : _selectedCondition)
+                          ? PromptCondition.conditionC
+                          : _selectedCondition),
               },
               onSelectionChanged: _running
                   ? null
@@ -1375,10 +1501,22 @@ class _NoteScreenState extends State<NoteScreen> {
                         style: textTheme.bodyMedium,
                       ),
                       Text('Seed: $_seed', style: textTheme.bodyMedium),
-                      Text('Top-K: $_topK | Top-P: $_topP', style: textTheme.bodyMedium),
-                      Text('Repeat Penalty: $_repeatPenalty', style: textTheme.bodyMedium),
-                      Text('Max Tokens: $_maxTokens', style: textTheme.bodyMedium),
-                      Text('Context Size: $_contextSize', style: textTheme.bodyMedium),
+                      Text(
+                        'Top-K: $_topK | Top-P: $_topP',
+                        style: textTheme.bodyMedium,
+                      ),
+                      Text(
+                        'Repeat Penalty: $_repeatPenalty',
+                        style: textTheme.bodyMedium,
+                      ),
+                      Text(
+                        'Max Tokens: $_maxTokens',
+                        style: textTheme.bodyMedium,
+                      ),
+                      Text(
+                        'Context Size: $_contextSize',
+                        style: textTheme.bodyMedium,
+                      ),
                       Text(
                         'Thinking toggle: not applied (export column is N/A)',
                         style: textTheme.bodySmall,
@@ -1427,7 +1565,9 @@ class _NoteScreenState extends State<NoteScreen> {
               runSpacing: 12,
               children: [
                 FilledButton(
-                  onPressed: _canRun ? () => _runCondition(_effectiveCondition) : null,
+                  onPressed: _canRun
+                      ? () => _runCondition(_effectiveCondition)
+                      : null,
                   child: Text('Run (${_effectiveCondition.shortCode})'),
                 ),
                 FilledButton.tonal(

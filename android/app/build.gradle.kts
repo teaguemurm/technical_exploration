@@ -1,8 +1,30 @@
+import java.util.Base64
+
 plugins {
     id("com.android.application")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
 }
+
+private fun Project.decodedDartDefines(): Map<String, String> {
+    val encoded = findProperty("dart-defines")?.toString().orEmpty()
+    if (encoded.isEmpty()) return emptyMap()
+    return encoded.split(",")
+        .mapNotNull { token ->
+            val decoded = try {
+                String(Base64.getDecoder().decode(token.trim()), Charsets.UTF_8)
+            } catch (_: IllegalArgumentException) {
+                return@mapNotNull null
+            }
+            val eq = decoded.indexOf('=')
+            if (eq <= 0) null else decoded.substring(0, eq) to decoded.substring(eq + 1)
+        }
+        .toMap()
+}
+
+val dartDefines = decodedDartDefines()
+val excludeArmv92 = dartDefines["EXCLUDE_ARMV92"] == "1"
+val kleidiSmeOff = dartDefines["GGML_KLEIDIAI_SME"] == "0"
 
 android {
     namespace = "nl.wisent.technicalexploration"
@@ -39,6 +61,9 @@ android {
     packaging {
         jniLibs {
             useLegacyPackaging = true
+            if (excludeArmv92) {
+                excludes += "**/libggml-cpu-android_armv9.2_*.so"
+            }
         }
     }
 }
@@ -51,4 +76,22 @@ kotlin {
 
 flutter {
     source = "../.."
+}
+
+// Flutter always copies the packaged APK to app-release.apk. Keep a second
+// copy under a name that a later variant build will not overwrite.
+afterEvaluate {
+    tasks.named("assembleRelease").configure {
+        doLast {
+            val destName = when {
+                excludeArmv92 -> "app-no-armv92-release.apk"
+                kleidiSmeOff -> "app-sme0-release.apk"
+                else -> return@doLast
+            }
+            val apkDir = layout.buildDirectory.dir("outputs/flutter-apk").get().asFile
+            val src = File(apkDir, "app-release.apk")
+            if (!src.exists()) return@doLast
+            src.copyTo(File(apkDir, destName), overwrite = true)
+        }
+    }
 }

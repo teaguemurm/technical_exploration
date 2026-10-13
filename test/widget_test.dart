@@ -20,6 +20,8 @@ void main() {
     // Model controls
     expect(find.text('Pick GGUF'), findsOneWidget);
     expect(find.text('Load'), findsOneWidget);
+    expect(find.text('Verify model'), findsOneWidget);
+    expect(find.text('Skip sanity check'), findsOneWidget);
     expect(find.text('No file selected'), findsOneWidget);
 
     // Three Condition Segments
