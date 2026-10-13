@@ -6,8 +6,13 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:llm_llamacpp/llm_llamacpp.dart';
+import 'package:technical_exploration/device_probe.dart';
+import 'package:technical_exploration/kernel_diag.dart';
 import 'package:technical_exploration/messages.dart';
+import 'package:technical_exploration/model_integrity.dart';
 import 'package:technical_exploration/prompt_tokens.dart';
+import 'package:technical_exploration/run_flags.dart';
+import 'package:technical_exploration/sanity_check.dart';
 import 'package:technical_exploration/system_metrics.dart';
 import 'package:technical_exploration/widgets/comparison_view.dart';
 import 'package:technical_exploration/widgets/metrics_dashboard.dart';
@@ -56,6 +61,11 @@ class _NoteScreenState extends State<NoteScreen> {
   String _quantization = 'unknown';
   String _backend = 'CPU';
   int _nGpuLayers = 0;
+  final bool _useMemoryMap = true;
+  bool _sanityOk = false;
+  String? _sanityFailure;
+  String? _kernelLine;
+  bool _finalizingRun = false;
 
   bool _hasLoadedEver = false;
   bool _isColdLoad = true;
@@ -117,6 +127,7 @@ class _NoteScreenState extends State<NoteScreen> {
     _currentRssBytes = MemorySnapshot.capture().currentRssBytes;
     _nGpuLayers = BackendDetector.getRecommendedGpuLayers();
     _backend = _nGpuLayers > 0 ? 'GPU' : 'CPU';
+    unawaited(refreshDeviceIdentity());
     unawaited(_initApp());
   }
 
@@ -145,7 +156,12 @@ class _NoteScreenState extends State<NoteScreen> {
       _modelPath != null && _modelPath!.isNotEmpty && !_loading && !_running;
 
   bool get _canRun =>
-      _loaded && _selected != null && !_running && !_loading && _catalog != null;
+      _loaded &&
+      _sanityOk &&
+      _selected != null &&
+      !_running &&
+      !_loading &&
+      _catalog != null;
 
   DecodingSettings get _currentDecodingSettings => DecodingSettings(
     temperature: _temperature,
@@ -231,6 +247,10 @@ class _NoteScreenState extends State<NoteScreen> {
       _loading = true;
       _loadError = null;
       _loaded = false;
+      _sanityOk = false;
+      _sanityFailure = null;
+      _kernelLine = null;
+      _status = 'Checking GGUF sha256...';
     });
 
     // If another model is currently loaded, unload it first
@@ -239,6 +259,32 @@ class _NoteScreenState extends State<NoteScreen> {
       _repo = null;
       // Brief pause to allow memory release before measuring pre-load RAM
       await Future<void>.delayed(const Duration(milliseconds: 150));
+    }
+
+    final ModelFileReport fileReport;
+    try {
+      fileReport = await inspectModelFile(path);
+    } catch (error) {
+      if (!mounted) return;
+      setState(() {
+        _loading = false;
+        _status = null;
+        _loadError = 'Could not hash the GGUF: $error';
+      });
+      return;
+    }
+    // ignore: avoid_print
+    print('[technical_exploration] ${fileReport.logLine}');
+    if (fileReport.hashMismatch) {
+      if (!mounted) return;
+      setState(() {
+        _loading = false;
+        _loaded = false;
+        _sanityOk = false;
+        _status = fileReport.mismatchMessage;
+        _loadError = fileReport.mismatchMessage;
+      });
+      return;
     }
 
     // Capture baseline RAM before allocating model
@@ -250,14 +296,20 @@ class _NoteScreenState extends State<NoteScreen> {
     _isColdLoad = isCold;
 
     // Inspect GGUF header for architecture & quantization
+    GgufMetadata? ggufMeta;
     try {
-      final meta = GgufMetadata.fromFileSync(path);
-      _architecture = meta.architecture ?? 'unknown';
-      _quantization = meta.quantizationType ?? 'unknown';
+      ggufMeta = GgufMetadata.fromFileSync(path);
+      _architecture = ggufMeta.architecture ?? 'unknown';
+      _quantization = ggufMeta.quantizationType ?? 'unknown';
     } catch (_) {
       _architecture = 'qwen2.5';
       _quantization = 'Q4_K_M';
     }
+    // ignore: avoid_print
+    print(
+      '[technical_exploration] gguf arch=$_architecture quant=$_quantization '
+      'tensors=${ggufMeta?.tensorCount ?? 'n/a'}',
+    );
 
     final repo = LlamaCppChatRepository(
       contextSize: _contextSize,
@@ -280,7 +332,7 @@ class _NoteScreenState extends State<NoteScreen> {
         path,
         options: ModelLoadOptions(
           nGpuLayers: _nGpuLayers,
-          useMemoryMap: true,
+          useMemoryMap: _useMemoryMap,
         ),
       );
       watch.stop();
@@ -296,18 +348,144 @@ class _NoteScreenState extends State<NoteScreen> {
         if (isCold) _coldLoadMs = duration;
         _ramIdleBytes = postSnap.currentRssBytes;
         _currentRssBytes = postSnap.currentRssBytes;
+        _status = 'Running sanity check...';
+      });
+      await _runSanityChecks();
+      final kernel = collectKernelReport(
+        useMemoryMap: _useMemoryMap,
+        nGpuLayers: _nGpuLayers,
+      );
+      // ignore: avoid_print
+      print('[technical_exploration] after load ${kernel.line}');
+      // ignore: avoid_print
+      print('[technical_exploration] after load ${kernel.detail}');
+      if (!mounted) return;
+      setState(() {
         _loading = false;
+        _kernelLine = kernel.line;
+        _status = _sanityOk
+            ? 'Sanity check passed.'
+            : (_sanityFailure ?? 'Sanity check failed. Batch not started.');
       });
     } catch (error) {
       watch.stop();
       if (!mounted) return;
       setState(() {
         _loaded = false;
+        _sanityOk = false;
         _loadDurationMs = null;
         _loadError = error.toString();
+        _status = error.toString();
         _loading = false;
       });
     }
+  }
+
+  /// Two fixed prompts. Both must pass before a protocol run can start.
+  /// The answers are logged and shown. They are not protocol rows.
+  Future<void> _runSanityChecks() async {
+    final repo = _repo;
+    final fileName = _modelFileName;
+    if (repo == null || fileName == null) {
+      _sanityOk = false;
+      _sanityFailure = 'Sanity check did not run because the model is not loaded.';
+      return;
+    }
+
+    final transcript = StringBuffer();
+    final failures = <String>[];
+    for (var i = 0; i < sanityPrompts.length; i++) {
+      final prompt = sanityPrompts[i];
+      if (mounted) {
+        setState(() {
+          _status = 'Sanity check ${i + 1}/${sanityPrompts.length}...';
+        });
+      }
+      try {
+        final result = await _probe(
+          repo: repo,
+          fileName: fileName,
+          prompt: prompt.text,
+        );
+        final reason = sanityFailureReason(
+          output: result.text,
+          hitMaxTokens: result.hitMax,
+          requireDigitFour: prompt.requireDigitFour,
+        );
+        transcript.writeln('sanity ${i + 1}: ${prompt.text}');
+        transcript.writeln(result.text.isEmpty ? '(empty)' : result.text);
+        transcript.writeln();
+        // ignore: avoid_print
+        print(
+          '[technical_exploration] sanity ${i + 1} '
+          'tokens=${result.tokens} hitMax=${result.hitMax} '
+          'reason=${reason ?? 'pass'}',
+        );
+        // ignore: avoid_print
+        print('[technical_exploration] sanity ${i + 1} output: ${result.text}');
+        if (reason != null) {
+          failures.add('"${prompt.text}" failed ($reason)');
+        }
+      } catch (error) {
+        failures.add('"${prompt.text}" failed ($error)');
+        // ignore: avoid_print
+        print('[technical_exploration] sanity ${i + 1} error: $error');
+      }
+    }
+
+    _sanityOk = failures.isEmpty;
+    _sanityFailure = failures.isEmpty
+        ? null
+        : '${failures.join(' ')} Batch not started.';
+    _outputController.text = transcript.toString().trimRight();
+  }
+
+  Future<({String text, int? tokens, bool hitMax})> _probe({
+    required LlamaCppChatRepository repo,
+    required String fileName,
+    required String prompt,
+  }) async {
+    final buffer = StringBuffer();
+    int? evalCount;
+    final stream = repo.streamChatWithGenerationOptions(
+      fileName,
+      messages: [LLMMessage(role: LLMRole.user, content: prompt)],
+      generationOptions: GenerationOptions(
+        temperature: _temperature,
+        topP: _topP,
+        topK: _topK,
+        maxTokens: sanityMaxTokens,
+        seed: _seed,
+        repeatPenalty: _repeatPenalty,
+      ),
+    );
+    await for (final chunk in stream) {
+      final text = chunk.message?.content;
+      if (text != null && text.isNotEmpty) buffer.write(text);
+      if (chunk.done == true) evalCount = chunk.evalCount;
+    }
+    final cleaned = sanitizeModelOutput(buffer.toString());
+    final hitMax = evalCount != null && evalCount >= sanityMaxTokens;
+    return (text: cleaned, tokens: evalCount, hitMax: hitMax);
+  }
+
+  void _logKernel(String when) {
+    final report = collectKernelReport(
+      useMemoryMap: _useMemoryMap,
+      nGpuLayers: _nGpuLayers,
+    );
+    // ignore: avoid_print
+    print('[technical_exploration] $when ${report.line}');
+    // ignore: avoid_print
+    print('[technical_exploration] $when ${report.detail}');
+    if (mounted) setState(() => _kernelLine = report.line);
+  }
+
+  Future<void> _logSocThermal(String when) async {
+    final line = await readSocThermalLine();
+    if (line == null) return;
+    // ignore: avoid_print
+    print('[technical_exploration] soc-thermal $when $line');
   }
 
   Future<void> _choosePrompt() async {
@@ -353,6 +531,12 @@ class _NoteScreenState extends State<NoteScreen> {
         _running) {
       return null;
     }
+    if (!_sanityOk) {
+      setState(() {
+        _status = _sanityFailure ?? 'Sanity check has not passed. Run not started.';
+      });
+      return null;
+    }
 
     final completer = Completer<RunRecord?>();
     _runCompleter = completer;
@@ -376,8 +560,12 @@ class _NoteScreenState extends State<NoteScreen> {
     }
 
     final initialSnap = MemorySnapshot.capture();
-    final batteryLevelBefore = readDeviceBatteryLevel();
-    final batteryTempBefore = readDeviceTemperatureCelsius();
+    await refreshDeviceIdentity();
+    final batteryBefore = await readBattery();
+    final batteryLevelBefore = batteryBefore.levelPercent;
+    final batteryTempBefore = batteryBefore.tempCelsius;
+    await _logSocThermal('before-run');
+    _finalizingRun = false;
 
     // ignore: deprecated_member_use
     final modelRef = repo.model;
@@ -444,12 +632,14 @@ class _NoteScreenState extends State<NoteScreen> {
         if (!completer.isCompleted) completer.complete(null);
       },
       onDone: () {
-        _onRunDone(
-          condition: condition,
-          batteryLevelBefore: batteryLevelBefore,
-          batteryTempBefore: batteryTempBefore,
-          isHeatTest: isHeatTest,
-          completer: completer,
+        unawaited(
+          _onRunDone(
+            condition: condition,
+            batteryLevelBefore: batteryLevelBefore,
+            batteryTempBefore: batteryTempBefore,
+            isHeatTest: isHeatTest,
+            completer: completer,
+          ),
         );
       },
     );
@@ -505,12 +695,14 @@ class _NoteScreenState extends State<NoteScreen> {
             });
           }
 
-          _onRunDone(
-            condition: condition,
-            batteryLevelBefore: batteryLevelBefore,
-            batteryTempBefore: batteryTempBefore,
-            isHeatTest: isHeatTest,
-            completer: completer,
+          unawaited(
+            _onRunDone(
+              condition: condition,
+              batteryLevelBefore: batteryLevelBefore,
+              batteryTempBefore: batteryTempBefore,
+              isHeatTest: isHeatTest,
+              completer: completer,
+            ),
           );
           return;
         }
@@ -545,13 +737,15 @@ class _NoteScreenState extends State<NoteScreen> {
     }
   }
 
-  void _onRunDone({
+  Future<void> _onRunDone({
     required PromptCondition condition,
     required int? batteryLevelBefore,
     required double? batteryTempBefore,
     required bool isHeatTest,
     required Completer<RunRecord?> completer,
-  }) {
+  }) async {
+    if (_finalizingRun || completer.isCompleted) return;
+    _finalizingRun = true;
     if (completer.isCompleted) return;
     if (!mounted) {
       completer.complete(null);
@@ -564,8 +758,10 @@ class _NoteScreenState extends State<NoteScreen> {
       _peakRssBytes = currentRssFinal;
     }
 
-    final batteryLevelAfter = readDeviceBatteryLevel();
-    final batteryTempAfter = readDeviceTemperatureCelsius();
+    final batteryAfter = await readBattery();
+    final batteryLevelAfter = batteryAfter.levelPercent;
+    final batteryTempAfter = batteryAfter.tempCelsius;
+    await _logSocThermal('after-run');
     _sessionRunCount++;
     _runIndexSinceLoad++;
 
@@ -601,21 +797,19 @@ class _NoteScreenState extends State<NoteScreen> {
     );
 
     final hitMax = _evalCount != null && _evalCount! >= _maxTokens;
-    final isColdForThisRun = _isColdLoad && _runIndexSinceLoad == 1;
-
-    final archLower = _architecture.toLowerCase();
-    final fileLower = (_modelFileName ?? '').toLowerCase();
-    final isThinkingModel = archLower.contains('qwen3') ||
-        fileLower.contains('qwen3') ||
-        archLower.contains('qwq') ||
-        fileLower.contains('qwq') ||
-        fileLower.contains('deepseek-r1');
-    final bool? thinkingDisabledValue = isThinkingModel ? true : null;
+    final coldForThisRun = isColdForThisRun(
+      loadWasCold: _isColdLoad,
+      runIndexSinceLoad: _runIndexSinceLoad,
+    );
+    // No thinking toggle is applied for any model.
+    final bool? thinkingDisabledValue = thinkingDisabledForRun(
+      toggleApplied: false,
+    );
 
     final record = RunRecord(
       runIndex: _sessionRunCount,
       runIndexSinceLoad: _runIndexSinceLoad,
-      isColdLoad: isColdForThisRun,
+      isColdLoad: coldForThisRun,
       loadDurationMs: _loadDurationMs,
       timestamp: DateTime.now(),
       deviceModel: readDeviceModel(),
@@ -698,6 +892,7 @@ class _NoteScreenState extends State<NoteScreen> {
   Future<void> _runCompareAll() async {
     if (!_canRun) return;
 
+    _logKernel('compare start');
     _stopRequested = false;
     setState(() => _comparisonResults.clear());
 
@@ -728,6 +923,7 @@ class _NoteScreenState extends State<NoteScreen> {
     final catalog = _catalog;
     if (!_canRun || catalog == null || catalog.prompts.isEmpty) return;
 
+    _logKernel('batch start');
     _stopRequested = false;
     final conditions = _simulatedRagEnabled
         ? [
@@ -787,6 +983,7 @@ class _NoteScreenState extends State<NoteScreen> {
     final catalog = _catalog;
     if (!_canRun || catalog == null) return;
 
+    _logKernel('heat test start');
     final targetPrompt = catalog.prompts.firstWhere(
       (p) => p.id == 'who-manages',
       orElse: () => catalog.prompts.first,
@@ -1036,6 +1233,21 @@ class _NoteScreenState extends State<NoteScreen> {
                   color: colorScheme.onSurfaceVariant,
                 ),
               ),
+              if (_kernelLine != null) ...[
+                const SizedBox(height: 4),
+                Text(_kernelLine!, style: textTheme.bodySmall),
+              ],
+              if (_status != null) ...[
+                const SizedBox(height: 4),
+                Text(
+                  _status!,
+                  style: textTheme.bodySmall?.copyWith(
+                    color: _sanityOk
+                        ? colorScheme.onSurfaceVariant
+                        : colorScheme.error,
+                  ),
+                ),
+              ],
             ],
             const SizedBox(height: 10),
             Wrap(
@@ -1059,6 +1271,10 @@ class _NoteScreenState extends State<NoteScreen> {
                   ),
               ],
             ),
+            if (_loading && _status != null) ...[
+              const SizedBox(height: 6),
+              Text(_status!, style: textTheme.bodySmall),
+            ],
             if (_loadError != null) ...[
               const SizedBox(height: 6),
               Text(_loadError!, style: TextStyle(color: colorScheme.error)),
@@ -1163,7 +1379,10 @@ class _NoteScreenState extends State<NoteScreen> {
                       Text('Repeat Penalty: $_repeatPenalty', style: textTheme.bodyMedium),
                       Text('Max Tokens: $_maxTokens', style: textTheme.bodyMedium),
                       Text('Context Size: $_contextSize', style: textTheme.bodyMedium),
-                      Text('Qwen3 Reasoning / Thinking: Suppressed (/no_think + tag stripped)', style: textTheme.bodySmall),
+                      Text(
+                        'Thinking toggle: not applied (export column is N/A)',
+                        style: textTheme.bodySmall,
+                      ),
                     ],
                   ),
                 ),

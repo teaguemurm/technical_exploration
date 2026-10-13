@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:path_provider/path_provider.dart';
+import 'package:technical_exploration/device_probe.dart';
 
 /// Captures a snapshot of current and peak process memory.
 ///
@@ -78,31 +79,23 @@ class MemorySnapshot {
   }
 }
 
-/// Reads the device model name (e.g. "Fairphone 5", "Mac14,6", "SM-F946B").
+/// Reads the device model name (e.g. "Fairphone 5", "Mac14,6").
+///
+/// On Android this prefers the marketing name plus SKU from [Build] and
+/// `ro.product.marketname`, cached by [refreshDeviceIdentity]. `getprop` is
+/// only the fallback. `/system/build.prop` is not read: Treble can name a
+/// reference device there.
 String readDeviceModel() {
   if (Platform.isAndroid) {
+    final cached = cachedAndroidDeviceLabel();
+    if (cached != null && cached.isNotEmpty) return cached;
     try {
       final res = Process.runSync('getprop', ['ro.product.model']);
       if (res.exitCode == 0 && res.stdout.toString().trim().isNotEmpty) {
         final model = res.stdout.toString().trim();
         final brandRes = Process.runSync('getprop', ['ro.product.brand']);
         final brand = brandRes.stdout.toString().trim();
-        if (brand.isNotEmpty && !model.toLowerCase().contains(brand.toLowerCase())) {
-          return '$brand $model';
-        }
-        return model;
-      }
-    } catch (_) {}
-
-    try {
-      final buildProp = File('/system/build.prop');
-      if (buildProp.existsSync()) {
-        final lines = buildProp.readAsLinesSync();
-        for (final line in lines) {
-          if (line.startsWith('ro.product.model=')) {
-            return line.split('=').last.trim();
-          }
-        }
+        return formatAndroidDeviceLabel(manufacturer: brand, model: model);
       }
     } catch (_) {}
     return 'Android Device';
@@ -120,60 +113,7 @@ String readDeviceModel() {
   return Platform.operatingSystem;
 }
 
-/// Reads the device battery level (percentage 0–100) on Linux/Android.
-int? readDeviceBatteryLevel() {
-  if (!Platform.isAndroid && !Platform.isLinux) {
-    return null;
-  }
-  const candidatePaths = [
-    '/sys/class/power_supply/battery/capacity',
-    '/sys/class/power_supply/BAT0/capacity',
-  ];
-  for (final path in candidatePaths) {
-    try {
-      final file = File(path);
-      if (file.existsSync()) {
-        final text = file.readAsStringSync().trim();
-        final val = int.tryParse(text);
-        if (val != null && val >= 0 && val <= 100) {
-          return val;
-        }
-      }
-    } catch (_) {}
-  }
-  return null;
-}
 
-/// Attempts to read the device battery or SoC temperature on Android/Linux.
-/// Returns temperature in degrees Celsius, or null if inaccessible.
-double? readDeviceTemperatureCelsius() {
-  if (!Platform.isAndroid && !Platform.isLinux) {
-    return null;
-  }
-  const candidatePaths = [
-    '/sys/class/power_supply/battery/temp',
-    '/sys/class/thermal/thermal_zone0/temp',
-    '/sys/devices/virtual/thermal/thermal_zone0/temp',
-  ];
-  for (final path in candidatePaths) {
-    try {
-      final file = File(path);
-      if (file.existsSync()) {
-        final text = file.readAsStringSync().trim();
-        final raw = double.tryParse(text);
-        if (raw != null && raw > 0) {
-          if (raw > 1000) {
-            return raw / 1000.0;
-          } else if (raw > 100) {
-            return raw / 10.0;
-          }
-          return raw;
-        }
-      }
-    } catch (_) {}
-  }
-  return null;
-}
 
 /// Formats a byte count into a human-readable string (e.g., "1.42 GB", "420 MB").
 String formatBytes(int? bytes, {bool signed = false}) {

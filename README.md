@@ -35,7 +35,7 @@ All runs execute with deterministic decoding settings to eliminate stochastic va
 - **Repeat Penalty**: `1.1`
 - **Max Tokens**: `256`
 - **Context Size**: `2048`
-- **Reasoning / Thinking**: Suppressed for Qwen3 / reasoning models (`/no_think` directive and `<think>` block stripping).
+- **Reasoning / Thinking**: No thinking toggle is applied. The export column is `N/A`. Output sanitizing still strips a `<think>` block if a model emits one.
 
 ---
 
@@ -79,11 +79,10 @@ Physical RAM consumption is sampled at multiple points using native OS interface
   $$\text{Max Throttle} (\%) = \max_{i \in [1, 10]} \left( \max(0, \text{Throttle}_i) \right)$$
   *(Speedups where $\text{TPS}_i > \text{TPS}_1$ yield $0\%$ throttle rather than negative percentages).*
 
-### 2.5 Battery Level & SoC Temperature
-* **Battery Level (%)**: Read directly from device sysfs:
-  - `/sys/class/power_supply/battery/capacity` or `/sys/class/power_supply/BAT0/capacity`.
-* **Battery / SoC Temperature (°C)**: Read in millidegrees Celsius and converted to °C:
-  - `/sys/class/power_supply/battery/temp` or `/sys/class/thermal/thermal_zone0/temp`.
+### 2.5 Battery Level & Temperature
+* **Android**: `BatteryManager.EXTRA_LEVEL` / `EXTRA_SCALE` for the percentage, and `EXTRA_TEMPERATURE` (tenths of a degree) divided by 10 for °C. These are the export values.
+* **Linux**: battery sysfs only (`battery/capacity` or `BAT0/capacity`, and the matching `temp` file). `thermal_zone0` is not a battery temperature and is not exported.
+* **SoC thermal zone**: On Android, each run logs the zone the old reader would have used (often `thermal_zone0`) with its type, raw value, and °C, plus the hottest zone. That log is logcat only (`soc-thermal`). It is what produced the 92–95 °C figures and it is how a throttled run is tied to TTFT and tok/s. It is not an export column.
 * Captured immediately before (`batteryLevelBefore`, `batteryTempBeforeCelsius`) and after each run (`batteryLevelAfter`, `batteryTempAfterCelsius`).
 
 ### 2.6 Token Counting & Context Tracking
@@ -184,16 +183,22 @@ Tapping the download icon in the AppBar provides instant export:
 | `RAM Peak (MB)` | double | Peak resident memory during inference in megabytes |
 | `Battery Before (%)`| int | Device battery level before run (mobile) |
 | `Battery After (%)` | int | Device battery level after run (mobile) |
-| `Temp Before (°C)`| double | Battery/SoC temperature before run |
-| `Temp After (°C)` | double | Battery/SoC temperature after run |
+| `Temp Before (°C)`| double | Battery temperature before the run, from `BatteryManager` on Android |
+| `Temp After (°C)` | double | Battery temperature after the run, from `BatteryManager` on Android |
 | `Throttle (%)` | double | Thermal throttle percentage (Heat Test only) |
 | `Is Heat Test` | string | `Yes` if part of 10-run heat test; `No` otherwise |
-| `Thinking Disabled`| string | `Yes` (reasoning suppressed/stripped) |
+| `Thinking Disabled`| string | `N/A` unless a thinking toggle was actually applied for that model. This app does not apply one. |
 | `Output` | string | Sanitized model response text |
 
 ---
 
-## 5. Building and Running on Devices
+## 5. Known limitations
+
+Gemma 4 E2B runs on a ChatML fallback, not its real chat template. The GGUF ships an 18 KB Jinja template (`<|turn|>` / `<turn|>`). `llama_chat_apply_template` is not a Jinja parser and does not recognise that template, and this build does not link `common/jinja`, so both the token counter and the inference isolate fall back to ChatML. Qwen is unaffected: its template is ChatML and the logged prompt lengths match the Mac batch. The fallback can change how Gemma follows the visitor notes, and it may explain some of Gemma's over-refusals. It is a validity limitation of the 11 Oct Gemma batch. Protocol message text is unchanged. Switching Gemma onto its real template would make new Gemma answers incomparable with that batch, so this round does not do it.
+
+After every load the app runs two fixed sanity prompts ("Name one European wild animal in three words." and "What is 2+2?", the latter must contain 4). A failure blocks the protocol batch. The CPU configuration for a batch (winning backend, KleidiAI SME, threads, KV type, flash attention, mmap, GPU layers) is printed to logcat and shown under the model line. It is not a new export column.
+
+## 6. Building and Running on Devices
 
 ### macOS / Desktop
 ```bash
