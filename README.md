@@ -274,3 +274,7 @@ Storage access uses `FileType.any` with user file selection, allowing `.gguf` fi
    # Or run directly with live console logs:
    flutter run -d <android-device-id> --release
    ```
+
+   Installing a newer APK over the installed app keeps the run history. `runs_history.jsonl` is in the app documents directory, and Android leaves that directory in place when the package id and signing key stay the same and the app is not uninstalled. Uninstall deletes it.
+
+   Export Files on Android still writes that private copy, then copies the finished CSV, JSON, and `model_sha256_cache.json` (when the cache exists) to `Download/technical-exploration/`. That folder shows up in the Files app and in Windows Explorer over USB. The snackbar names the files. Share sends those copies through the Android share sheet. A name that is already in that folder is overwritten for the hash cache and given a numeric suffix for a timestamped CSV or JSON. Desktop export is unchanged.

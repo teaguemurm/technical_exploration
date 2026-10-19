@@ -13,6 +13,7 @@ import 'package:technical_exploration/kleidi_sme.dart';
 import 'package:technical_exploration/messages.dart';
 import 'package:technical_exploration/model_integrity.dart';
 import 'package:technical_exploration/prompt_tokens.dart';
+import 'package:technical_exploration/public_exports.dart';
 import 'package:technical_exploration/run_flags.dart';
 import 'package:technical_exploration/sanity_check.dart';
 import 'package:technical_exploration/system_metrics.dart';
@@ -120,6 +121,7 @@ class _NoteScreenState extends State<NoteScreen> {
   String? _status;
 
   final List<RunRecord> _history = [];
+  List<String>? _lastPublicExportUris;
   final Map<PromptCondition, RunRecord?> _comparisonResults = {};
 
   StreamSubscription<LLMChunk>? _subscription;
@@ -1170,7 +1172,7 @@ class _NoteScreenState extends State<NoteScreen> {
     );
   }
 
-  Future<void> _exportFiles() async {
+  Future<void> _exportFiles({bool openShareSheet = false}) async {
     if (_history.isEmpty) {
       ScaffoldMessenger.of(
         context,
@@ -1180,6 +1182,11 @@ class _NoteScreenState extends State<NoteScreen> {
 
     final paths = await BenchmarkExporter.exportToFiles(_history);
     if (!mounted) return;
+
+    if (Platform.isAndroid) {
+      await _publishAndroidExports(paths, openShareSheet: openShareSheet);
+      return;
+    }
 
     showDialog<void>(
       context: context,
@@ -1221,6 +1228,79 @@ class _NoteScreenState extends State<NoteScreen> {
           ],
         );
       },
+    );
+  }
+
+  Future<void> _publishAndroidExports(
+    Map<String, String> paths, {
+    required bool openShareSheet,
+  }) async {
+    final csvPath = paths['csv'];
+    final jsonPath = paths['json'];
+    if (csvPath == null || jsonPath == null) {
+      _showExportSnackBar(
+        publicExportFailureMessage(
+          'the private export did not return both files',
+        ),
+      );
+      return;
+    }
+    final cache = File('${File(csvPath).parent.path}/$modelHashCacheFileName');
+    try {
+      final published = await publishPublicExports(
+        publicExportRequests(
+          csvPath: csvPath,
+          jsonPath: jsonPath,
+          hashCachePath: cache.existsSync() ? cache.path : null,
+        ),
+      );
+      _lastPublicExportUris = published.uris;
+      if (!mounted) return;
+      _showExportSnackBar(
+        publicExportSavedMessage(published.directory, published.names),
+        shareUris: published.uris,
+      );
+      if (openShareSheet) await _openShareSheet(published.uris);
+    } on PlatformException catch (error) {
+      if (!mounted) return;
+      _showExportSnackBar(
+        publicExportFailureMessage(error.message ?? error.code),
+      );
+    }
+  }
+
+  Future<void> _shareExports() async {
+    final uris = _lastPublicExportUris;
+    if (uris != null && uris.isNotEmpty) {
+      await _openShareSheet(uris);
+      return;
+    }
+    await _exportFiles(openShareSheet: true);
+  }
+
+  Future<void> _openShareSheet(List<String> uris) async {
+    try {
+      await sharePublicExports(uris);
+    } on PlatformException catch (error) {
+      if (!mounted) return;
+      _showExportSnackBar(
+        'Could not open the share sheet (${error.message ?? error.code}).',
+      );
+    }
+  }
+
+  void _showExportSnackBar(String message, {List<String>? shareUris}) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        duration: const Duration(seconds: 8),
+        action: shareUris == null
+            ? null
+            : SnackBarAction(
+                label: 'Share',
+                onPressed: () => _openShareSheet(shareUris),
+              ),
+      ),
     );
   }
 
@@ -1623,6 +1703,16 @@ class _NoteScreenState extends State<NoteScreen> {
                   onPressed: _history.isNotEmpty ? _exportFiles : null,
                   label: const Text('Export Files'),
                 ),
+                if (Platform.isAndroid)
+                  OutlinedButton.icon(
+                    icon: const Icon(Icons.share, size: 16),
+                    onPressed:
+                        _history.isNotEmpty ||
+                            (_lastPublicExportUris?.isNotEmpty ?? false)
+                        ? _shareExports
+                        : null,
+                    label: const Text('Share'),
+                  ),
               ],
             ),
 
