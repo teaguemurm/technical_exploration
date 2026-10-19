@@ -19,6 +19,7 @@ def main() -> None:
     print(f"examples: {stats['total']}")
     print(f"copied from original: {stats['copied_from_original']['total']}")
     print(f"nature_decode: {stats['nature_decode']}")
+    print(f"speak_as reworded: {len(stats['speak_as_reworded'])}")
     print(f"contrastive pairs: {stats['contrastive_pairs']}")
     print(f"train: {stats['train']['n']}  valid: {stats['valid']['n']}")
     for category, count in stats["by_category"].items():

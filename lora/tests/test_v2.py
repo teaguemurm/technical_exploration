@@ -13,7 +13,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from wisent_lora.leakage import check_examples, default_probes, normalize  # noqa: E402
 from wisent_lora.protocol import load_refusal, repo_root  # noqa: E402
-from wisent_lora.v2 import build_v2_examples  # noqa: E402
+from wisent_lora.v2 import SPEAK_AS_REWORD, build_v2_examples  # noqa: E402
 from wisent_lora.validate import validate_examples  # noqa: E402
 
 ORIGINAL_SHA256 = {
@@ -172,12 +172,37 @@ class V2Tests(unittest.TestCase):
             self.assertEqual(new["metadata"]["prompt_note_ids"], old["metadata"]["prompt_note_ids"])
             self.assertEqual(new["metadata"]["grounded_note_ids"], old["metadata"]["grounded_note_ids"])
             self.assertEqual(new["metadata"]["must_include"], old["metadata"]["must_include"])
-            self.assertEqual(_question(new), old["messages"][1]["content"])
+            old_question = old["messages"][1]["content"]
+            if old["metadata"]["category"] == "speak_as":
+                self.assertEqual(_question(new), SPEAK_AS_REWORD[old_question])
+                self.assertNotEqual(_question(new), old_question)
+            else:
+                self.assertEqual(_question(new), old_question)
             if old["metadata"]["category"] == "preaching":
                 self.assertEqual(new["messages"][-1]["content"], self.refusal)
                 self.assertNotEqual(old["messages"][2]["content"], self.refusal)
             else:
                 self.assertEqual(new["messages"][-1]["content"], old["messages"][2]["content"])
+
+    def test_speak_as_reword_is_recorded_and_leaves_the_answer_in_place(self) -> None:
+        data = self.root / "lora" / "data"
+        original = _read_jsonl(data / "train.jsonl") + _read_jsonl(data / "valid.jsonl")
+        stats = json.loads((data / "v2" / "stats.json").read_text(encoding="utf-8"))
+        recorded = {(item["id"], item["from"], item["to"]) for item in stats["speak_as_reworded"]}
+        expected = set()
+        for old in original:
+            if old["metadata"]["category"] != "speak_as":
+                continue
+            new = self.by_id[old["metadata"]["id"]]
+            old_question = old["messages"][1]["content"]
+            expected.add((old["metadata"]["id"], old_question, SPEAK_AS_REWORD[old_question]))
+            self.assertEqual(new["messages"][-1]["content"], old["messages"][2]["content"])
+            self.assertEqual(new["metadata"]["prompt_note_ids"], old["metadata"]["prompt_note_ids"])
+            self.assertEqual(new["metadata"]["grounded_note_ids"], old["metadata"]["grounded_note_ids"])
+            self.assertEqual(new["metadata"]["split"], old["metadata"]["split"])
+            self.assertEqual(new["metadata"]["category"], "speak_as")
+        self.assertEqual(recorded, expected)
+        self.assertEqual(len(recorded), len(SPEAK_AS_REWORD))
 
     def test_train_layout_still_rejects_a_preaching_refusal(self) -> None:
         data = self.root / "lora" / "data"

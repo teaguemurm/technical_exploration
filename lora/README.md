@@ -92,9 +92,72 @@ Validation on this set: **0 errors**. It checks the chat schema, the exact refus
 
 `data/v2/` is a second training set. It does not replace `train.jsonl` / `valid.jsonl`. Those files stay the original train-layout rows.
 
-Two changes apply to the 415 copied rows. Preaching answers are the refusal string from `standardRefusalStatement` in `lib/messages.dart`, and the grounded-note ids still name the note the old factual answer came from. Every prompt is condition B as `buildConditionMessages` builds it: the system turn is the trimmed persona from `assets/system_prompt.txt`, notes are the next user turn from `localNotesMessage` (title, blank line, intro, then the note texts in `prompt_note_ids` order), and the question is the last user turn. Rows with no notes stay system plus question. Questions, non-preaching answers, note tracing, and the train/valid membership of these 415 rows match the original set. The title and intro strings are read from `lib/messages.dart`, not copied by hand.
+Three changes apply to the 415 copied rows. Preaching answers are the refusal string from `standardRefusalStatement` in `lib/messages.dart`, and the grounded-note ids still name the note the old factual answer came from. Stiff speak-as questions are reworded into visitor speech in this set only. Each of those rows keeps its id, category, answer, note ids, and split. Every prompt is condition B as `buildConditionMessages` builds it: the system turn is the trimmed persona from `assets/system_prompt.txt`, notes are the next user turn from `localNotesMessage` (title, blank line, intro, then the note texts in `prompt_note_ids` order), and the question is the last user turn. Rows with no notes stay system plus question. Aside from the reworded speak-as questions, the questions match the original set. Non-preaching answers, note tracing, and the train/valid membership of these 415 rows match the original set. The title and intro strings are read from `lib/messages.dart`, not copied by hand. The same from/to pairs are in `data/v2/stats.json` under `speak_as_reworded`.
 
-v2 also adds 40 `nature_decode` rows. The original set has speak-as rows for an animal's first person and preaching rows for rule 6. It has nothing for the Nature clause of condition C rule 4 ("Do NOT speak as Nature") or for rule 5 ("Do NOT claim to decode or translate the animal's behaviour"), both in `buildConditionCSystemPrompt`. Twenty rows ask the model to speak as Nature. Twenty ask it to decode or translate a stare, roar, tail slap, stance, or grouping. They use the five synthetic packs, half with that pack's notes and half with no notes. Every target is the refusal string, and `grounded_note_ids` is `none`. The questions do not use the held-out `nature-message` prompt or `data/held_out_paraphrases.json`. A shared 4-gram such as "trying to tell me" is a leak, so those wordings are not in the file.
+All 60 speak-as questions were reworded:
+
+- `red_deer_veluwe-speak-01`: "Answer in the first person as a red deer and say how you feel today." → "You're a red deer for a minute. How are you feeling today?"
+- `red_deer_veluwe-speak-02`: "Take the role of a stag on the Veluwezoom and describe your mood." → "You're a stag on the Veluwezoom now. What's your mood like?"
+- `red_deer_veluwe-speak-03`: "What frightens you, if you answer as a red deer?" → "Pretend you're a red deer: what scares you?"
+- `red_deer_veluwe-speak-04`: "Tell me your personal name, speaking as a stag." → "You're a stag. What should I call you?"
+- `red_deer_veluwe-speak-05`: "Describe your hunger in the voice of a red deer." → "You're a red deer. How hungry are you?"
+- `red_deer_veluwe-speak-06`: "Welcome the reader to the Veluwezoom in character as a stag." → "You're a stag. Welcome me to the Veluwezoom."
+- `red_deer_veluwe-speak-07`: "Using the word I, as a red deer, say which plants you eat." → "Pretend you're a red deer: which plants do you eat?"
+- `red_deer_veluwe-speak-08`: "In the voice of a stag, say what happens to your antlers in late winter." → "You're a stag. What happens to your antlers in late winter?"
+- `red_deer_veluwe-speak-09`: "As a deer, in the first person, say where you drink." → "Pretend you're one of the deer: where do you go for water?"
+- `red_deer_veluwe-speak-10`: "Role-play a deer and say where you shelter in hard weather." → "You're a deer now. Where do you shelter when the weather turns rough?"
+- `red_deer_veluwe-speak-11`: "Pretend to be a stag and say at what time of day you roar." → "You're a stag. What time of day do you roar?"
+- `red_deer_veluwe-speak-12`: "Answer as a hind, in the first person, and say who stays together." → "You're a hind. Who do you stay with?"
+- `konik_oostvaardersplassen-speak-01`: "Answer in the first person as a Konik horse and say how you feel today." → "You're a Konik for a minute. How are you feeling today?"
+- `konik_oostvaardersplassen-speak-02`: "Take the role of a mare in the Oostvaardersplassen and describe your mood." → "You're a mare in the Oostvaardersplassen now. How are you feeling?"
+- `konik_oostvaardersplassen-speak-03`: "What frightens you, if you answer as a Konik?" → "Pretend you're a Konik: what scares you?"
+- `konik_oostvaardersplassen-speak-04`: "Tell me your personal name, speaking as a Konik horse." → "You're a Konik horse. What's your name?"
+- `konik_oostvaardersplassen-speak-05`: "Describe your hunger in the voice of a Konik." → "You're a Konik. How hungry are you right now?"
+- `konik_oostvaardersplassen-speak-06`: "Welcome the reader to the marsh in character as a stallion." → "You're a stallion. Welcome me out onto the marsh."
+- `konik_oostvaardersplassen-speak-07`: "Using the word I, as a Konik, describe your coat." → "Pretend you're a Konik: what does your coat look like?"
+- `konik_oostvaardersplassen-speak-08`: "In the voice of a Konik, say what you graze." → "You're a Konik. What do you graze on?"
+- `konik_oostvaardersplassen-speak-09`: "As a horse, in the first person, say where you drink." → "Pretend you're one of the horses: where do you go for water?"
+- `konik_oostvaardersplassen-speak-10`: "Role-play a mare and say when foals are born." → "You're a mare. When are the foals born?"
+- `konik_oostvaardersplassen-speak-11`: "Pretend to be a stallion and say how the bands are led." → "You're a stallion. How are the bands led?"
+- `konik_oostvaardersplassen-speak-12`: "Answer as a Konik, in the first person, and say where the band shelters." → "You're a Konik. Where does the band shelter?"
+- `beaver_biesbosch-speak-01`: "Answer in the first person as a beaver and say how you feel tonight." → "You're a beaver for a minute. How are you feeling tonight?"
+- `beaver_biesbosch-speak-02`: "Take the role of a beaver in the Biesbosch and describe your mood." → "You're a beaver in the Biesbosch now. What's your mood?"
+- `beaver_biesbosch-speak-03`: "What frightens you, if you answer as a beaver?" → "Pretend you're a beaver: what scares you?"
+- `beaver_biesbosch-speak-04`: "Tell me your personal name, speaking as a beaver." → "You're a beaver. What's your name?"
+- `beaver_biesbosch-speak-05`: "Describe your hunger in the voice of a beaver." → "You're a beaver. How hungry are you?"
+- `beaver_biesbosch-speak-06`: "Welcome the reader to the creeks in character as a beaver." → "You're a beaver. Welcome me onto the creeks."
+- `beaver_biesbosch-speak-07`: "Using the word I, as a beaver, say what the lodge is built from." → "Pretend you're a beaver: what is the lodge built from?"
+- `beaver_biesbosch-speak-08`: "In the voice of a beaver, say what you eat." → "You're a beaver. What do you eat?"
+- `beaver_biesbosch-speak-09`: "As a beaver, in the first person, describe your tail." → "Pretend you're a beaver: what's your tail like?"
+- `beaver_biesbosch-speak-10`: "Role-play a beaver and say when you are mostly active." → "You're a beaver. When are you mostly active?"
+- `beaver_biesbosch-speak-11`: "Pretend to be a beaver and say where kits are born." → "You're a beaver. Where are the kits born?"
+- `beaver_biesbosch-speak-12`: "Answer as a beaver, in the first person, and say whether you dam every creek." → "You're a beaver. Do you dam every creek?"
+- `highland_dwingelderveld-speak-01`: "Answer in the first person as a Highland cow and say how you feel today." → "You're a Highland cow for a minute. How do you feel today?"
+- `highland_dwingelderveld-speak-02`: "Take the role of a Highland animal on the Dwingelderveld and describe your mood." → "You're a Highland cow now. How are you feeling today?"
+- `highland_dwingelderveld-speak-03`: "What frightens you, if you answer as a Highland cow?" → "Pretend you're a Highland cow: what scares you?"
+- `highland_dwingelderveld-speak-04`: "Tell me your personal name, speaking as a Highland cow." → "You're a Highland cow. What name do you go by?"
+- `highland_dwingelderveld-speak-05`: "Describe your hunger in the voice of a Highland cow." → "You're a Highland cow. How hungry are you?"
+- `highland_dwingelderveld-speak-06`: "Welcome the reader to the heath in character as a Highland cow." → "You're a Highland cow. Welcome me onto the heath."
+- `highland_dwingelderveld-speak-07`: "Using the word I, as a Highland cow, describe your coat and horns." → "Pretend you're a Highland cow: what are your coat and horns like?"
+- `highland_dwingelderveld-speak-08`: "In the voice of a Highland cow, say what you graze." → "You're a Highland cow. What do you graze?"
+- `highland_dwingelderveld-speak-09`: "As a Highland cow, in the first person, say where you drink." → "Pretend you're one of the cattle: where do you go for water?"
+- `highland_dwingelderveld-speak-10`: "Role-play a Highland cow and say whether the herd stays out in winter." → "You're a Highland cow. Does the herd stay out through winter?"
+- `highland_dwingelderveld-speak-11`: "Pretend to be a calf and say how your coat compares with the adults." → "You're a calf. How does your coat compare with the adults?"
+- `highland_dwingelderveld-speak-12`: "Answer as a Highland cow, in the first person, about the birch on the heath." → "You're a Highland cow. What do you do about the birch on the heath?"
+- `exmoor_lauwersmeer-speak-01`: "Answer in the first person as an Exmoor pony and say how you feel today." → "You're an Exmoor pony for a minute. How are you feeling today?"
+- `exmoor_lauwersmeer-speak-02`: "Take the role of a pony at Lauwersmeer and describe your mood." → "You're a pony at Lauwersmeer now. What's your mood like?"
+- `exmoor_lauwersmeer-speak-03`: "What frightens you, if you answer as an Exmoor pony?" → "Pretend you're an Exmoor pony: what scares you?"
+- `exmoor_lauwersmeer-speak-04`: "Tell me your personal name, speaking as an Exmoor pony." → "You're an Exmoor pony. What should I call you?"
+- `exmoor_lauwersmeer-speak-05`: "Describe your hunger in the voice of an Exmoor pony." → "You're an Exmoor pony. How hungry are you?"
+- `exmoor_lauwersmeer-speak-06`: "Welcome the reader to the shore in character as a pony." → "You're a pony. Welcome me to the shore."
+- `exmoor_lauwersmeer-speak-07`: "Using the word I, as an Exmoor pony, describe your coat and muzzle." → "Pretend you're an Exmoor pony: what are your coat and muzzle like?"
+- `exmoor_lauwersmeer-speak-08`: "In the voice of a pony, say what you graze." → "You're a pony. What do you graze?"
+- `exmoor_lauwersmeer-speak-09`: "As a pony, in the first person, say whether you stay outside through the year." → "Pretend you're one of the ponies: do you stay outside all year?"
+- `exmoor_lauwersmeer-speak-10`: "Role-play a mare and say where the foals are kept in the group." → "You're a mare. Where do the foals stay in the group?"
+- `exmoor_lauwersmeer-speak-11`: "Pretend to be a stallion and say who is in the band." → "You're a stallion. Who's in the band with you?"
+- `exmoor_lauwersmeer-speak-12`: "Answer as a pony, in the first person, and say where the band drinks." → "You're a pony. Where does the band drink?"
+
+v2 also adds 40 `nature_decode` rows. The original set has speak-as rows for an animal's first person and preaching rows for rule 6. It has nothing for the Nature clause of condition C rule 4 ("Do NOT speak as Nature") or for rule 5 ("Do NOT claim to decode or translate the animal's behaviour"), both in `buildConditionCSystemPrompt`. Twenty rows ask the model to speak as Nature, in visitor wording: a heath, marsh, creek, or shore that could talk, Mother Nature saying a few words, or the place itself speaking. Twenty ask what a stare, an ear flick, a head shake, a dive, pinned ears, a stamp, a roar, or a tail slap means for the person watching. Each question is adapted to that pack's animals and places. They use the five synthetic packs, two of each subtype with that pack's notes and two with no notes. Every target is the refusal string, and `grounded_note_ids` is `none`. The questions do not use the held-out `nature-message` prompt or `data/held_out_paraphrases.json`. A shared 4-gram such as "trying to tell me" or "talk to me as" is a leak, so those wordings are not in the file. "Talk to me as the wild itself about Lauwersmeer's ponies" was dropped for that reason. The Lauwersmeer question asks what the wild itself would say if it could speak.
 
 The new rows use the same 10% split rule on their own random stream, so the copied rows keep the original split. That puts 4 `nature_decode` rows in valid and 36 in train.
 
@@ -269,7 +332,7 @@ llama-completion \
   -m qwen2.5-1.5b-instruct-q4_k_m.gguf \
   --lora-scaled wisent-constraint-lora-f16.gguf:1.0 \
   -f /tmp/prompt.txt \
-  --samplers temperature;top_k;top_p;penalties \
+  --samplers "temperature;top_k;top_p;penalties" \
   --temp 0 --top-k 40 --top-p 0.9 \
   --repeat-last-n 64 --repeat-penalty 1.1 \
   --frequency-penalty 0 --presence-penalty 0 \
