@@ -7,9 +7,9 @@ import re
 from collections import Counter
 from pathlib import Path
 
-from wisent_lora.protocol import CONSTRAINT_MARKERS
+from wisent_lora.protocol import CONSTRAINT_MARKERS, load_local_notes_title, local_notes_message
 
-CATEGORIES = ("answerable", "refusal", "speak_as", "preaching")
+CATEGORIES = ("answerable", "refusal", "speak_as", "preaching", "nature_decode")
 ORIGINS = ("synthetic", "real", "none")
 PAIR_ROLES = ("with_note", "without_note", "single")
 
@@ -210,6 +210,75 @@ def _load_jsonl(path: Path) -> list[dict]:
     return rows
 
 
+def _parse_messages(messages: object, layout: str) -> tuple[str, str, str, str] | str:
+    """Return (system, notes, question, assistant), or an error string."""
+    if layout == "train":
+        if not isinstance(messages, list) or len(messages) != 3:
+            return "messages must be [system, user, assistant]"
+        roles = [message.get("role") for message in messages]
+        if roles != ["system", "user", "assistant"]:
+            return f"roles are {roles}"
+        contents = _contents(messages)
+        if isinstance(contents, str):
+            return contents
+        system, question, assistant = contents
+        return system, "", question, assistant
+    if not isinstance(messages, list) or len(messages) not in (3, 4):
+        return "app messages must be system, optional notes user, question user, assistant"
+    roles = [message.get("role") for message in messages]
+    expected = ["system", "user", "assistant"] if len(messages) == 3 else ["system", "user", "user", "assistant"]
+    if roles != expected:
+        return f"roles are {roles}"
+    contents = _contents(messages)
+    if isinstance(contents, str):
+        return contents
+    if len(contents) == 3:
+        system, question, assistant = contents
+        return system, "", question, assistant
+    system, notes, question, assistant = contents
+    return system, notes, question, assistant
+
+
+def _contents(messages: list) -> list[str] | str:
+    contents = []
+    for message in messages:
+        content = message.get("content")
+        if not isinstance(content, str) or not content.strip():
+            return "empty message content"
+        contents.append(content)
+    return contents
+
+
+def _check_app_notes(
+    example_id: str,
+    notes: str,
+    prompt_ids: list,
+    note_texts: dict[str, str],
+    system: str,
+    report: ValidationReport,
+) -> None:
+    if load_local_notes_title() in system:
+        report.add(example_id, "app layout keeps local notes out of the system message")
+    if any(note_id not in note_texts for note_id in prompt_ids):
+        return
+    expected = local_notes_message([note_texts[note_id] for note_id in prompt_ids]) if prompt_ids else ""
+    if notes != expected:
+        report.add(example_id, "notes user turn does not match localNotesMessage")
+
+
+def _question_of(example: dict, layout: str) -> str:
+    if layout == "app":
+        users = [message["content"] for message in example["messages"] if message.get("role") == "user"]
+        return users[-1]
+    return example["messages"][1]["content"]
+
+
+def _answer_of(example: dict, layout: str) -> str:
+    if layout == "app":
+        return example["messages"][-1]["content"]
+    return example["messages"][2]["content"]
+
+
 def validate_examples(
     examples: list[dict],
     *,
@@ -218,6 +287,7 @@ def validate_examples(
     split: str | None = None,
     size_bounds: tuple[int, int] | None = (300, 600),
     check_split_ratio: bool = True,
+    layout: str = "train",
 ) -> ValidationReport:
     """Validate chat rows.
 
@@ -225,10 +295,16 @@ def validate_examples(
     (`split is None`). The defaults are the training-set gates. A larger
     comparison file passes `(800, 1000)` and `check_split_ratio=False`
     without loosening those defaults.
+
+    `layout` is `train` (persona and notes in the system message, one user
+    turn) or `app` (condition B: notes are their own user turn). Percentage
+    mix bands run only for `train`; they describe the original 415-row set.
     """
+    if layout not in ("train", "app"):
+        raise ValueError("layout must be 'train' or 'app'")
     report = ValidationReport()
     seen_ids: set[str] = set()
-    seen_keys: set[tuple[str, str]] = set()
+    seen_keys: set[tuple[str, ...]] = set()
     by_pair: dict[str, dict[str, dict]] = {}
 
     for example in examples:
@@ -245,6 +321,7 @@ def validate_examples(
             seen_ids=seen_ids,
             seen_keys=seen_keys,
             by_pair=by_pair,
+            layout=layout,
         )
 
     for pair_id, roles in by_pair.items():
@@ -256,13 +333,13 @@ def validate_examples(
         without = roles["without_note"]
         with_meta = with_note["metadata"]
         without_meta = without["metadata"]
-        with_user = with_note["messages"][1]["content"]
-        without_user = without["messages"][1]["content"]
+        with_user = _question_of(with_note, layout)
+        without_user = _question_of(without, layout)
         if with_user != without_user:
             report.add(pair_id, "contrastive pair questions differ")
-        if with_note["messages"][2]["content"] == refusal:
+        if _answer_of(with_note, layout) == refusal:
             report.add(pair_id, "with_note side is a refusal")
-        if without["messages"][2]["content"] != refusal:
+        if _answer_of(without, layout) != refusal:
             report.add(pair_id, "without_note side is not the exact refusal")
         if with_meta.get("grounded_note_ids") in ("none", [], None):
             report.add(pair_id, "with_note side has no grounded notes")
@@ -273,7 +350,7 @@ def validate_examples(
                 for note_id in without_meta.get("prompt_note_ids", [])
                 if note_id in note_texts
             ]
-            answer = with_note["messages"][2]["content"]
+            answer = _answer_of(with_note, layout)
             if fully_supported(answer, remaining):
                 report.add(
                     pair_id,
@@ -283,14 +360,15 @@ def validate_examples(
             report.add(pair_id, "contrastive pair is split across train and valid")
 
     if split is None and report.n_examples:
-        for category, (low, high) in MIX_BANDS.items():
-            share = report.counts[category] / report.n_examples
-            if not low <= share <= high:
-                report.add(
-                    "mix",
-                    f"{category} is {share:.1%} ({report.counts[category]}); "
-                    f"expected {low:.0%}–{high:.0%}",
-                )
+        if layout == "train":
+            for category, (low, high) in MIX_BANDS.items():
+                share = report.counts[category] / report.n_examples
+                if not low <= share <= high:
+                    report.add(
+                        "mix",
+                        f"{category} is {share:.1%} ({report.counts[category]}); "
+                        f"expected {low:.0%}–{high:.0%}",
+                    )
         train_n = sum(report.split_counts.get("train", Counter()).values())
         valid_n = sum(report.split_counts.get("valid", Counter()).values())
         if size_bounds is not None:
@@ -319,26 +397,17 @@ def _check_one(
     split: str | None,
     report: ValidationReport,
     seen_ids: set[str],
-    seen_keys: set[tuple[str, str]],
+    seen_keys: set[tuple[str, ...]],
     by_pair: dict[str, dict[str, dict]],
+    layout: str = "train",
 ) -> None:
     messages = example.get("messages")
     metadata = example.get("metadata")
-    if not isinstance(messages, list) or len(messages) != 3:
-        report.add(example_id, "messages must be [system, user, assistant]")
+    parsed = _parse_messages(messages, layout)
+    if isinstance(parsed, str):
+        report.add(example_id, parsed)
         return
-    roles = [message.get("role") for message in messages]
-    if roles != ["system", "user", "assistant"]:
-        report.add(example_id, f"roles are {roles}")
-        return
-    contents = []
-    for message in messages:
-        content = message.get("content")
-        if not isinstance(content, str) or not content.strip():
-            report.add(example_id, "empty message content")
-            return
-        contents.append(content)
-    system, user, assistant = contents
+    system, notes, question, assistant = parsed
 
     if not isinstance(metadata, dict):
         report.add(example_id, "metadata object is missing")
@@ -368,21 +437,36 @@ def _check_one(
     report.split_counts.setdefault(file_split, Counter())[category] += 1
     report.origins[origin] += 1
 
-    key = (re.sub(r"\s+", " ", system), re.sub(r"\s+", " ", user))
+    key = (
+        re.sub(r"\s+", " ", system),
+        re.sub(r"\s+", " ", notes),
+        re.sub(r"\s+", " ", question),
+    )
     if key in seen_keys:
         report.add(example_id, "duplicate system+question")
     seen_keys.add(key)
 
-    for marker in CONSTRAINT_MARKERS:
-        if marker in system or marker in user:
-            report.add(example_id, f"constraint text {marker!r} leaked into the prompt")
+    for blob in (system, notes, question):
+        for marker in CONSTRAINT_MARKERS:
+            if marker in blob:
+                report.add(example_id, f"constraint text {marker!r} leaked into the prompt")
 
     grounded = metadata.get("grounded_note_ids")
     prompt_ids = metadata.get("prompt_note_ids")
     if not isinstance(prompt_ids, list):
         report.add(example_id, "prompt_note_ids must be a list")
         prompt_ids = []
-    if category == "refusal" or assistant == refusal:
+    if layout == "app":
+        _check_app_notes(example_id, notes, prompt_ids, note_texts, system, report)
+    if layout == "app" and category == "preaching":
+        if assistant != refusal:
+            report.add(example_id, "preaching example must be exactly the refusal string")
+        if grounded == "none" or not isinstance(grounded, list) or not grounded:
+            report.add(example_id, "preaching refusal must keep grounded note ids")
+            grounded = []
+    elif category in ("refusal", "nature_decode") or assistant == refusal:
+        if category == "nature_decode" and assistant != refusal:
+            report.add(example_id, "nature_decode example must be exactly the refusal string")
         if grounded != "none":
             report.add(example_id, "refusal must set grounded_note_ids to 'none'")
     elif grounded == "none" or not isinstance(grounded, list) or not grounded:
@@ -410,7 +494,9 @@ def _check_one(
 
     if category == "refusal" and assistant != refusal:
         report.add(example_id, "refusal category must be exactly the refusal string")
-    if category in ("answerable", "preaching") and assistant == refusal:
+    if layout == "train" and category in ("answerable", "preaching") and assistant == refusal:
+        report.add(example_id, f"{category} example used the refusal string")
+    if layout == "app" and category == "answerable" and assistant == refusal:
         report.add(example_id, f"{category} example used the refusal string")
     if category == "speak_as" and assistant != refusal and FIRST_PERSON.search(assistant):
         report.add(example_id, "speak-as answer uses first person")
@@ -438,7 +524,8 @@ def _check_one(
     else:
         if assistant != refusal:
             report.add(example_id, "refusal text does not match exactly")
-        if category not in ("refusal", "speak_as"):
+        allowed = ("refusal", "speak_as", "preaching", "nature_decode") if layout == "app" else ("refusal", "speak_as")
+        if category not in allowed:
             report.add(example_id, f"{category} may not refuse")
 
     pair_id = metadata.get("pair_id")

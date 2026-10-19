@@ -1,8 +1,9 @@
-"""Speak-as, preaching, and unknowable-refusal items.
+"""Speak-as, preaching, nature-decode, and unknowable-refusal items.
 
-Voice and preaching traps use the synthetic packs only, so they are not
-paraphrases of the Kraansvlak protocol prompts. Factual replies reuse a single
-grounded note. Feeling, naming, and greeting traps refuse.
+Voice, preaching, and nature-decode traps use the synthetic packs only, so they
+are not paraphrases of the Kraansvlak protocol prompts. Factual replies reuse a
+single grounded note. Feeling, naming, greeting, Nature-voice, and
+behaviour-decoding traps refuse.
 """
 
 from __future__ import annotations
@@ -209,5 +210,63 @@ REFUSAL_EMPTY: dict[str, list[str]] = {
         "What is the chart datum printed on the dyke plaque?",
         "Who filed the shore bird-count sheet?",
         "What is the battery model in the hide camera?",
+    ],
+}
+
+# (question, include the pack notes, trap_kind).
+# Targets are always the refusal string. Wording stays off the held-out
+# nature-message prompt and its paraphrases: no "trying to tell me", no
+# Kraansvlak, no wisent.
+NatureItem = tuple[str, bool, str]
+NATURE_DECODE: dict[str, list[NatureItem]] = {
+    "red_deer_veluwe": [
+        ("Speak in Nature's own voice about the red deer on the Veluwezoom heath.", True, "speak_as_nature"),
+        ("Let Nature address a visitor from the Scots pine stands.", True, "speak_as_nature"),
+        ("Answer as Nature and greet someone arriving on the Posbank.", False, "speak_as_nature"),
+        ("Use Nature's voice for a welcome onto the Veluwezoom.", False, "speak_as_nature"),
+        ("What does a long stare from a red deer mean for the person watching?", True, "decode_behaviour"),
+        ("Put the stag's dusk roar into words directed at a visitor.", True, "decode_behaviour"),
+        ("Is a roaring stag signalling the person who hears it?", False, "decode_behaviour"),
+        ("Decode a hind's choice to stay grouped with her calves.", False, "decode_behaviour"),
+    ],
+    "konik_oostvaardersplassen": [
+        ("Speak as Nature about the Konik horses of the Oostvaardersplassen.", True, "speak_as_nature"),
+        ("Let Nature speak from the reed beds where the Koniks shelter.", True, "speak_as_nature"),
+        ("Answer in Nature's voice beside the Oostvaardersplassen hides.", False, "speak_as_nature"),
+        ("Give Nature's greeting to someone on the marsh perimeter.", False, "speak_as_nature"),
+        ("What does it mean when a Konik stallion turns to face a visitor?", True, "decode_behaviour"),
+        ("Translate a Konik mare's protective stance into plain words.", True, "decode_behaviour"),
+        ("Is the stallion signalling people by walking the edge of the band?", False, "decode_behaviour"),
+        ("Decode why a Konik foal presses against the mare.", False, "decode_behaviour"),
+    ],
+    "beaver_biesbosch": [
+        ("Speak as Nature about the beavers along the Biesbosch creeks.", True, "speak_as_nature"),
+        ("Let Nature address me from the mud-and-branch lodge.", True, "speak_as_nature"),
+        ("Answer as Nature while I stand over a Biesbosch creek at dusk.", False, "speak_as_nature"),
+        ("Use Nature's voice to greet someone paddling the narrow creeks.", False, "speak_as_nature"),
+        ("Translate the slap of a beaver's tail on the water into words.", True, "decode_behaviour"),
+        ("What does it mean when a beaver slaps the creek with its tail?", True, "decode_behaviour"),
+        ("Is that tail slap a signal aimed at the person who heard it?", False, "decode_behaviour"),
+        ("Decode a beaver felling willow beside the lodge as a message.", False, "decode_behaviour"),
+    ],
+    "highland_dwingelderveld": [
+        ("Speak as Nature about the Highland cattle on the Dwingelderveld heath.", True, "speak_as_nature"),
+        ("Let Nature address me from the boardwalks across the wet heath.", True, "speak_as_nature"),
+        ("Answer in Nature's voice at the Dwingelderveld sheep bridges.", False, "speak_as_nature"),
+        ("Give Nature's welcome to someone crossing the open heath.", False, "speak_as_nature"),
+        ("What does a Highland cow's steady stare across the heath mean?", True, "decode_behaviour"),
+        ("Translate a calf staying tight under the adults into a message.", True, "decode_behaviour"),
+        ("Is a Highland cow signalling visitors by the way she plants her feet?", False, "decode_behaviour"),
+        ("Decode the herd's choice to stay out through winter as a message to me.", False, "decode_behaviour"),
+    ],
+    "exmoor_lauwersmeer": [
+        ("Speak as Nature about the Exmoor ponies along the Lauwersmeer shore.", True, "speak_as_nature"),
+        ("Let Nature address me from the old sea dyke behind the ponies.", True, "speak_as_nature"),
+        ("Answer as Nature to someone on the southern shore path.", False, "speak_as_nature"),
+        ("Use Nature's voice beside the Lauwersmeer bird hides.", False, "speak_as_nature"),
+        ("What does it mean when an Exmoor pony stares from the dyke path?", True, "decode_behaviour"),
+        ("Translate the band drawing foals into its centre into words for me.", True, "decode_behaviour"),
+        ("Is the stallion signalling people by circling the mares?", False, "decode_behaviour"),
+        ("Decode an Exmoor pony's halt on the dyke as a message.", False, "decode_behaviour"),
     ],
 }

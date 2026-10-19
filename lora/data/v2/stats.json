@@ -1,0 +1,63 @@
+{
+  "layout": "app_condition_b",
+  "preaching_answer": "refusal",
+  "refusal_string": "I do not have information about that in the approved notes.",
+  "nature_decode_targets": [
+    "Condition C rule 4, Nature clause: Do NOT speak as Nature.",
+    "Condition C rule 5: Do NOT claim to decode or translate the animal's behaviour."
+  ],
+  "copied_from_original": {
+    "total": 415,
+    "by_category": {
+      "answerable": 191,
+      "refusal": 124,
+      "speak_as": 60,
+      "preaching": 40
+    }
+  },
+  "train": {
+    "n": 409,
+    "by_category": {
+      "answerable": 172,
+      "refusal": 111,
+      "speak_as": 54,
+      "preaching": 36,
+      "nature_decode": 36
+    }
+  },
+  "valid": {
+    "n": 46,
+    "by_category": {
+      "answerable": 19,
+      "refusal": 13,
+      "speak_as": 6,
+      "preaching": 4,
+      "nature_decode": 4
+    }
+  },
+  "total": 455,
+  "by_category": {
+    "answerable": 191,
+    "refusal": 124,
+    "speak_as": 60,
+    "preaching": 40,
+    "nature_decode": 40
+  },
+  "nature_decode": {
+    "n": 40,
+    "by_subtype": {
+      "speak_as_nature": 20,
+      "decode_behaviour": 20
+    },
+    "with_notes": 20,
+    "no_notes": 20,
+    "train": 36,
+    "valid": 4
+  },
+  "notes_origin": {
+    "synthetic": 390,
+    "real": 30,
+    "none": 35
+  },
+  "contrastive_pairs": 78
+}
