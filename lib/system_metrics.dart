@@ -113,8 +113,6 @@ String readDeviceModel() {
   return Platform.operatingSystem;
 }
 
-
-
 /// Formats a byte count into a human-readable string (e.g., "1.42 GB", "420 MB").
 String formatBytes(int? bytes, {bool signed = false}) {
   if (bytes == null) {
@@ -326,10 +324,12 @@ class RunRecord {
     return RunRecord(
       runIndex: (json['runIndex'] as num?)?.toInt() ?? 0,
       runIndexSinceLoad: (json['runIndexSinceLoad'] as num?)?.toInt() ?? 1,
-      isColdLoad: (json['loadType'] == 'Cold') ||
+      isColdLoad:
+          (json['loadType'] == 'Cold') ||
           (json['isColdLoad'] as bool? ?? false),
       loadDurationMs: (json['loadDurationMs'] as num?)?.toInt(),
-      timestamp: DateTime.tryParse(json['timestamp']?.toString() ?? '') ??
+      timestamp:
+          DateTime.tryParse(json['timestamp']?.toString() ?? '') ??
           DateTime.now(),
       deviceModel: json['deviceModel']?.toString() ?? 'Unknown',
       osVersion: json['osVersion']?.toString() ?? 'Unknown',
@@ -341,7 +341,8 @@ class RunRecord {
       condition: json['condition']?.toString() ?? 'A',
       notesMode: json['notesMode']?.toString() ?? 'none',
       k: (json['k'] as num?)?.toInt() ?? 0,
-      injectedNoteIds: (json['injectedNoteIds'] as List?)
+      injectedNoteIds:
+          (json['injectedNoteIds'] as List?)
               ?.map((e) => e.toString())
               .toList() ??
           const [],
@@ -364,10 +365,10 @@ class RunRecord {
       tokensPerSecond: (json['tokensPerSecond'] as num?)?.toDouble(),
       batteryLevelBefore: (json['batteryLevelBefore'] as num?)?.toInt(),
       batteryLevelAfter: (json['batteryLevelAfter'] as num?)?.toInt(),
-      batteryTempBeforeCelsius:
-          (json['batteryTempBeforeCelsius'] as num?)?.toDouble(),
-      batteryTempAfterCelsius:
-          (json['batteryTempAfterCelsius'] as num?)?.toDouble(),
+      batteryTempBeforeCelsius: (json['batteryTempBeforeCelsius'] as num?)
+          ?.toDouble(),
+      batteryTempAfterCelsius: (json['batteryTempAfterCelsius'] as num?)
+          ?.toDouble(),
       throttlePercentage: (json['throttlePercentage'] as num?)?.toDouble(),
       isHeatTest: json['isHeatTest'] as bool? ?? false,
       thinkingDisabled: json['thinkingDisabled'] as bool?,
@@ -376,6 +377,12 @@ class RunRecord {
 }
 
 /// Manages persistence to disk across app sessions.
+///
+/// Runs are `runs_history.jsonl` in the application documents directory
+/// (`context.getDir("flutter")` on Android). Installing a new APK over this
+/// one keeps that directory when the package id and signing key stay the same
+/// and the app is not uninstalled. Uninstall deletes it. Copies in
+/// Download/technical-exploration are exports, not this history.
 class RunPersistenceManager {
   static const _fileName = 'runs_history.jsonl';
 
@@ -494,9 +501,10 @@ class BenchmarkExporter {
         final idleMb = r.ramIdleBytes != null
             ? (r.ramIdleBytes! / 1024 / 1024).toStringAsFixed(1)
             : '';
-        final overheadMb = (r.ramIdleBytes != null && r.ramBeforeLoadBytes != null)
+        final overheadMb =
+            (r.ramIdleBytes != null && r.ramBeforeLoadBytes != null)
             ? ((r.ramIdleBytes! - r.ramBeforeLoadBytes!) / 1024 / 1024)
-                .toStringAsFixed(1)
+                  .toStringAsFixed(1)
             : '';
         buffer.writeln(
           '${_escape(r.deviceModel)},${_escape(r.osVersion)},${_escape(r.modelFileName)},${_escape(r.architecture)},${_escape(r.quantization)},${_escape(r.backend)},${r.nGpuLayers},${r.loadType},${r.loadDurationMs ?? ""},$beforeMb,$idleMb,$overheadMb,${r.timestamp.toIso8601String()}',
@@ -529,48 +537,50 @@ class BenchmarkExporter {
           ? r.batteryTempAfterCelsius!.toStringAsFixed(1)
           : '';
 
-      buffer.writeln([
-        r.runIndex,
-        r.runIndexSinceLoad,
-        r.loadType,
-        r.timestamp.toIso8601String(),
-        _escape(r.deviceModel),
-        _escape(r.osVersion),
-        _escape(r.modelFileName),
-        _escape(r.architecture),
-        _escape(r.quantization),
-        _escape(r.backend),
-        _escape(r.condition),
-        _escape(r.notesMode),
-        r.k,
-        _escape(r.injectedNoteIds.join('; ')),
-        _escape(r.promptId),
-        _escape(r.promptText),
-        r.decodingSettings.temperature,
-        r.decodingSettings.seed ?? '',
-        r.decodingSettings.topK,
-        r.decodingSettings.topP,
-        r.decodingSettings.repeatPenalty ?? '',
-        r.decodingSettings.maxTokens,
-        r.decodingSettings.contextSize,
-        r.promptTokenCount ?? '',
-        r.generatedTokenCount ?? '',
-        r.hitMaxTokens ? 'Yes' : 'No',
-        r.ttftMs ?? '',
-        r.generationDurationMs ?? '',
-        tps,
-        peakMb,
-        r.batteryLevelBefore ?? '',
-        r.batteryLevelAfter ?? '',
-        tempB,
-        tempA,
-        throttle,
-        r.isHeatTest ? 'Yes' : 'No',
-        r.thinkingDisabled == null
-            ? 'N/A'
-            : (r.thinkingDisabled! ? 'Yes' : 'No'),
-        _escape(r.output),
-      ].join(','));
+      buffer.writeln(
+        [
+          r.runIndex,
+          r.runIndexSinceLoad,
+          r.loadType,
+          r.timestamp.toIso8601String(),
+          _escape(r.deviceModel),
+          _escape(r.osVersion),
+          _escape(r.modelFileName),
+          _escape(r.architecture),
+          _escape(r.quantization),
+          _escape(r.backend),
+          _escape(r.condition),
+          _escape(r.notesMode),
+          r.k,
+          _escape(r.injectedNoteIds.join('; ')),
+          _escape(r.promptId),
+          _escape(r.promptText),
+          r.decodingSettings.temperature,
+          r.decodingSettings.seed ?? '',
+          r.decodingSettings.topK,
+          r.decodingSettings.topP,
+          r.decodingSettings.repeatPenalty ?? '',
+          r.decodingSettings.maxTokens,
+          r.decodingSettings.contextSize,
+          r.promptTokenCount ?? '',
+          r.generatedTokenCount ?? '',
+          r.hitMaxTokens ? 'Yes' : 'No',
+          r.ttftMs ?? '',
+          r.generationDurationMs ?? '',
+          tps,
+          peakMb,
+          r.batteryLevelBefore ?? '',
+          r.batteryLevelAfter ?? '',
+          tempB,
+          tempA,
+          throttle,
+          r.isHeatTest ? 'Yes' : 'No',
+          r.thinkingDisabled == null
+              ? 'N/A'
+              : (r.thinkingDisabled! ? 'Yes' : 'No'),
+          _escape(r.output),
+        ].join(','),
+      );
     }
 
     return buffer.toString();
@@ -653,16 +663,17 @@ class BenchmarkExporter {
     final timestamp =
         '${now.year.toString().padLeft(4, '0')}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}_'
         '${now.hour.toString().padLeft(2, '0')}${now.minute.toString().padLeft(2, '0')}${now.second.toString().padLeft(2, '0')}';
-    final csvFile = File('${dir.path}/technical_exploration_runs_$timestamp.csv');
-    final jsonFile = File('${dir.path}/technical_exploration_runs_$timestamp.json');
+    final csvFile = File(
+      '${dir.path}/technical_exploration_runs_$timestamp.csv',
+    );
+    final jsonFile = File(
+      '${dir.path}/technical_exploration_runs_$timestamp.json',
+    );
 
-    await csvFile.writeAsString(exportCsv(runs));
-    await jsonFile.writeAsString(exportJson(runs));
+    await csvFile.writeAsString(exportCsv(runs), flush: true);
+    await jsonFile.writeAsString(exportJson(runs), flush: true);
 
-    return {
-      'csv': csvFile.path,
-      'json': jsonFile.path,
-    };
+    return {'csv': csvFile.path, 'json': jsonFile.path};
   }
 
   static String _escape(String value) {

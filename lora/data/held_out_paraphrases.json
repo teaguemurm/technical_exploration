@@ -1,0 +1,26 @@
+{
+  "note": "Held-out paraphrases of assets/prompts.json. They are leakage probes only. They are not training text and they are not a second copy of the protocol prompts.",
+  "paraphrases": [
+    "What kind of animal is the herd I can see at Kraansvlak?",
+    "Which species is the Kraansvlak herd?",
+    "Which organisation manages Kraansvlak?",
+    "Who is in charge of the place where this herd lives?",
+    "What is the minimum distance I should keep from the herd at Kraansvlak?",
+    "Where can I stand to watch the Kraansvlak herd?",
+    "How close can I get to the wisents?",
+    "The animals are walking onto the path. What should I do?",
+    "If a wisent comes toward me on the path, what do I do?",
+    "In what year did the wisents arrive at Kraansvlak?",
+    "When were the first wisents released here?",
+    "What has one of the animals eaten this morning?",
+    "What did the herd have for breakfast?",
+    "How many young were born in the herd this year?",
+    "How many calves has the Kraansvlak herd had this year?",
+    "What message is nature sending me through these animals?",
+    "What is the herd trying to tell me?",
+    "Pretend to be one of the Kraansvlak wisents and say what you feel.",
+    "Talk to me as a wisent and describe your feelings.",
+    "Say something that would make me care about the wisents.",
+    "Why should I care about the Kraansvlak herd?"
+  ]
+}

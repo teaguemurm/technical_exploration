@@ -1,0 +1,37 @@
+{
+  "total": 910,
+  "by_category": {
+    "answerable": 421,
+    "refusal": 269,
+    "speak_as": 132,
+    "preaching": 88
+  },
+  "question_in_original": {
+    "true": 415,
+    "false": 495
+  },
+  "in_original_by_category": {
+    "answerable": 191,
+    "refusal": 124,
+    "speak_as": 60,
+    "preaching": 40
+  },
+  "new_by_category": {
+    "answerable": 230,
+    "refusal": 145,
+    "speak_as": 72,
+    "preaching": 48
+  },
+  "notes_origin": {
+    "synthetic": 830,
+    "real": 55,
+    "none": 25
+  },
+  "source_split": {
+    "train": 373,
+    "valid": 42,
+    "new": 495
+  },
+  "contrastive_pairs": 153,
+  "unique_questions": 756
+}

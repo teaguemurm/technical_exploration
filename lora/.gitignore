@@ -1,0 +1,16 @@
+.venv/
+__pycache__/
+*.pyc
+
+# Trained weights, converted adapters, and fused models.
+adapters/
+peft_adapter/
+fused_hf/
+fused_model/
+base_hf/
+out/
+checkpoints/
+*.safetensors
+*.gguf
+*.bin
+*.npz

@@ -1,0 +1,13 @@
+# Mac only. Dataset scripts do not import these.
+#
+# Training (bf16 LoRA, not QLoRA):
+#   pip install "mlx-lm[train]"
+mlx-lm[train]>=0.22
+
+# scripts/mlx_to_peft.py
+numpy>=1.26
+safetensors>=0.4
+
+# llama.cpp's convert_lora_to_gguf.py needs torch, transformers, and gguf.
+# Install those from that repo's requirements.txt in the environment you use
+# to run the converter, which can be separate from mlx-lm.

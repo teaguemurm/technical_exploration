@@ -1,0 +1,251 @@
+{
+  "synthetic": true,
+  "warning": "These notes are synthetic. Do not treat them as visitor guidance.",
+  "packs": [
+    {
+      "id": "red_deer_veluwe",
+      "synthetic": true,
+      "animal": "red deer",
+      "place": "Veluwezoom",
+      "note": "Invented for constraint-LoRA training. Not a park fact sheet.",
+      "notes": [
+        {
+          "id": "rd-species",
+          "text": "The Veluwezoom herd is a herd of red deer."
+        },
+        {
+          "id": "rd-park",
+          "text": "The herd lives in Nationaal Park Veluwezoom."
+        },
+        {
+          "id": "rd-manager",
+          "text": "Natuurmonumenten manages the area."
+        },
+        {
+          "id": "rd-rut",
+          "text": "During the rut in September and October the stags roar at dusk."
+        },
+        {
+          "id": "rd-antlers",
+          "text": "Stags shed their antlers in late winter and grow a new set through the spring."
+        },
+        {
+          "id": "rd-food",
+          "text": "The red deer browse heather, grasses, and young shoots and are not given supplementary feed."
+        },
+        {
+          "id": "rd-groups",
+          "text": "Hinds and calves stay in groups, while mature stags are often apart outside the rut."
+        },
+        {
+          "id": "rd-lookout",
+          "text": "Visitors may see the deer from the marked paths and from the lookout at the Posbank."
+        },
+        {
+          "id": "rd-shelter",
+          "text": "In hard weather the deer use the Scots pine stands for shelter."
+        },
+        {
+          "id": "rd-water",
+          "text": "The deer drink at the pools and streams on the heath."
+        }
+      ]
+    },
+    {
+      "id": "konik_oostvaardersplassen",
+      "synthetic": true,
+      "animal": "Konik horses",
+      "place": "Oostvaardersplassen",
+      "note": "Invented for constraint-LoRA training. Not a park fact sheet.",
+      "notes": [
+        {
+          "id": "kk-species",
+          "text": "The Oostvaardersplassen herd is a herd of Konik horses."
+        },
+        {
+          "id": "kk-place",
+          "text": "The herd lives in the Oostvaardersplassen nature reserve in Flevoland."
+        },
+        {
+          "id": "kk-manager",
+          "text": "Staatsbosbeheer manages the area."
+        },
+        {
+          "id": "kk-coat",
+          "text": "Konik horses have a grey-dun coat and a dark dorsal stripe."
+        },
+        {
+          "id": "kk-food",
+          "text": "The Koniks graze reeds, grasses, and willow shoots and are not given hay by visitors."
+        },
+        {
+          "id": "kk-water",
+          "text": "The horses drink from the shallow pools and ditches in the marsh."
+        },
+        {
+          "id": "kk-foals",
+          "text": "Foals are usually born in spring and stay with the mare."
+        },
+        {
+          "id": "kk-bands",
+          "text": "The horses live in family bands led by a mare, with a stallion alongside."
+        },
+        {
+          "id": "kk-shelter",
+          "text": "In hard weather the bands use the willow scrub and reed beds for shelter."
+        },
+        {
+          "id": "kk-hides",
+          "text": "Visitors view the horses from the perimeter tracks and the hides."
+        }
+      ]
+    },
+    {
+      "id": "beaver_biesbosch",
+      "synthetic": true,
+      "animal": "Eurasian beavers",
+      "place": "Biesbosch",
+      "note": "Invented for constraint-LoRA training. Not a park fact sheet.",
+      "notes": [
+        {
+          "id": "bv-species",
+          "text": "The Biesbosch animals in these notes are Eurasian beavers."
+        },
+        {
+          "id": "bv-place",
+          "text": "The colony lives in Nationaal Park De Biesbosch."
+        },
+        {
+          "id": "bv-manager",
+          "text": "Staatsbosbeheer manages the national park."
+        },
+        {
+          "id": "bv-lodge",
+          "text": "Beavers build lodges of branches and mud on the water edge."
+        },
+        {
+          "id": "bv-dams",
+          "text": "In the narrow creeks they sometimes dam the flow with branches."
+        },
+        {
+          "id": "bv-food",
+          "text": "Beavers eat bark, twigs, and aquatic plants, and they fell willow and poplar."
+        },
+        {
+          "id": "bv-night",
+          "text": "The beavers are mostly active at dusk and during the night."
+        },
+        {
+          "id": "bv-tail",
+          "text": "A beaver tail is flat and scaly and is used as a rudder in the water."
+        },
+        {
+          "id": "bv-kits",
+          "text": "Kits are born inside the lodge in late spring and swim within a few weeks."
+        },
+        {
+          "id": "bv-view",
+          "text": "Visitors most often notice beavers from the canoe creeks and the watch huts at dusk."
+        }
+      ]
+    },
+    {
+      "id": "highland_dwingelderveld",
+      "synthetic": true,
+      "animal": "Scottish Highland cattle",
+      "place": "Dwingelderveld",
+      "note": "Invented for constraint-LoRA training. Not a park fact sheet.",
+      "notes": [
+        {
+          "id": "hc-species",
+          "text": "The Dwingelderveld grazers in these notes are Scottish Highland cattle."
+        },
+        {
+          "id": "hc-place",
+          "text": "The herd lives on the heath of Nationaal Park Dwingelderveld."
+        },
+        {
+          "id": "hc-manager",
+          "text": "Natuurmonumenten manages the area."
+        },
+        {
+          "id": "hc-coat",
+          "text": "Highland cattle have a long shaggy coat and wide horns."
+        },
+        {
+          "id": "hc-food",
+          "text": "Highland cattle graze heather, purple moor-grass, and birch shoots and are not fed by visitors."
+        },
+        {
+          "id": "hc-winter",
+          "text": "The herd stays out on the heath through the winter."
+        },
+        {
+          "id": "hc-calves",
+          "text": "Calves are born in spring and have a lighter coat than the adults."
+        },
+        {
+          "id": "hc-birch",
+          "text": "The cattle keep young birch from closing over the open heath."
+        },
+        {
+          "id": "hc-water",
+          "text": "Highland cattle drink at the peat pools and the shallow fens."
+        },
+        {
+          "id": "hc-view",
+          "text": "Visitors see the cattle from the sheep bridges and the boardwalks across the wet heath."
+        }
+      ]
+    },
+    {
+      "id": "exmoor_lauwersmeer",
+      "synthetic": true,
+      "animal": "Exmoor ponies",
+      "place": "Lauwersmeer",
+      "note": "Invented for constraint-LoRA training. Not a park fact sheet.",
+      "notes": [
+        {
+          "id": "ex-species",
+          "text": "The Lauwersmeer herd is a herd of Exmoor ponies."
+        },
+        {
+          "id": "ex-place",
+          "text": "The herd lives in Nationaal Park Lauwersmeer."
+        },
+        {
+          "id": "ex-manager",
+          "text": "Staatsbosbeheer manages the area."
+        },
+        {
+          "id": "ex-coat",
+          "text": "Exmoor ponies have a brown coat, a mealy muzzle, and a dark eel stripe along the back."
+        },
+        {
+          "id": "ex-food",
+          "text": "The ponies graze salt marsh grasses and reeds and find their own food."
+        },
+        {
+          "id": "ex-winter",
+          "text": "Exmoor ponies keep a winter coat and stay outside through the year."
+        },
+        {
+          "id": "ex-foals",
+          "text": "Foals are born in late spring and the band keeps them in the middle of the group."
+        },
+        {
+          "id": "ex-bands",
+          "text": "The ponies move in small bands of mares, foals, and a stallion."
+        },
+        {
+          "id": "ex-water",
+          "text": "The bands drink from the freshwater pools behind the old sea dyke."
+        },
+        {
+          "id": "ex-view",
+          "text": "Visitors see the ponies from the dyke path and the bird hides on the southern shore."
+        }
+      ]
+    }
+  ]
+}

@@ -2,6 +2,8 @@
 
 Offline Flutter application for running the local on-device LLM evaluation protocol across 10 prompts, 10 local dataset notes, and 3 experimental conditions (plus an optional retrieval approximation pass).
 
+The constraint-LoRA training workspace (dataset, checks, and the Mac mlx-lm pipeline) is in [lora/](lora/README.md).
+
 Outputs are scored by hand post-hoc; non-functional metrics (timings, token rates, memory, thermal throttling, and battery) export directly into the evaluation measurement sheet and benchmark reports.
 
 ---
@@ -200,7 +202,7 @@ After every load the app runs two fixed sanity prompts ("Name one European wild 
 
 Load does not hash the GGUF. Hashing reads the whole file and warms the page cache, which makes the following load time incomparable. "Verify model" hashes once and stores the result in `model_sha256_cache.json` in the exports directory, keyed by path, size, and mtime. A later load of that same file reuses the stored hash and still blocks a known-Qwen mismatch. An unverified file loads and is logged as `sha256=unverified`. Verifying and then immediately loading still warms the cache.
 
-The CPU configuration for a batch (winning backend, KleidiAI SME, threads, KV type, flash attention, mmap, GPU layers) is printed to logcat and shown under the model line. It is not a new export column. Threads, KV type, and flash attention are the values this app's repository passes. It does not pass them, so the line says `unset`. It does not read `llama_context_default_params`. `sme=` is the value this process set with `setenv` before backend init, or `unset`.
+The CPU configuration for a batch (winning backend, KleidiAI SME, threads, KV type, flash attention, mmap, GPU layers) is printed to logcat and shown under the model line. It is not a new export column. `variant=` is the basename of each registered `libggml-cpu-*.so` (`dladdr` on the backend's `ggml_backend_set_n_threads`), not the `CPU` device name. Threads, KV type, and flash attention are the values this app's repository passes. It does not pass them unless a build define says so, so the line says `unset`. It does not read `llama_context_default_params`. `sme=` is the value this process set with `setenv` before backend init, or `unset`.
 
 ## 6. Building and Running on Devices
 
@@ -233,6 +235,34 @@ Storage access uses `FileType.any` with user file selection, allowing `.gguf` fi
    ```
    Output: `build/app/outputs/flutter-apk/app-no-armv92-release.apk`
 
+   Those two APKs both failed sanity: each prompt hit the token cap. SME KleidiAI and the armv9.2 libraries are ruled out on their own. Do not treat them as the next protocol build.
+
+   The next three builds each change one thing. `app-release.apk` is still overwritten; keep the named copy. `packages/llm_llamacpp` is the vendored 0.7.0 package. The nommap APK is the only one that sets `load_mode` to `NONE` in the inference isolate. The others leave llama.cpp's `AUTO` load mode.
+
+   No mmap. Threads stay unset, every CPU library stays, GPU layers stay 0:
+   ```bash
+   flutter build apk --release --dart-define=NO_MMAP=true
+   ```
+   Output: `build/app/outputs/flutter-apk/app-nommap-release.apk`
+
+   Only the armv8.0 and armv8.2 CPU libraries, with `threads=4` passed into the repository:
+   ```bash
+   flutter build apk --release --dart-define=CPU_LIBS=armv8 --dart-define=N_THREADS=4
+   ```
+   Output: `build/app/outputs/flutter-apk/app-armv8-threads4-release.apk`
+
+   Same libraries, with the thread count left unset:
+   ```bash
+   flutter build apk --release --dart-define=CPU_LIBS=armv8
+   ```
+   Output: `build/app/outputs/flutter-apk/app-armv8-release.apk`
+
+   Vulkan diagnostic. `nGpuLayers=99` is not the protocol default. Run the sanity prompts only:
+   ```bash
+   flutter build apk --release --dart-define=N_GPU_LAYERS=99
+   ```
+   Output: `build/app/outputs/flutter-apk/app-vulkan99-release.apk`
+
 2. **Push GGUF Model to Phone**:
    ```bash
    adb push path/to/model.gguf /sdcard/Download/
@@ -244,3 +274,7 @@ Storage access uses `FileType.any` with user file selection, allowing `.gguf` fi
    # Or run directly with live console logs:
    flutter run -d <android-device-id> --release
    ```
+
+   Installing a newer APK over the installed app keeps the run history. `runs_history.jsonl` is in the app documents directory, and Android leaves that directory in place when the package id and signing key stay the same and the app is not uninstalled. Uninstall deletes it.
+
+   Export Files on Android still writes that private copy, then copies the finished CSV, JSON, and `model_sha256_cache.json` (when the cache exists) to `Download/technical-exploration/`. That folder shows up in the Files app and in Windows Explorer over USB. The snackbar names the files. Share sends those copies through the Android share sheet. A name that is already in that folder is overwritten for the hash cache and given a numeric suffix for a timestamped CSV or JSON. Desktop export is unchanged.
