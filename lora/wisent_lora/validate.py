@@ -216,7 +216,16 @@ def validate_examples(
     refusal: str,
     note_texts: dict[str, str],
     split: str | None = None,
+    size_bounds: tuple[int, int] | None = (300, 600),
+    check_split_ratio: bool = True,
 ) -> ValidationReport:
+    """Validate chat rows.
+
+    `size_bounds` and `check_split_ratio` apply only to a combined pass
+    (`split is None`). The defaults are the training-set gates. A larger
+    comparison file passes `(800, 1000)` and `check_split_ratio=False`
+    without loosening those defaults.
+    """
     report = ValidationReport()
     seen_ids: set[str] = set()
     seen_keys: set[tuple[str, str]] = set()
@@ -284,9 +293,17 @@ def validate_examples(
                 )
         train_n = sum(report.split_counts.get("train", Counter()).values())
         valid_n = sum(report.split_counts.get("valid", Counter()).values())
-        if report.n_examples < 300 or report.n_examples > 600:
-            report.add("mix", f"example count {report.n_examples} is outside 300–600")
-        if train_n and valid_n:
+        if size_bounds is not None:
+            low, high = size_bounds
+            if report.n_examples < low or report.n_examples > high:
+                if (low, high) == (300, 600):
+                    report.add("mix", f"example count {report.n_examples} is outside 300–600")
+                else:
+                    report.add(
+                        "mix",
+                        f"example count {report.n_examples} is outside {low}–{high}",
+                    )
+        if check_split_ratio and train_n and valid_n:
             valid_share = valid_n / report.n_examples
             if not 0.08 <= valid_share <= 0.12:
                 report.add("mix", f"valid split is {valid_share:.1%}; expected about 10%")
