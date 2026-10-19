@@ -2,6 +2,8 @@
 
 Offline Flutter application for running the local on-device LLM evaluation protocol across 10 prompts, 10 local dataset notes, and 3 experimental conditions (plus an optional retrieval approximation pass).
 
+The constraint-LoRA training workspace (dataset, checks, and the Mac mlx-lm pipeline) is in [lora/](lora/README.md).
+
 Outputs are scored by hand post-hoc; non-functional metrics (timings, token rates, memory, thermal throttling, and battery) export directly into the evaluation measurement sheet and benchmark reports.
 
 ---

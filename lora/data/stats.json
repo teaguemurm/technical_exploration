@@ -1,0 +1,33 @@
+{
+  "train": {
+    "n": 373,
+    "by_category": {
+      "answerable": 172,
+      "refusal": 111,
+      "speak_as": 54,
+      "preaching": 36
+    }
+  },
+  "valid": {
+    "n": 42,
+    "by_category": {
+      "answerable": 19,
+      "refusal": 13,
+      "speak_as": 6,
+      "preaching": 4
+    }
+  },
+  "total": 415,
+  "by_category": {
+    "answerable": 191,
+    "refusal": 124,
+    "speak_as": 60,
+    "preaching": 40
+  },
+  "notes_origin": {
+    "synthetic": 370,
+    "real": 30,
+    "none": 15
+  },
+  "contrastive_pairs": 78
+}

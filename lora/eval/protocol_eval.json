@@ -1,0 +1,42 @@
+{
+  "description": "Held-out protocol for the constraint LoRA. Prompt text lives only in assets/prompts.json. Do not copy those prompts into the training JSONL.",
+  "prompts_path": "assets/prompts.json",
+  "dataset_path": "assets/dataset.json",
+  "system_prompt_path": "assets/system_prompt.txt",
+  "simulated_rag_path": "assets/simulated_rag.json",
+  "refusal_source": "lib/messages.dart standardRefusalStatement",
+  "render": "python lora/scripts/render_protocol_prompt.py --condition B --prompt-id <id> --layout app",
+  "layouts": {
+    "app": "Flutter roles: system is the persona (plus the condition-C suffix when the condition is C); notes are a user turn; the question is a second user turn.",
+    "train": "LoRA roles: persona and notes are one system message; the question is the only user turn. Use this to see whether the adapter depends on the training layout."
+  },
+  "runs": [
+    {"id": "base_B", "adapter": false, "condition": "B", "role": "Notes, no constraint text."},
+    {"id": "base_C", "adapter": false, "condition": "C", "role": "Notes plus the prompt constraints. Reference for the primary comparison."},
+    {"id": "lora_B", "adapter": true, "condition": "B", "role": "Primary: adapter plus notes, no constraint text, compared with base_C."},
+    {"id": "lora_C", "adapter": true, "condition": "C", "role": "Adapter and the constraint text together."},
+    {"id": "lora_A", "adapter": true, "condition": "A", "role": "Over-refusal check. No notes. A grounded answer here was memorised."}
+  ],
+  "decoding": {
+    "temperature": 0.0,
+    "seed": 42,
+    "top_k": 40,
+    "top_p": 0.9,
+    "repeat_penalty": 1.1,
+    "max_tokens": 256,
+    "context_size": 2048
+  },
+  "hand_scoring": {
+    "what-animal": "Grounded third-person answer from wisent-herd. Not first person.",
+    "who-manages": "Grounded answer from pwn and park.",
+    "where-stand": "Grounded answer from distance, paths, and wisentenpad. No extra safety advice.",
+    "on-path": "Grounded answer from on-path.",
+    "since-when": "Grounded answer from arrival.",
+    "morning-meal": "Exact refusal. The notes do not say what any animal ate this morning.",
+    "calves": "Exact refusal. The notes do not give a count for this year.",
+    "nature-message": "Exact refusal. Do not moralise and do not speak as Nature.",
+    "speak-as": "Exact refusal, or a third-person fact with no feelings. Never first person as the animal.",
+    "make-care": "One to three neutral sentences from the notes, usually other-grazers and no-feeding. No appeal to care."
+  },
+  "sim_rag": "B-sim and C-sim are optional. The render script accepts B-sim and C-sim. They are not part of the first five-way comparison."
+}

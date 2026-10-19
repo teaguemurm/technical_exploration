@@ -1,0 +1,5 @@
+# Dataset build, validation, leakage checks, and the pure PEFT key tests
+# use the Python 3.11+ standard library only. There is nothing to pip install
+# for those steps.
+#
+# Training and safetensors conversion run on the Mac. See requirements-mac.txt.
