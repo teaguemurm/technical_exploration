@@ -187,6 +187,10 @@ Stream<LLMChunk> _streamChatImpl(
           ),
           promptEvalCount: message.promptTokens,
           evalCount: message.generatedTokens,
+          providerMetadata: {
+            if (message.promptFormatter != null)
+              'promptFormatter': message.promptFormatter,
+          },
         );
 
         if (collectedToolCalls.isNotEmpty &&

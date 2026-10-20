@@ -1,3 +1,5 @@
+import 'package:llm_llamacpp/src/chat_template_format.dart';
+
 /// Resolves the text-level stop strings used to end a generation.
 ///
 /// Two mechanisms stop generation in llama.cpp. Token-level detection uses
@@ -42,6 +44,16 @@ List<String> resolveStopTokens({
   // Same idea for Llama-3-style end-of-turn markers.
   if (prompt.contains('<|eot_id|>')) {
     addDetected('<|eot_id|>', 'Llama-3-style template detected');
+  }
+
+  // Gemma 4's own end marker is `<turn|>`. Some checkpoints still emit the
+  // older `<end_of_turn>` or `<eos>`. Stopping only on `<turn|>` lets those
+  // runs continue to maxTokens. These are added only when the rendered prompt
+  // is Gemma 4, so a ChatML prompt's stop list is unchanged.
+  if (prompt.contains('<|turn>') || prompt.contains('<turn|>')) {
+    for (final marker in gemma4GenerationStopMarkers) {
+      addDetected(marker, 'Gemma 4 template detected');
+    }
   }
 
   return resolved;

@@ -229,6 +229,8 @@ class RunRecord {
     this.throttlePercentage,
     this.isHeatTest = false,
     this.thinkingDisabled,
+    this.promptFormatter,
+    this.thoughtEmitted = false,
   });
 
   final int runIndex;
@@ -276,6 +278,14 @@ class RunRecord {
   final bool isHeatTest;
   final bool? thinkingDisabled;
 
+  /// `native`, `gemma4`, or `chatml-fallback`. Null on runs recorded before
+  /// the formatter was logged.
+  final String? promptFormatter;
+
+  /// True when the model output contained a thought block. Independent of
+  /// [thinkingDisabled], which stays null because this app applies no toggle.
+  final bool thoughtEmitted;
+
   String get loadType => isColdLoad ? 'Cold' : 'Warm';
 
   Map<String, dynamic> toJson() => {
@@ -318,6 +328,8 @@ class RunRecord {
     'throttlePercentage': throttlePercentage,
     'isHeatTest': isHeatTest,
     'thinkingDisabled': thinkingDisabled,
+    'promptFormatter': promptFormatter,
+    'thoughtEmitted': thoughtEmitted,
   };
 
   factory RunRecord.fromJson(Map<String, dynamic> json) {
@@ -372,6 +384,8 @@ class RunRecord {
       throttlePercentage: (json['throttlePercentage'] as num?)?.toDouble(),
       isHeatTest: json['isHeatTest'] as bool? ?? false,
       thinkingDisabled: json['thinkingDisabled'] as bool?,
+      promptFormatter: json['promptFormatter'] as String?,
+      thoughtEmitted: json['thoughtEmitted'] as bool? ?? false,
     );
   }
 }
@@ -517,7 +531,7 @@ class BenchmarkExporter {
     // Section 2: Inference Runs
     buffer.writeln('# Tab: Inference');
     buffer.writeln(
-      'Run Index,Run Since Load,Load Type,Timestamp,Device Model,OS Version,Model File,Architecture,Quantization,Backend,Condition,Notes Mode,k,Injected Notes,Prompt ID,Prompt Text,Temperature,Seed,Top-K,Top-P,Repeat Penalty,Max Tokens,Context Size,Prompt Tokens,Gen Tokens,Hit Max Tokens,TTFT (ms),Gen Duration (ms),TPS (tok/s),RAM Peak (MB),Battery Level Before (%),Battery Level After (%),Battery Temp Before (C),Battery Temp After (C),Throttle (%),Is Heat Test,Thinking Disabled,Output',
+      'Run Index,Run Since Load,Load Type,Timestamp,Device Model,OS Version,Model File,Architecture,Quantization,Backend,Condition,Notes Mode,k,Injected Notes,Prompt ID,Prompt Text,Temperature,Seed,Top-K,Top-P,Repeat Penalty,Max Tokens,Context Size,Prompt Tokens,Gen Tokens,Hit Max Tokens,TTFT (ms),Gen Duration (ms),TPS (tok/s),RAM Peak (MB),Battery Level Before (%),Battery Level After (%),Battery Temp Before (C),Battery Temp After (C),Throttle (%),Is Heat Test,Thinking Disabled,Prompt Formatter,Thought Emitted,Output',
     );
 
     for (final r in runs) {
@@ -578,6 +592,8 @@ class BenchmarkExporter {
           r.thinkingDisabled == null
               ? 'N/A'
               : (r.thinkingDisabled! ? 'Yes' : 'No'),
+          _escape(r.promptFormatter ?? ''),
+          r.thoughtEmitted ? 'Yes' : 'No',
           _escape(r.output),
         ].join(','),
       );

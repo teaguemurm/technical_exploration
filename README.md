@@ -189,14 +189,18 @@ Tapping the download icon in the AppBar provides instant export:
 | `Temp After (°C)` | double | Battery temperature after the run, from `BatteryManager` on Android |
 | `Throttle (%)` | double | Thermal throttle percentage (Heat Test only) |
 | `Is Heat Test` | string | `Yes` if part of 10-run heat test; `No` otherwise |
-| `Thinking Disabled`| string | `N/A` unless a thinking toggle was actually applied for that model. This app does not apply one. |
-| `Output` | string | Sanitized model response text |
+| `Thinking Disabled`| string | `N/A` unless a thinking toggle was actually applied. This app does not apply one, so the column stays `N/A`. |
+| `Prompt Formatter` | string | Formatter that built the prompt: `native`, `gemma4`, or `chatml-fallback`. |
+| `Thought Emitted` | string | `Yes` when the stored output contains a thought block; `No` otherwise. |
+| `Output` | string | Model response text. Stop markers are removed. Thought text is removed except for Gemma 4, where it is kept. |
+
+`Thinking Disabled` stays `N/A` because this app never applies a thinking toggle; `Thought Emitted` is `Yes` only when the stored output actually contains a thought block.
 
 ---
 
 ## 5. Known limitations
 
-Gemma 4 E2B runs on a ChatML fallback, not its real chat template. The GGUF ships an 18 KB Jinja template (`<|turn|>` / `<turn|>`). `llama_chat_apply_template` is not a Jinja parser and does not recognise that template, and this build does not link `common/jinja`, so both the token counter and the inference isolate fall back to ChatML. Qwen is unaffected: its template is ChatML and the logged prompt lengths match the Mac batch. The fallback can change how Gemma follows the visitor notes, and it may explain some of Gemma's over-refusals. It is a validity limitation of the 11 Oct Gemma batch. Protocol message text is unchanged. Switching Gemma onto its real template would make new Gemma answers incomparable with that batch, so this round does not do it.
+Gemma 4 now uses its own turn format (`<|turn>` / `<turn|>`). `llama_chat_apply_template` is not a Jinja parser and does not recognise that template, so the app renders it in Dart instead of substituting ChatML. Thinking is left off: the prompt has no `<|think|>` and no thought channel. If the model still emits a thought block, the stored output keeps that text and `Thought Emitted` is `Yes`. A template that cannot be applied fails the run instead of silently using another model's format. Gemma results from before this fix, including the 11 Oct export `technical_exploration_runs_20261011_153749.json`, were prompted in ChatML and are not comparable to new Gemma runs. Qwen still uses the native ChatML template, and its prompt token counts are unchanged. Before a full Gemma batch on the Fold, run one A/B/C sanity check on the armv8 build and compare its prompt token counts with the laptop. A Mac-only count can hide a different vocabulary or BOS handling in the Android library.
 
 After every load the app runs two fixed sanity prompts ("Name one European wild animal in three words." and "What is 2+2?"). The animal answer must contain a recognisable animal word, so Latin-script soup fails as well as mixed-script soup. The math answer must contain 4. A failure blocks the protocol batch. Those prompts exercise the loaded model, so when they ran every protocol row is `Warm` (`isColdLoad` false), including run 1. A Mac-only "Skip sanity check" toggle, off by default, skips them so the first protocol run after a cold load can still be `Cold`. The toggle is ignored on Android.
 

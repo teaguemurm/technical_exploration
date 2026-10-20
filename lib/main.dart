@@ -113,6 +113,8 @@ class _NoteScreenState extends State<NoteScreen> {
   double? _tokensPerSecond;
   int? _evalCount;
   int? _promptTokenCount;
+  String? _preflightPromptFormatter;
+  String? _sentPromptFormatter;
   Duration? _generationDuration;
   double? _batteryTempCelsius;
   double? _heatTestThrottlePercentage;
@@ -555,6 +557,7 @@ class _NoteScreenState extends State<NoteScreen> {
   }) async {
     final buffer = StringBuffer();
     int? evalCount;
+    String? formatter;
     final stream = repo.streamChatWithGenerationOptions(
       fileName,
       messages: [LLMMessage(role: LLMRole.user, content: prompt)],
@@ -570,9 +573,15 @@ class _NoteScreenState extends State<NoteScreen> {
     await for (final chunk in stream) {
       final text = chunk.message?.content;
       if (text != null && text.isNotEmpty) buffer.write(text);
-      if (chunk.done == true) evalCount = chunk.evalCount;
+      if (chunk.done == true) {
+        evalCount = chunk.evalCount;
+        formatter = chunk.providerMetadata['promptFormatter'] as String?;
+      }
     }
-    final cleaned = sanitizeModelOutput(buffer.toString());
+    final cleaned = sanitizeModelOutput(
+      buffer.toString(),
+      keepThoughts: formatter == promptFormatterGemma4,
+    );
     final hitMax = evalCount != null && evalCount >= sanityMaxTokens;
     return (text: cleaned, tokens: evalCount, hitMax: hitMax);
   }
@@ -679,11 +688,23 @@ class _NoteScreenState extends State<NoteScreen> {
 
     // ignore: deprecated_member_use
     final modelRef = repo.model;
-    final nativeTokens = countPromptTokens(
-      model: modelRef?.pointer,
-      vocab: modelRef?.vocab,
-      messages: messages,
-    );
+    _preflightPromptFormatter = null;
+    _sentPromptFormatter = null;
+    final CountedPrompt? counted;
+    try {
+      counted = countPromptTokens(
+        model: modelRef?.pointer,
+        vocab: modelRef?.vocab,
+        messages: messages,
+      );
+    } on ChatTemplateException catch (error) {
+      setState(() {
+        _status = error.message;
+      });
+      if (!completer.isCompleted) completer.complete(null);
+      return null;
+    }
+    _preflightPromptFormatter = counted?.formatter;
 
     setState(() {
       _selectedCondition = condition;
@@ -693,7 +714,7 @@ class _NoteScreenState extends State<NoteScreen> {
       _ttftMs = null;
       _tokensPerSecond = null;
       _evalCount = null;
-      _promptTokenCount = nativeTokens;
+      _promptTokenCount = counted?.tokenCount;
       _generationDuration = null;
       _status = null;
       _firstTokenAt = null;
@@ -778,8 +799,13 @@ class _NoteScreenState extends State<NoteScreen> {
         }
       }
 
-      // Early stop if any stop sequence leaked into the accumulated output
-      for (final stop in stopSequences) {
+      // Early stop if any stop sequence leaked into the accumulated output.
+      // Gemma also stops if `<eos>` leaked; other families leave that string
+      // alone so a Qwen answer is unchanged.
+      final leakedStops = _preflightPromptFormatter == promptFormatterGemma4
+          ? const <String>[...stopSequences, '<eos>']
+          : stopSequences;
+      for (final stop in leakedStops) {
         if (_outputController.text.contains(stop)) {
           unawaited(_subscription?.cancel());
           _subscription = null;
@@ -842,6 +868,10 @@ class _NoteScreenState extends State<NoteScreen> {
         _tokensPerSecond = rate;
         _evalCount = chunk.evalCount;
         _promptTokenCount ??= chunk.promptEvalCount;
+        final reported = chunk.providerMetadata['promptFormatter'];
+        if (reported is String && reported.isNotEmpty) {
+          _sentPromptFormatter = reported;
+        }
         _generationDuration = generation;
       });
     }
@@ -861,6 +891,25 @@ class _NoteScreenState extends State<NoteScreen> {
       completer.complete(null);
       return;
     }
+
+    final sentFormatter = _sentPromptFormatter;
+    final preflightFormatter = _preflightPromptFormatter;
+    if (preflightFormatter != null &&
+        sentFormatter != null &&
+        preflightFormatter != sentFormatter) {
+      final message = promptFormatterMismatchMessage(
+        preflight: preflightFormatter,
+        sent: sentFormatter,
+      );
+      setState(() {
+        _running = false;
+        _subscription = null;
+        _status = message;
+      });
+      completer.complete(null);
+      return;
+    }
+    final formatterForRecord = sentFormatter ?? preflightFormatter;
 
     // Capture final memory before context cleanup
     final currentRssFinal = MemorySnapshot.capture().currentRssBytes;
@@ -893,8 +942,14 @@ class _NoteScreenState extends State<NoteScreen> {
       }
     }
 
-    // Clean any thinking blocks and trailing stop sequences from output
-    final cleanedOutput = sanitizeModelOutput(_outputController.text);
+    // Gemma 4 keeps thought text. Other formatters still strip it, so a Qwen
+    // answer stays what it was. Stop markers are cut either way.
+    final rawOutput = _outputController.text;
+    final thoughtEmitted = outputContainsThought(rawOutput);
+    final cleanedOutput = sanitizeModelOutput(
+      rawOutput,
+      keepThoughts: formatterForRecord == promptFormatterGemma4,
+    );
     _outputController.text = cleanedOutput;
 
     final selected = _selected!;
@@ -960,6 +1015,8 @@ class _NoteScreenState extends State<NoteScreen> {
       throttlePercentage: throttlePercentage,
       isHeatTest: isHeatTest,
       thinkingDisabled: thinkingDisabledValue,
+      promptFormatter: formatterForRecord,
+      thoughtEmitted: thoughtEmitted,
     );
 
     _history.add(record);

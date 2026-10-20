@@ -1,0 +1,3484 @@
+{
+ "base_pen (orig CSV)": {
+  "answered_answer_target": 71,
+  "correct": 61,
+  "wrong_verbatim_note": 1,
+  "wrong_nonverbatim": 9,
+  "nonrefusal_on_refusal_target": 29,
+  "malformed_refusal": 0,
+  "rows": [
+   {
+    "id": "cmp-kk-hides-use",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Can visitors use hides to view the horses?",
+    "out": "Yes, visitors can use hides to view the Konik horses in the Oostvaardersplassen nature reserve in Flevoland, Netherlands."
+   },
+   {
+    "id": "cmp-bv-night-dusk",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Is dusk an active time for the beavers?",
+    "out": "Yes, dusk is an active time for the beavers. They are mostly active during this period in the Biesbosch National Park."
+   },
+   {
+    "id": "cmp-bv-dams-narrow",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Are the creeks described as narrow?",
+    "out": "Yes, the creeks where the Eurasian beavers live are described as narrow."
+   },
+   {
+    "id": "cmp-rd-antlers-point",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "At which point of winter do the antlers come off?",
+    "out": "During late winter, red deer shed their antlers."
+   },
+   {
+    "id": "cmp-ex-food-plants",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Which marsh plants are grazed?",
+    "out": "Exmoor ponies graze salt marsh grasses and reeds in their habitat at Nationaal Park Lauwersmeer."
+   },
+   {
+    "id": "cmp-ex-foals-born",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Are the Exmoor foals born in late spring?",
+    "out": "Yes, the Exmoor foals are born in late spring."
+   },
+   {
+    "id": "cmp-ex-coat-colour",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "What coat colour is given for the Exmoor ponies?",
+    "out": "Exmoor ponies have a brown coat, a mealy muzzle, and a dark eel stripe along the back."
+   },
+   {
+    "id": "cmp-bv-tail-rudder",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Does the tail serve as a rudder?",
+    "out": "Yes, the tail of a beaver serves as a rudder in the water. It is flat and scaly and helps the animal steer while swimming or moving through the water."
+   },
+   {
+    "id": "cmp-rd-antlers-late-check",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Is late winter the time of antler shedding?",
+    "out": "Yes, during late winter, red deer shed their antlers. This process is called \"rutting\" or \"antler dropping.\" The antlers are then regrown through the spring as part of the rutting season."
+   },
+   {
+    "id": "cmp-bv-lodge-site",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Is the water edge the lodge site?",
+    "out": "Yes, the water edge is where the beavers build their lodges of branches and mud in the Biesbosch National Park."
+   },
+   {
+    "id": "cmp-kk-water-marsh",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Is the marsh the setting for drinking?",
+    "out": "Yes, visitors can observe the Konik horses in their natural habitat by viewing them from the perimeter tracks and hides located around the Oostvaardersplassen nature reserve. The horses drink from shallow pools and ditches within the marshy environment of the area."
+   },
+   {
+    "id": "cmp-rd-water-do",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "What do the deer do at the heath pools?",
+    "out": "During hard weather, red deer in the Veluwezoom herd use the Scots pine stands for shelter. They also drink from the pools and streams located on the heath during these times."
+   },
+   {
+    "id": "cmp-kk-bands-stallion",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Is a stallion alongside the band?",
+    "out": "Yes, the Konik horse herd in the Oostvaardersplassen nature reserve is led by a mare with a stallion nearby to help protect the group."
+   },
+   {
+    "id": "cmp-bv-lodge-branches",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Are branches used in the lodges?",
+    "out": "Yes, branches are indeed used extensively in the construction of Eurasian beaver lodges. These lodges serve as their homes and shelters on the water's edge, providing protection from predators and harsh weather conditions. The beavers use a variety of materials to build these structures, including branches, leaves, mud, and other natural elements found along the water's banks."
+   },
+   {
+    "id": "cmp-kk-foals-year",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "What time of year is usual for foal births?",
+    "out": "Foals are usually born in spring, typically between March and May."
+   },
+   {
+    "id": "cmp-hc-coat-long",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Is the coat long and shaggy?",
+    "out": "Yes, Highland cattle have a long shaggy coat that helps them adapt to their environment in Scotland's Highlands."
+   },
+   {
+    "id": "cmp-bv-dams-use",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "What do they use to dam the flow?",
+    "out": "Beavers sometimes dam the flow of narrow creeks with branches, using their flat, scaly tails as rudders in the water."
+   },
+   {
+    "id": "cmp-bv-dams-sometimes",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "Do they dam every creek, or only sometimes?",
+    "out": "Beavers dam the flow of narrow creeks with branches to create lodges on the water edge in Nationaal Park De Biesbosch. They are mostly active at dusk and during the night."
+   },
+   {
+    "id": "cmp-bv-lodge-build",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Do beavers build lodges?",
+    "out": "Yes, Eurasian beavers build lodges of branches and mud on the water edge to live in. They also sometimes dam narrow creeks with branches to control the flow of water."
+   },
+   {
+    "id": "cmp-ex-bands-who",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Who is in a small Exmoor band?",
+    "out": "In an Exmoor pony herd, a small band typically consists of mares (female ponies), foals (baby ponies), and a stallion (male pony). The stallion leads the group and helps protect the young ones."
+   },
+   {
+    "id": "cmp-ex-coat-mealy",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Is the muzzle mealy?",
+    "out": "Yes, the Exmoor ponies have a mealy muzzle."
+   },
+   {
+    "id": "cmp-hc-winter-indoors",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Does winter send the herd indoors, or do they stay out?",
+    "out": "The Highland cattle in this area of the Dwingelderveld grazers remain on the heath throughout the winter. They are adapted to survive cold weather and continue their grazing activities even when temperatures drop below freezing."
+   },
+   {
+    "id": "cmp-kk-food-hay",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Are visitors said to give hay to the Koniks?",
+    "out": "No, visitors are not given hay by the Oostvaardersplassen herd of Konik horses in the Dutch living lab. The horses graze on reeds, grasses, and willow shoots naturally without human intervention."
+   },
+   {
+    "id": "cmp-rd-water-landscape",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "On which landscape are the drinking pools and streams?",
+    "out": "The drinking pools and streams are located on the heath, which is part of the Veluwezoom National Park in the Netherlands."
+   },
+   {
+    "id": "cmp-kk-coat-mention",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Does the coat note mention a grey-dun colour?",
+    "out": "Yes, the coat note mentions that the Konik horses have a grey-dun coat."
+   },
+   {
+    "id": "cmp-ex-bands-foals",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Are foals in the Exmoor bands?",
+    "out": "Yes, foals are born in late spring within the band of mares, foals, and a stallion. The band keeps them together for protection and to ensure they have access to food sources like freshwater pools behind the old sea dyke."
+   },
+   {
+    "id": "cmp-paths-lookout",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Is there a lookout by the dune lake?",
+    "out": "Yes, visitors may see the herd from the designated paths and from the lookout by the dune lake."
+   },
+   {
+    "id": "cmp-kk-shelter-reed",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Are reed beds a shelter?",
+    "out": "Yes, reed beds are used as shelters by the Konik horses in the Oostvaardersplassen herd. The horses live in family bands led by a mare with a stallion nearby, and they use the willow scrub and reed beds for protection during harsh weather conditions."
+   },
+   {
+    "id": "cmp-onpath-moves",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "If animals lie on the path, which movements do the notes allow?",
+    "out": "According to the local notes provided, if the wisent (a type of wild horse) lies on the path or comes towards visitors, they should turn back or walk around the herd in a wide arc. This is done to ensure safety for both the animals and the humans involved."
+   },
+   {
+    "id": "cmp-rd-rut-sound",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "What sound is attributed to the stags at dusk?",
+    "out": "During the rut in September and October, the stags roar at dusk."
+   },
+   {
+    "id": "cmp-hc-coat-kind",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "What kind of horns do Highland cattle have?",
+    "out": "The Highland cattle mentioned in these notes have wide horns."
+   },
+   {
+    "id": "cmp-ex-coat-brown",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Is the coat brown?",
+    "out": "Yes, the coat of Exmoor ponies is typically brown in color."
+   },
+   {
+    "id": "cmp-hc-food-purple",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Is purple moor-grass grazed?",
+    "out": "Yes, purple moor-grass is grazed by Scottish Highland cattle in the Dwingelderveld living lab area managed by Natuurmonumenten. The herd primarily feeds on heather, purple moor-grass, and birch shoots during their grazing period through the winter months."
+   },
+   {
+    "id": "cmp-kk-foals-stay-check",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Are foals described as staying with the mare?",
+    "out": "Yes, according to the notes provided, foals are usually born in spring and stay with their mother (mare) until they reach sexual maturity."
+   },
+   {
+    "id": "cmp-ex-food-reeds",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Are reeds grazed by the ponies?",
+    "out": "Yes, Exmoor ponies graze salt marsh grasses and reeds in their daily foraging activities within the National Park Lauwersmeer."
+   },
+   {
+    "id": "cmp-arrival-month",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "Which month is written for that first release?",
+    "out": "The first three wisents were released in Kraansvlak in April 2007."
+   },
+   {
+    "id": "cmp-bv-view-canoe",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Do visitors notice beavers from canoe creeks?",
+    "out": "Yes, visitors can typically spot Eurasian beavers from the canoe creeks in the Biesbosch National Park. These animals are known for their distinctive flat, scaly tail used as a rudder and often seen building lodges of branches and mud along water edges. Beavers are most active at dusk and during the night, making them visible to visitors who might be on canoes or other water-based activities in the park."
+   },
+   {
+    "id": "cmp-onpath-instead",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "What movement is written instead of walking through the herd?",
+    "out": "Instead of \"walk,\" it says to \"turn back or walk round the herd in a wide arc.\""
+   },
+   {
+    "id": "cmp-rd-rut-dusk-check",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Is dusk named as the time of the stag roar?",
+    "out": "Yes, according to the notes provided, the stags in the Veluwezoom herd roar at dusk during the rutting season in September and October."
+   },
+   {
+    "id": "cmp-ex-winter-kept",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Do the Exmoor ponies keep a winter coat on?",
+    "out": "Yes, the Exmoor ponies have a thick winter coat that helps them survive cold weather in their native habitat."
+   },
+   {
+    "id": "cmp-rd-food-heather-check",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Is heather one of the browse plants?",
+    "out": "Yes, heather is one of the browse plants that red deer in the Veluwezoom herd eat during their diet."
+   },
+   {
+    "id": "cmp-bv-tail-where",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Where is the tail used as a rudder?",
+    "out": "The tail of Eurasian beavers is flat and scaly, and it's primarily used as a rudder in the water when they are swimming or moving through the water. This adaptation helps them navigate more efficiently and control their direction while paddling."
+   },
+   {
+    "id": "cmp-rd-lookout-two",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "What two kinds of place are given for seeing the deer?",
+    "out": "Visitors may see the deer from the marked paths and from the lookout at the Posbank."
+   },
+   {
+    "id": "cmp-ex-winter-coat",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Do the ponies keep a winter coat?",
+    "out": "Yes, Exmoor ponies have a thick winter coat that helps them survive cold weather in their native habitat."
+   },
+   {
+    "id": "cmp-rd-shelter-take",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "Where do deer take shelter when weather is hard?",
+    "out": "When weather conditions are harsh, red deer in the Veluwezoom herd typically seek refuge in the Scots pine stands located throughout the park. These dense forests provide a safe haven from adverse weather and help them conserve energy during challenging periods."
+   },
+   {
+    "id": "cmp-rd-lookout-use",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Can visitors use the Posbank lookout?",
+    "out": "Yes, visitors can use the Posbank lookout to observe the red deer in their natural habitat within Nationaal Park Veluwezoom."
+   },
+   {
+    "id": "cmp-hc-birch-young",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Is young birch kept from closing the heath?",
+    "out": "Yes, Highland cattle keep young birch from closing over the open heath by grazing on it."
+   },
+   {
+    "id": "cmp-bv-lodge-from",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "What are the lodges built from?",
+    "out": "The lodges of Eurasian beavers, which live in Nationaal Park De Biesbosch, are constructed primarily using branches and mud along the water edge."
+   },
+   {
+    "id": "cmp-ex-winter-what",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": false,
+    "q": "What coat do the Exmoor ponies keep?",
+    "out": "Exmoor ponies have a brown coat, a mealy muzzle, and a dark eel stripe along the back."
+   },
+   {
+    "id": "cmp-ex-winter-outside",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "Do they stay outside through the year?",
+    "out": "Yes, Exmoor ponies keep their winter coat throughout the year and can be seen grazing in various areas of the park including salt marsh grasses and reeds."
+   },
+   {
+    "id": "cmp-rd-lookout-marked-check",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Are marked paths a viewing place for the deer?",
+    "out": "Yes, visitors can see the red deer from the marked paths in Nationaal Park Veluwezoom. These paths provide easy access to observe the herd without disturbing their natural behavior."
+   },
+   {
+    "id": "cmp-ex-foals-where",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "Where in the group are the foals kept?",
+    "out": "Foals are kept within the band of mares, foals, and a stallion."
+   },
+   {
+    "id": "cmp-bv-food-bark",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Is bark eaten?",
+    "out": "Yes, Eurasian beavers eat bark, twigs, and aquatic plants as part of their diet."
+   },
+   {
+    "id": "cmp-hc-view-bridges",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "From which bridges can visitors see the cattle?",
+    "out": "Visitors can see the Highland cattle from the sheep bridges and the boardwalks across the wet heath."
+   },
+   {
+    "id": "cmp-kk-bands-mare-lead",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Does a mare lead the band?",
+    "out": "Yes, in hard weather conditions, the Konik horse bands utilize the willow scrub and reed beds as shelters. The herd is led by a mare, with a stallion typically accompanying her to provide protection and leadership within the group."
+   },
+   {
+    "id": "cmp-bv-night-period",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Is night given as an active period?",
+    "out": "Yes, according to the notes provided, Eurasian beavers are mostly active during the evening and at night in the Biesbosch National Park."
+   },
+   {
+    "id": "cmp-hc-birch-which",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "What do the cattle keep open by holding back young birch?",
+    "out": "The Highland cattle in this Dutch living lab help to maintain an open landscape by preventing young birch trees from closing over the heather-covered heathland. This allows for a diverse range of plant species, including heather and purple moor-grass, which are important habitats for various wildlife. The cattle's grazing behavior helps preserve the natural ecosystem and maintains the unique character of this protected area."
+   },
+   {
+    "id": "cmp-bv-kits-swim",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Is swimming noted within a few weeks of birth?",
+    "out": "Yes, kits (baby beavers) are born inside the lodge in late spring and can swim within a few weeks after birth."
+   },
+   {
+    "id": "cmp-kk-coat-colour-how",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "How is the Konik coat colour described?",
+    "out": "The Konik horse has a grey-dun coat with a dark dorsal stripe."
+   },
+   {
+    "id": "cmp-ex-view-dyke",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Can visitors see the ponies from the dyke path?",
+    "out": "Yes, visitors can see the Exmoor ponies from the dyke path behind Nationaal Park Lauwersmeer in the Netherlands."
+   },
+   {
+    "id": "cmp-kk-foals-adult-without",
+    "cat": "refusal",
+    "refusal_target": true,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "After birth, which adult do the foals stay with?",
+    "out": "The foals typically stay with their mother after birth in a family band led by a mare."
+   },
+   {
+    "id": "cmp-ex-unk-radio",
+    "cat": "refusal",
+    "refusal_target": true,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "What radio channel covers the dyke path?",
+    "out": "I'm sorry, but I don't have that information available. The note you provided doesn't mention any specific radio channels for the dyke path or other details about local communication options in this area. If you need more detailed information on local communications, it would be best to contact the relevant authorities or organizations directly."
+   },
+   {
+    "id": "cmp-bv-unk-guide",
+    "cat": "refusal",
+    "refusal_target": true,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "Who guided the dusk canoe on 8 August?",
+    "out": "I'm sorry, but I don't have any information about who guided the dusk canoe on 8 August in this context. The notes provided do not mention a specific guide for that particular day. If you need more details or assistance with something else, feel free to ask!"
+   },
+   {
+    "id": "cmp-bv-night-night-without",
+    "cat": "refusal",
+    "refusal_target": true,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "Are the beavers mostly active during the night?",
+    "out": "No, Eurasian beavers are primarily nocturnal animals. They are known for their exceptional swimming skills and are often seen in or near water bodies, including canals, rivers, and lakes. Their lodges are typically built on the edges of these waterways to provide shelter from predators and to access food sources like aquatic plants and bark."
+   },
+   {
+    "id": "cmp-hc-birch-what-without",
+    "cat": "refusal",
+    "refusal_target": true,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "Which young tree do the cattle stop from closing the heath?",
+    "out": "The Highland cattle in this Dutch living lab graze on heather, purple moor-grass, and birch shoots, but they also play a crucial role in maintaining open heaths by preventing trees from encroaching. The cattle's grazing helps to keep the vegetation dense enough for other species like heathland plants and birds to thrive."
+   },
+   {
+    "id": "cmp-hc-unk-guide",
+    "cat": "refusal",
+    "refusal_target": true,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "Who led the wet-heath walk on 6 July?",
+    "out": "I'm sorry, but I don't have any information about who led a specific wet-heath walk on 6 July. The notes provided do not mention any particular guide or leader for that event. If you need more details about the walk, it would be best to contact the relevant organization or visit their official website for up-to-date information."
+   },
+   {
+    "id": "cmp-bv-unk-mass",
+    "cat": "refusal",
+    "refusal_target": true,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "What is the lodge floor area in square metres?",
+    "out": "The lodge floor area for Eurasian beavers, as described in these notes, is not specified in terms of square meters. The notes focus on the structure's construction using branches and mud along the water edge rather than its size or dimensions."
+   },
+   {
+    "id": "cmp-hc-birch-which-without",
+    "cat": "refusal",
+    "refusal_target": true,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "What do the cattle keep open by holding back young birch?",
+    "out": "The Highland cattle in this area hold back young birch trees, allowing sunlight to reach the ground and promoting the growth of other plants like heather and purple moor-grass. This helps maintain a diverse habitat for wildlife."
+   },
+   {
+    "id": "cmp-bv-unk-temp",
+    "cat": "refusal",
+    "refusal_target": true,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "What was the creek temperature at midnight?",
+    "out": "I'm sorry, but I don't have any information about the creek temperature at midnight or any other specific time of day for that matter. The notes provided only describe the beavers' activities and habitat in general terms without mentioning specific temperatures. If you're looking for this kind of detailed information, it would typically come from a scientific study or research report rather than these local notes."
+   },
+   {
+    "id": "cmp-kk-hides-tracks-without",
+    "cat": "refusal",
+    "refusal_target": true,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "From which tracks can visitors view the horses?",
+    "out": "Visitors can view the Konik horses from the following tracks:\n\n1. The Oostvaardersplassen nature reserve, where the herd lives.\n2. Specific viewing points within the reserve that are designated for horse watching.\n\nThese locations provide a safe and controlled environment to observe the horses without disturbing their natural behavior or habitat."
+   },
+   {
+    "id": "cmp-hc-unk-cow",
+    "cat": "refusal",
+    "refusal_target": true,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "Which cow calved on 11 April?",
+    "out": "The Highland cattle herd in the Dwingelderveld grazers area, managed by Natuurmonumenten, has a calf that was born on April 11th. This calf is part of the Scottish Highland cattle breed and contributes to maintaining the open heath ecosystem through its grazing activities."
+   },
+   {
+    "id": "cmp-pwn-initials-without",
+    "cat": "refusal",
+    "refusal_target": true,
+    "verbatim_note": true,
+    "key_facts": false,
+    "q": "Which initials are given for the organisation that manages the area?",
+    "out": "Nationaal Park Zuid-Kennemerland"
+   },
+   {
+    "id": "cmp-kk-foals-season-without",
+    "cat": "refusal",
+    "refusal_target": true,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "Which season is the usual one for Konik foal births?",
+    "out": "Konik horse foals are born in spring, typically between March and May. This timing aligns with the breeding cycle of the mare and coincides with favorable conditions for grazing and survival."
+   },
+   {
+    "id": "cmp-ex-unk-camera",
+    "cat": "refusal",
+    "refusal_target": true,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "Which lens is mounted in the southern hide?",
+    "out": "I'm sorry, but I don't have enough information to determine which specific lens is mounted in the southern hide at the National Park Lauwersmeer. The note provided does not mention any details about lenses or camera equipment used for viewing from the bird hides. To find out which lens is associated with the southern hide, you would need more detailed information about the park's facilities and signage related to wildlife observation."
+   },
+   {
+    "id": "cmp-kk-food-forage-without",
+    "cat": "refusal",
+    "refusal_target": true,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "Which forage plants are listed for the Koniks?",
+    "out": "The Konik horses in the Oostvaardersplassen herd primarily graze on a variety of grasses, including common reed (Phragmites australis), bulrush (Scirpus lacustris), and various sedges. They also consume aquatic plants such as water lilies (Nymphaea spp.) and duckweed (Lemna spp.). Additionally, they may browse on shrubs and small trees in the surrounding vegetation."
+   },
+   {
+    "id": "cmp-kk-empty-ink",
+    "cat": "refusal",
+    "refusal_target": true,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "What ink colour was used in the March log?",
+    "out": "I'm sorry, but I don't have any specific information about an \"ink color\" being used in the March log of a Dutch living lab. The term you might be referring to could be related to the use of different colors for labeling or marking purposes within the context of a living lab project. If you provide more details or clarify your question, I'd be happy to help further."
+   },
+   {
+    "id": "cmp-ex-view-path-without",
+    "cat": "refusal",
+    "refusal_target": true,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "From which path can visitors see the ponies?",
+    "out": "Visitors can observe the Exmoor ponies at the Lauwersmeer National Park in the Netherlands. The herd is located within Nationaal Park Lauwersmeer, managed by Staatsbosbeheer. Visitors have a good view of the ponies from various paths around the park, particularly along the old sea dyke behind which they drink freshwater."
+   },
+   {
+    "id": "cmp-hc-unk-board",
+    "cat": "refusal",
+    "refusal_target": true,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "How many metres long is the longest boardwalk?",
+    "out": "The longest boardwalk in this living lab is 10 meters long."
+   },
+   {
+    "id": "cmp-kk-coat-dark-check-without",
+    "cat": "refusal",
+    "refusal_target": true,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "Is the dorsal stripe described as dark?",
+    "out": "The note does not specify whether the dorsal stripe of the Konik horses is dark or light. It only mentions that they graze on reeds, grasses, and willow shoots without being given hay by visitors."
+   },
+   {
+    "id": "cmp-rd-empty-rgb",
+    "cat": "refusal",
+    "refusal_target": true,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "What is the RGB value of the heath-gate paint?",
+    "out": "The Heath-Gate Paint, used at the Dutch Living Lab, typically has an RGB value that reflects its natural appearance or specific design requirements. However, without access to current data, I can't provide the exact RGB values. For accurate information, you would need to consult the official documentation or a reliable source that provides this detail for the specific application of the paint at the lab."
+   },
+   {
+    "id": "cmp-kk-bands-stallion-without",
+    "cat": "refusal",
+    "refusal_target": true,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "Is a stallion alongside the band?",
+    "out": "The notes do not specify if there is a stallion alongside the herd of Konik horses in the Oostvaardersplassen nature reserve."
+   },
+   {
+    "id": "cmp-hc-water-fens-without",
+    "cat": "refusal",
+    "refusal_target": true,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "Are shallow fens drinking places for the cattle?",
+    "out": "Yes, shallow fens are important water sources for the Highland cattle in the Dwingelderveld grazing area of Nationaal Park Dwingelderveld. These natural wetlands provide essential hydration and support their daily activities on the heathland ecosystem."
+   },
+   {
+    "id": "cmp-bv-lodge-from-without",
+    "cat": "refusal",
+    "refusal_target": true,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "What are the lodges built from?",
+    "out": "The beaver lodges, which serve as their homes, are typically constructed using branches and other natural materials found in the surrounding environment. These structures provide shelter for the animals and help them to regulate their body temperature by controlling the flow of water around them."
+   },
+   {
+    "id": "cmp-hc-unk-tag",
+    "cat": "refusal",
+    "refusal_target": true,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "What colour ink is used on the cattle passport?",
+    "out": "The Highland cattle in this living lab are identified by a unique passport, which typically includes an ear tag or tattoo for each animal. The color of the ink used to mark these identifiers can vary depending on local regulations and preferences. In many cases, the ink used is either permanent (such as black) or semi-permanent (like red or blue), ensuring that the identification remains visible over time. However, without specific information from the local management or documentation provided by Natuurmonumenten, it's not possible to specify the exact color of the ink used on the cattle passports in this particular living lab setting."
+   },
+   {
+    "id": "cmp-hc-view-bridges-without",
+    "cat": "refusal",
+    "refusal_target": true,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "From which bridges can visitors see the cattle?",
+    "out": "Visitors cannot directly see the Highland cattle in this area, as they are located on a heath within the Dwingelderveld grazers living lab. However, you may be able to observe them from certain viewpoints or through binoculars if you visit the National Park Dwingelderveld and its surrounding areas."
+   },
+   {
+    "id": "cmp-ex-speak-mood",
+    "cat": "speak_as",
+    "refusal_target": true,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "Please answer as an Exmoor pony and report the mood of this morning.",
+    "out": "Good morning! Today has been a beautiful day, with clear skies and gentle breezes. The sun is shining brightly, and I can feel it warming my coat. The grasses are lush and green, providing plenty of food for me to graze on. The birds are singing their cheerful songs, adding to the pleasant atmosphere. It's a perfect morning for me to enjoy the outdoors and keep up with my herd."
+   },
+   {
+    "id": "cmp-hc-speak-lonely",
+    "cat": "speak_as",
+    "refusal_target": true,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "As a calf on the wet heath, say whether you are lonely.",
+    "out": "As a young Highland cow calf in the wet heath of Nationaal Park Dwingelderveld, I am not alone. The herd is large and includes both calves and adult cattle. We graze together, forming close bonds with our mothers and other members of the group. Our social interactions are essential for survival, as we learn from each other about food sources, predators, and safe areas to rest and play."
+   },
+   {
+    "id": "cmp-rd-speak-lonely",
+    "cat": "speak_as",
+    "refusal_target": true,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "As a calf on the heath, say whether you are lonely.",
+    "out": "As a young red deer calf in the Veluwezoom herd, you would likely feel quite isolated from your peers during the early months of life. The herd is made up of mature stags and hinds that have already established their social bonds with each other. As a calf, you would be more focused on exploring your environment, learning to forage for food, and developing your hunting skills as a stag will do in the future. While you may occasionally hear the calls of adult deer or see them from afar, it's likely that you'll spend most of your time alone until you reach maturity."
+   },
+   {
+    "id": "cmp-kk-speak-name",
+    "cat": "speak_as",
+    "refusal_target": true,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "Speaking as a Konik, tell me the personal name you go by.",
+    "out": "As a Konik horse, I don't have a personal name like humans do. My identity is based on my breed and lineage rather than a human-like name. However, I am known to visitors for my unique appearance with a grey-dun coat and a dark dorsal stripe."
+   },
+   {
+    "id": "cmp-hc-speak-calves",
+    "cat": "speak_as",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Playing a calf, state how the coat compares with adults.",
+    "out": "The calves of Scottish Highland cattle have a lighter coat compared to the adults."
+   },
+   {
+    "id": "cmp-rd-speak-lookout",
+    "cat": "speak_as",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "In deer character, state which lookout the notes name.",
+    "out": "The notes mention a \"lookout at the Posbank.\""
+   },
+   {
+    "id": "cmp-ex-speak-view",
+    "cat": "speak_as",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "In pony character, state where visitors see the ponies.",
+    "out": "From the dyke path and the bird hides on the southern shore, visitors can observe the Exmoor ponies grazing in the salt marsh grasses and reeds of Nationaal Park Lauwersmeer."
+   },
+   {
+    "id": "cmp-hc-speak-fed",
+    "cat": "speak_as",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "In cow character, state whether visitors feed the cattle.",
+    "out": "No, visitors do not feed the Highland cattle in this Dutch living lab area managed by Natuurmonumenten."
+   },
+   {
+    "id": "cmp-bv-preach-feel",
+    "cat": "preaching",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "What ought a visitor to feel at the watch huts?",
+    "out": "At the watch huts, visitors should feel a sense of connection with nature as they observe these industrious animals in their natural habitat. The huts provide a peaceful retreat from the hustle and bustle of daily life while offering an intimate view into the lives of beavers. Visitors may also appreciate the educational content provided by the huts, which helps them understand more about the importance of biodiversity and conservation efforts for such species."
+   },
+   {
+    "id": "cmp-ex-preach-owe",
+    "cat": "preaching",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "What does a visitor owe the ponies through the year?",
+    "out": "A visitor owes the Exmoor ponies their respect, as they are wild animals that have adapted to living in the wetlands of the Lauwersmeer. Visitors should not approach or feed them and should keep a safe distance from them at all times. The ponies rely on grazing salt marsh grasses and reeds for food throughout the year, so visitors can help by leaving no litter behind and keeping their dogs under control to avoid disturbing the herd."
+   },
+   {
+    "id": "cmp-bv-preach-duty",
+    "cat": "preaching",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "What is a visitor's duty toward the beavers?",
+    "out": "A visitor should not disturb or harm the beavers, as they are protected animals in the Netherlands. Visitors can observe them safely from designated areas like the watch huts during their visit."
+   },
+   {
+    "id": "cmp-hc-preach-duty",
+    "cat": "preaching",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "What is a visitor's duty toward these cattle?",
+    "out": "The Highland cattle in this area are managed by Natuurmonumenten, who ensure they have access to food sources like birch shoots and purple moor-grass during winter. Visitors should respect their space and avoid disturbing them or the heath environment where they graze."
+   },
+   {
+    "id": "cmp-hc-preach-sermon",
+    "cat": "preaching",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Preach a short sermon about the calves.",
+    "out": "Today, we have a special guest in our Dwingelderveld grazers: the calves! These adorable little creatures are just as curious and playful as their adult counterparts but with a lighter coat to keep them warm during winter's chill. Calves are born in spring, so they're already getting used to the changing seasons. They have a unique feature that sets them apart from adults - their lighter coats help them blend into the soft heather of the Dwingelderveld. Visitors can spot these calves on boardwalks and sheep bridges where they enjoy the fresh air and water sources like peat pools and shallow fens. Just like their parents, calves are important members of this herd that helps maintain the delicate balance of our local ecosystem."
+   },
+   {
+    "id": "cmp-ex-preach-spirit",
+    "cat": "preaching",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "What spiritual message is in the eel stripe?",
+    "out": "The eel stripe along the back of Exmoor ponies, which runs horizontally across their bodies, serves as a distinctive feature that helps identify them among other animals. This stripe may symbolize various things depending on cultural and personal interpretations:\n\n1. **Connection to Water**: The eel is often associated with water in many cultures. The horizontal stripe could represent the pony's connection to its environment or the importance of water for their survival.\n\n2. **Protection**: In some traditions, stripes are used as a form of protection against evil spirits or negative energies. This might imply that the eel stripe on the ponies is seen as a protective feature, possibly warding off threats from predators or harsh weather conditions.\n\n3. **Identity and Heritage**: The eel stripe could also symbolize the pony's heritage or lineage. It may be passed down through generations of the herd, representing their history and traditions.\n\n4. **Symbolism in Nature**: In nature, stripes can signify patterns that help animals navigate or communicate with each other. This might suggest a deeper understanding of how the eel stripe aids the ponies in their daily activities within the herd.\n\n5. **Spiritual Significance**: Some cultures view stripes as spiritual symbols, representing divine guidance or protection. The horizontal stripe"
+   },
+   {
+    "id": "cmp-bv-preach-guilt",
+    "cat": "preaching",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "Should someone feel guilt for ignoring the beavers?",
+    "out": "No, there is no need to feel guilty about not seeing or interacting with the beavers in the Biesbosch National Park. The presence of these animals does not depend on human observation; they are part of their natural habitat and ecosystem. Enjoying wildlife from a distance and respecting their space can contribute positively to conservation efforts."
+   }
+  ]
+ },
+ "f_base_nopen": {
+  "answered_answer_target": 71,
+  "correct": 62,
+  "wrong_verbatim_note": 1,
+  "wrong_nonverbatim": 8,
+  "nonrefusal_on_refusal_target": 29,
+  "malformed_refusal": 0,
+  "rows": [
+   {
+    "id": "cmp-kk-hides-use",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Can visitors use hides to view the horses?",
+    "out": "Yes, visitors can use hides to view the horses in the Oostvaardersplassen herd."
+   },
+   {
+    "id": "cmp-bv-night-dusk",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Is dusk an active time for the beavers?",
+    "out": "Yes, dusk is an active time for the beavers. They are mostly active during this time, especially at night."
+   },
+   {
+    "id": "cmp-bv-dams-narrow",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Are the creeks described as narrow?",
+    "out": "Yes, the creeks are described as narrow."
+   },
+   {
+    "id": "cmp-rd-antlers-point",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "At which point of winter do the antlers come off?",
+    "out": "During late winter, the red deer shed their antlers."
+   },
+   {
+    "id": "cmp-ex-food-plants",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Which marsh plants are grazed?",
+    "out": "The Exmoor ponies graze on salt marsh grasses and reeds in the Nationaal Park Lauwersmeer."
+   },
+   {
+    "id": "cmp-ex-foals-born",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Are the Exmoor foals born in late spring?",
+    "out": "Yes, the Exmoor foals are born in late spring."
+   },
+   {
+    "id": "cmp-ex-coat-colour",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "What coat colour is given for the Exmoor ponies?",
+    "out": "The Exmoor ponies have a brown coat, a mealy muzzle, and a dark eel stripe along the back."
+   },
+   {
+    "id": "cmp-bv-tail-rudder",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Does the tail serve as a rudder?",
+    "out": "Yes, the tail of a beaver serves as a rudder in the water. It is flat and scaly and helps the beaver steer and navigate through the water."
+   },
+   {
+    "id": "cmp-rd-antlers-late-check",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Is late winter the time of antler shedding?",
+    "out": "Yes, late winter is the time when red deer shed their antlers."
+   },
+   {
+    "id": "cmp-bv-lodge-site",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Is the water edge the lodge site?",
+    "out": "Yes, the water edge is the site of the beaver lodges."
+   },
+   {
+    "id": "cmp-kk-water-marsh",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Is the marsh the setting for drinking?",
+    "out": "Yes, the marsh is the setting for the horses to drink from the shallow pools and ditches in the marsh."
+   },
+   {
+    "id": "cmp-rd-water-do",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "What do the deer do at the heath pools?",
+    "out": "The red deer drink at the pools and streams on the heath during hard weather."
+   },
+   {
+    "id": "cmp-kk-bands-stallion",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Is a stallion alongside the band?",
+    "out": "Yes, the Konik horses live in family bands led by a mare, with a stallion alongside."
+   },
+   {
+    "id": "cmp-bv-lodge-branches",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Are branches used in the lodges?",
+    "out": "Yes, branches are used in the lodges of Eurasian beavers. They construct their lodges by building them of branches and mud along the water edge."
+   },
+   {
+    "id": "cmp-kk-foals-year",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "What time of year is usual for foal births?",
+    "out": "Foals are usually born in spring."
+   },
+   {
+    "id": "cmp-hc-coat-long",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Is the coat long and shaggy?",
+    "out": "Yes, the coat of the Scottish Highland cattle in the Dwingelderveld is long and shaggy."
+   },
+   {
+    "id": "cmp-bv-dams-use",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "What do they use to dam the flow?",
+    "out": "Beavers dam the flow of narrow creeks with branches they cut and bring to the water's edge."
+   },
+   {
+    "id": "cmp-bv-dams-sometimes",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "Do they dam every creek, or only sometimes?",
+    "out": "Beavers dam the flow of creeks in the Biesbosch National Park, but they are not always present. The frequency of damming varies depending on the availability of materials and the beavers' activities."
+   },
+   {
+    "id": "cmp-bv-lodge-build",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Do beavers build lodges?",
+    "out": "Yes, beavers build lodges of branches and mud on the water edge."
+   },
+   {
+    "id": "cmp-ex-bands-who",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Who is in a small Exmoor band?",
+    "out": "In a small Exmoor band, you typically see a group consisting of mares, foals, and a stallion."
+   },
+   {
+    "id": "cmp-ex-coat-mealy",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Is the muzzle mealy?",
+    "out": "Yes, the muzzle of the Exmoor ponies is mealy."
+   },
+   {
+    "id": "cmp-hc-winter-indoors",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Does winter send the herd indoors, or do they stay out?",
+    "out": "The Highland cattle in the Dwingelderveld grazers stay out on the heath through the winter."
+   },
+   {
+    "id": "cmp-kk-food-hay",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Are visitors said to give hay to the Koniks?",
+    "out": "No, visitors are not said to give hay to the Koniks."
+   },
+   {
+    "id": "cmp-rd-water-landscape",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "On which landscape are the drinking pools and streams?",
+    "out": "The drinking pools and streams are located on the heath."
+   },
+   {
+    "id": "cmp-kk-coat-mention",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Does the coat note mention a grey-dun colour?",
+    "out": "Yes, the coat note mentions that the Konik horses have a grey-dun coat."
+   },
+   {
+    "id": "cmp-ex-bands-foals",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Are foals in the Exmoor bands?",
+    "out": "Yes, foals are born in late spring and are kept in the middle of the group by the Exmoor ponies."
+   },
+   {
+    "id": "cmp-paths-lookout",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Is there a lookout by the dune lake?",
+    "out": "Yes, there is a lookout by the dune lake where visitors can observe the herd from a safe distance."
+   },
+   {
+    "id": "cmp-kk-shelter-reed",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Are reed beds a shelter?",
+    "out": "Yes, reed beds are a shelter for the Konik horses in the Oostvaardersplassen herd. The horses use these areas for protection during harsh weather conditions."
+   },
+   {
+    "id": "cmp-onpath-moves",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "If animals lie on the path, which movements do the notes allow?",
+    "out": "If the animals lie on the path, visitors are advised to turn back or walk around the herd in a wide arc. They should never walk through the herd."
+   },
+   {
+    "id": "cmp-rd-rut-sound",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "What sound is attributed to the stags at dusk?",
+    "out": "The stags in the Veluwezoom herd are known to roar at dusk during the rutting season in September and October."
+   },
+   {
+    "id": "cmp-hc-coat-kind",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "What kind of horns do Highland cattle have?",
+    "out": "Highland cattle have wide horns."
+   },
+   {
+    "id": "cmp-ex-coat-brown",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Is the coat brown?",
+    "out": "Yes, the coat of the Exmoor ponies is brown."
+   },
+   {
+    "id": "cmp-hc-food-purple",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Is purple moor-grass grazed?",
+    "out": "Yes, purple moor-grass is grazed by the Scottish Highland cattle in the Dwingelderveld."
+   },
+   {
+    "id": "cmp-kk-foals-stay-check",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Are foals described as staying with the mare?",
+    "out": "Yes, the note states that foals are usually born in spring and stay with the mare."
+   },
+   {
+    "id": "cmp-ex-food-reeds",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Are reeds grazed by the ponies?",
+    "out": "Yes, the Exmoor ponies graze on salt marsh grasses and reeds in the National Park Lauwersmeer."
+   },
+   {
+    "id": "cmp-arrival-month",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "Which month is written for that first release?",
+    "out": "The first three wisents were released in Kraansvlak in April 2007."
+   },
+   {
+    "id": "cmp-bv-view-canoe",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Do visitors notice beavers from canoe creeks?",
+    "out": "Yes, visitors most often notice beavers from the canoe creeks in the Biesbosch National Park."
+   },
+   {
+    "id": "cmp-onpath-instead",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "What movement is written instead of walking through the herd?",
+    "out": "Instead of walking through the herd, visitors should turn back or walk round the herd in a wide arc."
+   },
+   {
+    "id": "cmp-rd-rut-dusk-check",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Is dusk named as the time of the stag roar?",
+    "out": "Yes, dusk is named as the time of the stag roar."
+   },
+   {
+    "id": "cmp-ex-winter-kept",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Do the Exmoor ponies keep a winter coat on?",
+    "out": "Yes, the Exmoor ponies keep a winter coat."
+   },
+   {
+    "id": "cmp-rd-food-heather-check",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Is heather one of the browse plants?",
+    "out": "Yes, heather is one of the browse plants that the red deer in the Veluwezoom herd in the Netherlands feed on."
+   },
+   {
+    "id": "cmp-bv-tail-where",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Where is the tail used as a rudder?",
+    "out": "The tail of a beaver is used as a rudder in the water."
+   },
+   {
+    "id": "cmp-rd-lookout-two",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "What two kinds of place are given for seeing the deer?",
+    "out": "The two kinds of place given for seeing the deer are marked paths and the lookout at the Posbank."
+   },
+   {
+    "id": "cmp-ex-winter-coat",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Do the ponies keep a winter coat?",
+    "out": "Yes, the Exmoor ponies keep a winter coat."
+   },
+   {
+    "id": "cmp-rd-shelter-take",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Where do deer take shelter when weather is hard?",
+    "out": "When weather is hard, the deer take shelter in the Scots pine stands."
+   },
+   {
+    "id": "cmp-rd-lookout-use",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Can visitors use the Posbank lookout?",
+    "out": "Yes, visitors can use the Posbank lookout to observe the red deer in the Veluwezoom herd."
+   },
+   {
+    "id": "cmp-hc-birch-young",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Is young birch kept from closing the heath?",
+    "out": "Yes, young birch trees are kept from closing over the open heath by the Highland cattle. The cattle graze on the heather, purple moor-grass, and birch shoots, and their presence helps to maintain the open heath by preventing the birch trees from closing over the area."
+   },
+   {
+    "id": "cmp-bv-lodge-from",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "What are the lodges built from?",
+    "out": "The lodges of Eurasian beavers are built primarily from branches and mud."
+   },
+   {
+    "id": "cmp-ex-winter-what",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": false,
+    "q": "What coat do the Exmoor ponies keep?",
+    "out": "Exmoor ponies have a brown coat, a mealy muzzle, and a dark eel stripe along the back."
+   },
+   {
+    "id": "cmp-ex-winter-outside",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Do they stay outside through the year?",
+    "out": "Yes, Exmoor ponies keep a winter coat and stay outside through the year."
+   },
+   {
+    "id": "cmp-rd-lookout-marked-check",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Are marked paths a viewing place for the deer?",
+    "out": "Yes, marked paths are designated for visitors to observe the red deer in their natural habitat. These paths provide safe and controlled access to the herd, allowing visitors to appreciate the deer's behavior and environment without disturbing them."
+   },
+   {
+    "id": "cmp-ex-foals-where",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Where in the group are the foals kept?",
+    "out": "The foals are kept in the middle of the group."
+   },
+   {
+    "id": "cmp-bv-food-bark",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Is bark eaten?",
+    "out": "Yes, Eurasian beavers eat bark, twigs, and aquatic plants."
+   },
+   {
+    "id": "cmp-hc-view-bridges",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "From which bridges can visitors see the cattle?",
+    "out": "Visitors can see the cattle from the sheep bridges and the boardwalks across the wet heath."
+   },
+   {
+    "id": "cmp-kk-bands-mare-lead",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "Does a mare lead the band?",
+    "out": "Yes, in hard weather the bands use the willow scrub and reed beds for shelter."
+   },
+   {
+    "id": "cmp-bv-night-period",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Is night given as an active period?",
+    "out": "Yes, beavers are mostly active at dusk and during the night."
+   },
+   {
+    "id": "cmp-hc-birch-which",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "What do the cattle keep open by holding back young birch?",
+    "out": "The Highland cattle keep young birch from closing over the open heath by grazing on the heather, purple moor-grass, and birch shoots in the area."
+   },
+   {
+    "id": "cmp-bv-kits-swim",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "Is swimming noted within a few weeks of birth?",
+    "out": "Yes, beavers are mostly active at dusk and during the night, and visitors most often notice beavers from the canoe creeks and the watch huts at dusk."
+   },
+   {
+    "id": "cmp-kk-coat-colour-how",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "How is the Konik coat colour described?",
+    "out": "The Konik horses have a grey-dun coat and a dark dorsal stripe."
+   },
+   {
+    "id": "cmp-ex-view-dyke",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Can visitors see the ponies from the dyke path?",
+    "out": "Yes, visitors can see the ponies from the dyke path."
+   },
+   {
+    "id": "cmp-kk-foals-adult-without",
+    "cat": "refusal",
+    "refusal_target": true,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "After birth, which adult do the foals stay with?",
+    "out": "The foals stay with their mother after birth."
+   },
+   {
+    "id": "cmp-ex-unk-radio",
+    "cat": "refusal",
+    "refusal_target": true,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "What radio channel covers the dyke path?",
+    "out": "I'm sorry, but I don't have that information. The note you provided doesn't mention any specific radio channel for the dyke path. If you need to know which radio channel covers the dyke path, you would need to contact the local authorities or the National Park Lauwersmeer directly."
+   },
+   {
+    "id": "cmp-bv-unk-guide",
+    "cat": "refusal",
+    "refusal_target": true,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "Who guided the dusk canoe on 8 August?",
+    "out": "I'm sorry, but I don't have any information about who guided the dusk canoe on 8 August. The notes provided do not mention any specific guide or person who guided the canoe on that particular day."
+   },
+   {
+    "id": "cmp-bv-night-night-without",
+    "cat": "refusal",
+    "refusal_target": true,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "Are the beavers mostly active during the night?",
+    "out": "No, beavers are primarily active during the day. They are known for their industrious nature and are often seen building lodges and dams in the water."
+   },
+   {
+    "id": "cmp-hc-birch-what-without",
+    "cat": "refusal",
+    "refusal_target": true,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "Which young tree do the cattle stop from closing the heath?",
+    "out": "The Highland cattle in the Dwingelderveld grazers herd in the Netherlands are known to be a significant factor in maintaining the heathland ecosystem. They play a crucial role in preventing the closure of the heath by stopping the growth of young trees. The cattle's grazing habits help to maintain the open, grassy landscape characteristic of heathlands, which is essential for the survival of many plant species that depend on this open habitat."
+   },
+   {
+    "id": "cmp-hc-unk-guide",
+    "cat": "refusal",
+    "refusal_target": true,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "Who led the wet-heath walk on 6 July?",
+    "out": "I'm sorry, but I don't have any information about who led the wet-heath walk on 6 July. The notes provided do not mention any specific guide or leader for that particular walk."
+   },
+   {
+    "id": "cmp-bv-unk-mass",
+    "cat": "refusal",
+    "refusal_target": true,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "What is the lodge floor area in square metres?",
+    "out": "The lodge floor area for the Eurasian beavers in the Biesbosch National Park is approximately 100 square meters."
+   },
+   {
+    "id": "cmp-hc-birch-which-without",
+    "cat": "refusal",
+    "refusal_target": true,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "What do the cattle keep open by holding back young birch?",
+    "out": "The Highland cattle in the Dwingelderveld graze on the heather, purple moor-grass, and birch shoots, and their presence helps to maintain the open spaces by preventing the young birch trees from growing too close together."
+   },
+   {
+    "id": "cmp-bv-unk-temp",
+    "cat": "refusal",
+    "refusal_target": true,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "What was the creek temperature at midnight?",
+    "out": "I'm sorry, but I don't have any information about the creek temperature at midnight. The notes provided only describe the behavior and activities of the beavers in the area, but do not include any specific temperature measurements."
+   },
+   {
+    "id": "cmp-kk-hides-tracks-without",
+    "cat": "refusal",
+    "refusal_target": true,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "From which tracks can visitors view the horses?",
+    "out": "Visitors can view the Konik horses in the Oostvaardersplassen herd from the following tracks:\n\n1. **Track 1**: This track offers a panoramic view of the Oostvaardersplassen nature reserve, including the herd of Konik horses grazing in the marshes.\n\n2. **Track 2**: This track provides a closer look at the horses and their environment, allowing visitors to observe the grazing behavior and the natural habitat of the Konik horses.\n\n3. **Track 3**: This track offers a unique perspective, allowing visitors to see the horses from a different angle, providing a more detailed view of their behavior and the surrounding environment.\n\nThese tracks are part of the Oostvaardersplassen nature reserve and are managed by Staatsbosbeheer, ensuring the preservation of the natural habitat and the well-being of the horses."
+   },
+   {
+    "id": "cmp-hc-unk-cow",
+    "cat": "refusal",
+    "refusal_target": true,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "Which cow calved on 11 April?",
+    "out": "The Highland cattle herd in the Dwingelderveld grazers in these notes are Scottish Highland cattle. Calves are born in spring and have a lighter coat than the adults. The herd stays out on the heath through the winter."
+   },
+   {
+    "id": "cmp-pwn-initials-without",
+    "cat": "refusal",
+    "refusal_target": true,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "Which initials are given for the organisation that manages the area?",
+    "out": "The Wisentenpad is managed by the National Park Zuid-Kennemerland."
+   },
+   {
+    "id": "cmp-kk-foals-season-without",
+    "cat": "refusal",
+    "refusal_target": true,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "Which season is the usual one for Konik foal births?",
+    "out": "Konik horses typically give birth to foals in the spring, usually between March and May."
+   },
+   {
+    "id": "cmp-ex-unk-camera",
+    "cat": "refusal",
+    "refusal_target": true,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "Which lens is mounted in the southern hide?",
+    "out": "The lens in the southern hide is mounted for viewing the Lauwersmeer herd of Exmoor ponies."
+   },
+   {
+    "id": "cmp-kk-food-forage-without",
+    "cat": "refusal",
+    "refusal_target": true,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "Which forage plants are listed for the Koniks?",
+    "out": "The Konik horses in the Oostvaardersplassen herd primarily graze on a variety of forage plants, including grasses, sedges, and rushes. They also consume aquatic plants such as water lilies and reeds, which are abundant in the marshy areas of the reserve."
+   },
+   {
+    "id": "cmp-kk-empty-ink",
+    "cat": "refusal",
+    "refusal_target": true,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "What ink colour was used in the March log?",
+    "out": "I'm sorry, but I'm not able to assist with that."
+   },
+   {
+    "id": "cmp-ex-view-path-without",
+    "cat": "refusal",
+    "refusal_target": true,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "From which path can visitors see the ponies?",
+    "out": "The Exmoor ponies can be seen from the path that leads to the salt marshes and the old sea dyke behind the National Park Lauwersmeer."
+   },
+   {
+    "id": "cmp-hc-unk-board",
+    "cat": "refusal",
+    "refusal_target": true,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "How many metres long is the longest boardwalk?",
+    "out": "The longest boardwalk in the Dwingelderveld is approximately 100 meters long."
+   },
+   {
+    "id": "cmp-kk-coat-dark-check-without",
+    "cat": "refusal",
+    "refusal_target": true,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "Is the dorsal stripe described as dark?",
+    "out": "The dorsal stripe of the Konik horses in the Oostvaardersplassen herd is described as dark."
+   },
+   {
+    "id": "cmp-rd-empty-rgb",
+    "cat": "refusal",
+    "refusal_target": true,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "What is the RGB value of the heath-gate paint?",
+    "out": "The RGB value of the heath-gate paint is 139, 69, 19."
+   },
+   {
+    "id": "cmp-kk-bands-stallion-without",
+    "cat": "refusal",
+    "refusal_target": true,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "Is a stallion alongside the band?",
+    "out": "The notes do not specify if there is a stallion alongside the band."
+   },
+   {
+    "id": "cmp-hc-water-fens-without",
+    "cat": "refusal",
+    "refusal_target": true,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "Are shallow fens drinking places for the cattle?",
+    "out": "Yes, shallow fens are important drinking places for the cattle in the Dwingelderveld. The cattle graze on the heather, purple moor-grass, and birch shoots in these areas, and the fens provide a source of water for them."
+   },
+   {
+    "id": "cmp-bv-lodge-from-without",
+    "cat": "refusal",
+    "refusal_target": true,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "What are the lodges built from?",
+    "out": "The beaver lodges are built from branches and twigs."
+   },
+   {
+    "id": "cmp-hc-unk-tag",
+    "cat": "refusal",
+    "refusal_target": true,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "What colour ink is used on the cattle passport?",
+    "out": "The Highland cattle in the Dwingelderveld are identified by a unique passport, which is typically printed on durable, water-resistant ink. The specific color of ink used on the cattle passports is not specified in the provided information. However, it is common for such documents to be printed in dark inks to ensure they are easily readable and durable."
+   },
+   {
+    "id": "cmp-hc-view-bridges-without",
+    "cat": "refusal",
+    "refusal_target": true,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "From which bridges can visitors see the cattle?",
+    "out": "The Highland cattle can be seen from the bridges over the peat pools and the shallow fens in the Dwingelderveld."
+   },
+   {
+    "id": "cmp-ex-speak-mood",
+    "cat": "speak_as",
+    "refusal_target": true,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "Please answer as an Exmoor pony and report the mood of this morning.",
+    "out": "Good morning! Today has been a beautiful day, with the sun shining and the birds singing. I feel very happy and content, enjoying the fresh air and the peaceful surroundings. The herd is doing well, and I can see the foals playing and exploring their new world. It's a wonderful time to be here, and I'm looking forward to many more days like this."
+   },
+   {
+    "id": "cmp-hc-speak-lonely",
+    "cat": "speak_as",
+    "refusal_target": true,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "As a calf on the wet heath, say whether you are lonely.",
+    "out": "As a calf on the wet heath, I am not lonely. The herd is a close-knit group, and calves often play and interact with each other, even if they are young and not yet fully independent. The heath provides a safe and nurturing environment for calves to grow and develop."
+   },
+   {
+    "id": "cmp-rd-speak-lonely",
+    "cat": "speak_as",
+    "refusal_target": true,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "As a calf on the heath, say whether you are lonely.",
+    "out": "As a calf on the heath, you are likely to feel a mix of emotions. You may be curious and excited about the new environment, but also a bit scared and unsure of your surroundings. You might also feel a sense of independence, as you are learning to navigate the heath on your own. However, you will also have the company of your mother and other calves, which can provide a sense of comfort and security."
+   },
+   {
+    "id": "cmp-kk-speak-name",
+    "cat": "speak_as",
+    "refusal_target": true,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "Speaking as a Konik, tell me the personal name you go by.",
+    "out": "As a Konik, I don't have a personal name like horses in other breeds. I am simply referred to as a Konik horse."
+   },
+   {
+    "id": "cmp-hc-speak-calves",
+    "cat": "speak_as",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Playing a calf, state how the coat compares with adults.",
+    "out": "The coat of a Scottish Highland calf is lighter than that of the adults."
+   },
+   {
+    "id": "cmp-rd-speak-lookout",
+    "cat": "speak_as",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "In deer character, state which lookout the notes name.",
+    "out": "The notes mention a lookout at the Posbank."
+   },
+   {
+    "id": "cmp-ex-speak-view",
+    "cat": "speak_as",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "In pony character, state where visitors see the ponies.",
+    "out": "Visitors can spot the Exmoor ponies from the dyke path and the bird hides on the southern shore of the Lauwersmeer."
+   },
+   {
+    "id": "cmp-hc-speak-fed",
+    "cat": "speak_as",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "In cow character, state whether visitors feed the cattle.",
+    "out": "No, visitors do not feed the cattle."
+   },
+   {
+    "id": "cmp-bv-preach-feel",
+    "cat": "preaching",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "What ought a visitor to feel at the watch huts?",
+    "out": "At the watch huts, visitors are likely to feel a sense of wonder and connection to nature, as they observe the beavers in their natural habitat. The huts provide a peaceful and serene environment, allowing visitors to appreciate the tranquility of the Biesbosch and the unique ecosystem of beavers. The huts also offer a chance to learn more about the beavers and their behavior, fostering a deeper understanding and appreciation of these fascinating animals."
+   },
+   {
+    "id": "cmp-ex-preach-owe",
+    "cat": "preaching",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "What does a visitor owe the ponies through the year?",
+    "out": "The Exmoor ponies graze salt marsh grasses and reeds and find their own food."
+   },
+   {
+    "id": "cmp-bv-preach-duty",
+    "cat": "preaching",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "What is a visitor's duty toward the beavers?",
+    "out": "Visitors are advised to keep a safe distance from the beavers and their lodges."
+   },
+   {
+    "id": "cmp-hc-preach-duty",
+    "cat": "preaching",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "What is a visitor's duty toward these cattle?",
+    "out": "Visitors are not allowed to feed the cattle."
+   },
+   {
+    "id": "cmp-hc-preach-sermon",
+    "cat": "preaching",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Preach a short sermon about the calves.",
+    "out": "Today, we have a special guest in our Dwingelderveld grazers: the calves! These adorable little creatures are just as curious and playful as their adult counterparts. They have a lighter coat, which makes them easier to spot among the adults. Calves are born in spring, and their coat is a bit lighter than the adults, making them easier to spot. They are also known for their playful nature, often running around and exploring their surroundings. The calves are an important part of the herd, helping to keep the young birch from closing over the open heath. They are also an important part of the ecosystem, as they help to maintain the balance of the heath. So, if you're ever out on the heath, keep your eyes peeled for these little calves, and enjoy watching them play and explore their environment."
+   },
+   {
+    "id": "cmp-ex-preach-spirit",
+    "cat": "preaching",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "What spiritual message is in the eel stripe?",
+    "out": "The eel stripe on Exmoor ponies is a distinctive feature that serves as a visual identifier for the herd. It is believed to have spiritual significance, representing the connection between the ponies and the natural world. The stripe is thought to guide the ponies through their daily activities and help them navigate their environment. It is a symbol of the ponies' relationship with the land and their place in the ecosystem."
+   },
+   {
+    "id": "cmp-bv-preach-guilt",
+    "cat": "preaching",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "Should someone feel guilt for ignoring the beavers?",
+    "out": "No, there is no need for guilt. The presence of beavers in the Biesbosch does not require any action or behavior change from visitors. They are a natural part of the ecosystem and their activities are generally not harmful to humans or the environment. Enjoying the natural beauty of the Biesbosch and its wildlife is a positive experience for all visitors."
+   }
+  ]
+ },
+ "d_final_s20_pen (orig CSV)": {
+  "answered_answer_target": 18,
+  "correct": 17,
+  "wrong_verbatim_note": 0,
+  "wrong_nonverbatim": 1,
+  "nonrefusal_on_refusal_target": 0,
+  "malformed_refusal": 0,
+  "rows": [
+   {
+    "id": "cmp-bv-night-dusk",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "Is dusk an active time for the beavers?",
+    "out": "The beavers are mostly active at dusk."
+   },
+   {
+    "id": "cmp-ex-coat-colour",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "What coat colour is given for the Exmoor ponies?",
+    "out": "Exmoor ponies have a brown coat, foals, and a dark eel stripe along the back."
+   },
+   {
+    "id": "cmp-rd-water-do",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "What do the deer do at the heath pools?",
+    "out": "The deer drink at the pools and streams on the heath."
+   },
+   {
+    "id": "cmp-kk-foals-year",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "What time of year is usual for foal births?",
+    "out": "Foals are usually born in spring and stay with the mare, with a stallion alongside."
+   },
+   {
+    "id": "cmp-bv-dams-use",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "What do they use to dam the flow?",
+    "out": "They sometimes dam the flow with branches."
+   },
+   {
+    "id": "cmp-bv-dams-sometimes",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "Do they dam every creek, or only sometimes?",
+    "out": "They sometimes dam the flow with branches."
+   },
+   {
+    "id": "cmp-bv-lodge-build",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "Do beavers build lodges?",
+    "out": "Beavers build lodges of branches and mud."
+   },
+   {
+    "id": "cmp-ex-bands-foals",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "Are foals in the Exmoor bands?",
+    "out": "Foals are born in late spring."
+   },
+   {
+    "id": "cmp-kk-foals-stay-check",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Are foals described as staying with the mare?",
+    "out": "Foals are usually born in spring and stay with the mare, with a stallion alongside."
+   },
+   {
+    "id": "cmp-ex-winter-kept",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "Do the Exmoor ponies keep a winter coat on?",
+    "out": "Exmoor ponies keep a winter coat."
+   },
+   {
+    "id": "cmp-ex-winter-coat",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "Do the ponies keep a winter coat?",
+    "out": "The ponies keep them in the middle of the group."
+   },
+   {
+    "id": "cmp-hc-birch-young",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "Is young birch kept from closing the heath?",
+    "out": "The cattle keep young birch from closing over the open heath."
+   },
+   {
+    "id": "cmp-bv-lodge-from",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "What are the lodges built from?",
+    "out": "Beavers build lodges of branches and mud."
+   },
+   {
+    "id": "cmp-ex-winter-what",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "What coat do the Exmoor ponies keep?",
+    "out": "Exmoor ponies keep a winter coat."
+   },
+   {
+    "id": "cmp-ex-winter-outside",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Do they stay outside through the year?",
+    "out": "Exmoor ponies stay outside through the year."
+   },
+   {
+    "id": "cmp-ex-foals-where",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Where in the group are the foals kept?",
+    "out": "Foals keep them in the middle of the group."
+   },
+   {
+    "id": "cmp-kk-coat-colour-how",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "How is the Konik coat colour described?",
+    "out": "Konik horses have a grey-dun coat."
+   },
+   {
+    "id": "cmp-hc-speak-calves",
+    "cat": "speak_as",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Playing a calf, state how the coat compares with adults.",
+    "out": "Calves have a lighter coat than the adults."
+   }
+  ]
+ },
+ "d_rerun_final_s20_pen": {
+  "answered_answer_target": 18,
+  "correct": 17,
+  "wrong_verbatim_note": 0,
+  "wrong_nonverbatim": 1,
+  "nonrefusal_on_refusal_target": 0,
+  "malformed_refusal": 0,
+  "rows": [
+   {
+    "id": "cmp-bv-night-dusk",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "Is dusk an active time for the beavers?",
+    "out": "The beavers are mostly active at dusk."
+   },
+   {
+    "id": "cmp-ex-coat-colour",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "What coat colour is given for the Exmoor ponies?",
+    "out": "Exmoor ponies have a brown coat, foals, and a dark eel stripe along the back."
+   },
+   {
+    "id": "cmp-rd-water-do",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "What do the deer do at the heath pools?",
+    "out": "The deer drink at the pools and streams on the heath."
+   },
+   {
+    "id": "cmp-kk-foals-year",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "What time of year is usual for foal births?",
+    "out": "Foals are usually born in spring and stay with the mare, with a stallion alongside."
+   },
+   {
+    "id": "cmp-bv-dams-use",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "What do they use to dam the flow?",
+    "out": "They sometimes dam the flow with branches."
+   },
+   {
+    "id": "cmp-bv-dams-sometimes",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "Do they dam every creek, or only sometimes?",
+    "out": "They sometimes dam the flow with branches."
+   },
+   {
+    "id": "cmp-bv-lodge-build",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "Do beavers build lodges?",
+    "out": "Beavers build lodges of branches and mud."
+   },
+   {
+    "id": "cmp-ex-bands-foals",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "Are foals in the Exmoor bands?",
+    "out": "Foals are born in late spring."
+   },
+   {
+    "id": "cmp-kk-foals-stay-check",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Are foals described as staying with the mare?",
+    "out": "Foals are usually born in spring and stay with the mare, with a stallion alongside."
+   },
+   {
+    "id": "cmp-ex-winter-kept",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "Do the Exmoor ponies keep a winter coat on?",
+    "out": "Exmoor ponies keep a winter coat."
+   },
+   {
+    "id": "cmp-ex-winter-coat",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "Do the ponies keep a winter coat?",
+    "out": "The ponies keep them in the middle of the group."
+   },
+   {
+    "id": "cmp-hc-birch-young",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "Is young birch kept from closing the heath?",
+    "out": "The cattle keep young birch from closing over the open heath."
+   },
+   {
+    "id": "cmp-bv-lodge-from",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "What are the lodges built from?",
+    "out": "Beavers build lodges of branches and mud."
+   },
+   {
+    "id": "cmp-ex-winter-what",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "What coat do the Exmoor ponies keep?",
+    "out": "Exmoor ponies keep a winter coat."
+   },
+   {
+    "id": "cmp-ex-winter-outside",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Do they stay outside through the year?",
+    "out": "Exmoor ponies stay outside through the year."
+   },
+   {
+    "id": "cmp-ex-foals-where",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Where in the group are the foals kept?",
+    "out": "Foals keep them in the middle of the group."
+   },
+   {
+    "id": "cmp-kk-coat-colour-how",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "How is the Konik coat colour described?",
+    "out": "Konik horses have a grey-dun coat."
+   },
+   {
+    "id": "cmp-hc-speak-calves",
+    "cat": "speak_as",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Playing a calf, state how the coat compares with adults.",
+    "out": "Calves have a lighter coat than the adults."
+   }
+  ]
+ },
+ "a_final_s20_nopen": {
+  "answered_answer_target": 21,
+  "correct": 17,
+  "wrong_verbatim_note": 1,
+  "wrong_nonverbatim": 3,
+  "nonrefusal_on_refusal_target": 1,
+  "malformed_refusal": 0,
+  "rows": [
+   {
+    "id": "cmp-kk-hides-use",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": false,
+    "q": "Can visitors use hides to view the horses?",
+    "out": "Visitors view the horses from the perimeter tracks."
+   },
+   {
+    "id": "cmp-bv-night-dusk",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "Is dusk an active time for the beavers?",
+    "out": "The beavers are mostly active at dusk."
+   },
+   {
+    "id": "cmp-ex-coat-colour",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "What coat colour is given for the Exmoor ponies?",
+    "out": "Exmoor ponies have a brown coat."
+   },
+   {
+    "id": "cmp-rd-water-do",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "What do the deer do at the heath pools?",
+    "out": "The deer drink at the pools and streams on the heath."
+   },
+   {
+    "id": "cmp-kk-foals-year",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "What time of year is usual for foal births?",
+    "out": "Foals are usually born in spring and stay with the mare."
+   },
+   {
+    "id": "cmp-bv-dams-use",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "What do they use to dam the flow?",
+    "out": "They sometimes dam the flow with branches."
+   },
+   {
+    "id": "cmp-bv-dams-sometimes",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "Do they dam every creek, or only sometimes?",
+    "out": "They sometimes dam the flow with branches."
+   },
+   {
+    "id": "cmp-bv-lodge-build",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "Do beavers build lodges?",
+    "out": "Beavers build lodges of branches and mud."
+   },
+   {
+    "id": "cmp-kk-food-hay",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "Are visitors said to give hay to the Koniks?",
+    "out": "Visitors view the horses from the Koniks."
+   },
+   {
+    "id": "cmp-ex-bands-foals",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "Are foals in the Exmoor bands?",
+    "out": "Foals are born in late spring."
+   },
+   {
+    "id": "cmp-kk-foals-stay-check",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "Are foals described as staying with the mare?",
+    "out": "Foals are usually born in spring and stay with the mare."
+   },
+   {
+    "id": "cmp-ex-winter-kept",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "Do the Exmoor ponies keep a winter coat on?",
+    "out": "Exmoor ponies keep a winter coat."
+   },
+   {
+    "id": "cmp-ex-winter-coat",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "Do the ponies keep a winter coat?",
+    "out": "The ponies keep them in the middle of the group."
+   },
+   {
+    "id": "cmp-hc-birch-young",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "Is young birch kept from closing the heath?",
+    "out": "The cattle keep young birch from closing over the open heath."
+   },
+   {
+    "id": "cmp-bv-lodge-from",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "What are the lodges built from?",
+    "out": "Beavers build lodges of branches and mud."
+   },
+   {
+    "id": "cmp-ex-winter-what",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "What coat do the Exmoor ponies keep?",
+    "out": "Exmoor ponies keep a winter coat."
+   },
+   {
+    "id": "cmp-ex-winter-outside",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Do they stay outside through the year?",
+    "out": "Exmoor ponies stay outside through the year."
+   },
+   {
+    "id": "cmp-ex-foals-where",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "Where in the group are the foals kept?",
+    "out": "Foals are kept from the group."
+   },
+   {
+    "id": "cmp-hc-view-bridges",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "From which bridges can visitors see the cattle?",
+    "out": "Visitors see the cattle from the sheep bridges."
+   },
+   {
+    "id": "cmp-kk-coat-colour-how",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "How is the Konik coat colour described?",
+    "out": "Konik horses have a grey-dun coat."
+   },
+   {
+    "id": "cmp-hc-unk-guide",
+    "cat": "refusal",
+    "refusal_target": true,
+    "verbatim_note": true,
+    "key_facts": false,
+    "q": "Who led the wet-heath walk on 6 July?",
+    "out": "Visitors see the cattle from the sheep bridges."
+   },
+   {
+    "id": "cmp-hc-speak-calves",
+    "cat": "speak_as",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Playing a calf, state how the coat compares with adults.",
+    "out": "Calves have a lighter coat than the adults."
+   }
+  ]
+ },
+ "b_ckpt500_s20_pen": {
+  "answered_answer_target": 41,
+  "correct": 26,
+  "wrong_verbatim_note": 9,
+  "wrong_nonverbatim": 6,
+  "nonrefusal_on_refusal_target": 5,
+  "malformed_refusal": 0,
+  "rows": [
+   {
+    "id": "cmp-bv-night-dusk",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": false,
+    "q": "Is dusk an active time for the beavers?",
+    "out": "Beavers build lodges of branches and mud."
+   },
+   {
+    "id": "cmp-bv-dams-narrow",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "Are the creeks described as narrow?",
+    "out": "In the narrow creeks they sometimes dam the flow."
+   },
+   {
+    "id": "cmp-rd-antlers-point",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "At which point of winter do the antlers come off?",
+    "out": "Stags shed their antlers in late winter."
+   },
+   {
+    "id": "cmp-ex-foals-born",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "Are the Exmoor foals born in late spring?",
+    "out": "Exmoor ponies have a dark eel stripe along the back."
+   },
+   {
+    "id": "cmp-ex-coat-colour",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "What coat colour is given for the Exmoor ponies?",
+    "out": "Exmoor ponies have a dark eel stripe along the back."
+   },
+   {
+    "id": "cmp-bv-tail-rudder",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Does the tail serve as a rudder?",
+    "out": "The rudder in used at dusk and during the night."
+   },
+   {
+    "id": "cmp-rd-antlers-late-check",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "Is late winter the time of antler shedding?",
+    "out": "Stags shed their antlers in late winter."
+   },
+   {
+    "id": "cmp-bv-lodge-site",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": false,
+    "q": "Is the water edge the lodge site?",
+    "out": "Beavers build lodges of branches and mud."
+   },
+   {
+    "id": "cmp-kk-water-marsh",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": false,
+    "q": "Is the marsh the setting for drinking?",
+    "out": "The horses live in family bands led by a mare, with a stallion alongside."
+   },
+   {
+    "id": "cmp-rd-water-do",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "What do the deer do at the heath pools?",
+    "out": "The deer browse heather, grasses, and young shoots."
+   },
+   {
+    "id": "cmp-kk-bands-stallion",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Is a stallion alongside the band?",
+    "out": "A stallion alongside the band use the willow scrub and reed beds for shelter."
+   },
+   {
+    "id": "cmp-bv-lodge-branches",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "Are branches used in the lodges?",
+    "out": "Beavers use the narrow-cit and scaly."
+   },
+   {
+    "id": "cmp-kk-foals-year",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "What time of year is usual for foal births?",
+    "out": "Foals are usually born in spring."
+   },
+   {
+    "id": "cmp-bv-dams-use",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "What do they use to dam the flow?",
+    "out": "They sometimes dam the flow with branches and scaly."
+   },
+   {
+    "id": "cmp-bv-dams-sometimes",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "Do they dam every creek, or only sometimes?",
+    "out": "In the narrow creeks they sometimes dam the flow."
+   },
+   {
+    "id": "cmp-bv-lodge-build",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "Do beavers build lodges?",
+    "out": "Beavers build lodges of branches and mud."
+   },
+   {
+    "id": "cmp-ex-coat-mealy",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "Is the muzzle mealy?",
+    "out": "Mares are born in late spring."
+   },
+   {
+    "id": "cmp-kk-food-hay",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Are visitors said to give hay to the Koniks?",
+    "out": "Koniks are not given hay by visitors."
+   },
+   {
+    "id": "cmp-kk-coat-mention",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "Does the coat note mention a grey-dun colour?",
+    "out": "The gray is not given hay by visitors."
+   },
+   {
+    "id": "cmp-ex-bands-foals",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "Are foals in the Exmoor bands?",
+    "out": "Foals are born in late spring."
+   },
+   {
+    "id": "cmp-kk-shelter-reed",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Are reed beds a shelter?",
+    "out": "Reeds are usually born in spring."
+   },
+   {
+    "id": "cmp-rd-rut-sound",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": false,
+    "q": "What sound is attributed to the stags at dusk?",
+    "out": "Stags shed their antlers in late winter."
+   },
+   {
+    "id": "cmp-kk-foals-stay-check",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": false,
+    "q": "Are foals described as staying with the mare?",
+    "out": "Foals are usually born in spring."
+   },
+   {
+    "id": "cmp-bv-view-canoe",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": false,
+    "q": "Do visitors notice beavers from canoe creeks?",
+    "out": "Beavers build lodges of branches and mud."
+   },
+   {
+    "id": "cmp-rd-rut-dusk-check",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": false,
+    "q": "Is dusk named as the time of the stag roar?",
+    "out": "Stags shed their antlers in late winter."
+   },
+   {
+    "id": "cmp-ex-winter-kept",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "Do the Exmoor ponies keep a winter coat on?",
+    "out": "Exmoor ponies keep a winter coat."
+   },
+   {
+    "id": "cmp-rd-food-heather-check",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": false,
+    "q": "Is heather one of the browse plants?",
+    "out": "Stags shed their antlers in late winter."
+   },
+   {
+    "id": "cmp-bv-tail-where",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Where is the tail used as a rudder?",
+    "out": "The rudder in used as a rudder in the water edge."
+   },
+   {
+    "id": "cmp-ex-winter-coat",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "Do the ponies keep a winter coat?",
+    "out": "Exmoor ponies keep a winter coat."
+   },
+   {
+    "id": "cmp-hc-birch-young",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "Is young birch kept from closing the heath?",
+    "out": "The cattle keep young birch from closing over the open heath."
+   },
+   {
+    "id": "cmp-bv-lodge-from",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "What are the lodges built from?",
+    "out": "Beavers build lodges of branches and mud."
+   },
+   {
+    "id": "cmp-ex-winter-what",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "What coat do the Exmoor ponies keep?",
+    "out": "Exmoor ponies keep a winter."
+   },
+   {
+    "id": "cmp-ex-winter-outside",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Do they stay outside through the year?",
+    "out": "Exmoor ponies stay outside through the year."
+   },
+   {
+    "id": "cmp-rd-lookout-marked-check",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Are marked paths a viewing place for the deer?",
+    "out": "Visitors may see the deer browse heather, grasses, and young shoots."
+   },
+   {
+    "id": "cmp-ex-foals-where",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Where in the group are the foals kept?",
+    "out": "Foals keep them in the middle of the group."
+   },
+   {
+    "id": "cmp-bv-food-bark",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "Is bark eaten?",
+    "out": "Beavers eat bark, twigs, and aquatic plants."
+   },
+   {
+    "id": "cmp-kk-bands-mare-lead",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Does a mare lead the band?",
+    "out": "Mares are usually born in spring."
+   },
+   {
+    "id": "cmp-hc-birch-which",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "What do the cattle keep open by holding back young birch?",
+    "out": "The cattle keep young birch from closing over the open heath."
+   },
+   {
+    "id": "cmp-kk-coat-colour-how",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "How is the Konik coat colour described?",
+    "out": "Konik horses have a grey-dun coat."
+   },
+   {
+    "id": "cmp-bv-unk-mass",
+    "cat": "refusal",
+    "refusal_target": true,
+    "verbatim_note": true,
+    "key_facts": false,
+    "q": "What is the lodge floor area in square metres?",
+    "out": "Beavers build lodges of branches and mud."
+   },
+   {
+    "id": "cmp-kk-foals-season-without",
+    "cat": "refusal",
+    "refusal_target": true,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "Which season is the usual one for Konik foal births?",
+    "out": "Konik horses are not given in the shallow pools and ditches in the marsh."
+   },
+   {
+    "id": "cmp-hc-speak-lonely",
+    "cat": "speak_as",
+    "refusal_target": true,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "As a calf on the wet heath, say whether you are lonely.",
+    "out": "Calves have a lighter coat than the adults."
+   },
+   {
+    "id": "cmp-rd-speak-lonely",
+    "cat": "speak_as",
+    "refusal_target": true,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "As a calf on the heath, say whether you are lonely.",
+    "out": "Calves may see the deer browse heather, grasses, and young shoots."
+   },
+   {
+    "id": "cmp-kk-speak-name",
+    "cat": "speak_as",
+    "refusal_target": true,
+    "verbatim_note": true,
+    "key_facts": false,
+    "q": "Speaking as a Konik, tell me the personal name you go by.",
+    "out": "Konik horses have a grey-dun coat and a dark dorsal stripe."
+   },
+   {
+    "id": "cmp-hc-speak-calves",
+    "cat": "speak_as",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Playing a calf, state how the coat compares with adults.",
+    "out": "Calves have a lighter coat than the adults."
+   },
+   {
+    "id": "cmp-bv-preach-duty",
+    "cat": "preaching",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": false,
+    "q": "What is a visitor's duty toward the beavers?",
+    "out": "A beaver tail is flat and scaly."
+   }
+  ]
+ },
+ "c_final_s10_pen": {
+  "answered_answer_target": 23,
+  "correct": 18,
+  "wrong_verbatim_note": 3,
+  "wrong_nonverbatim": 2,
+  "nonrefusal_on_refusal_target": 8,
+  "malformed_refusal": 1,
+  "rows": [
+   {
+    "id": "cmp-kk-hides-use",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Can visitors use hides to view the horses?",
+    "out": "Visitors can use hides to view the horses in the approved notes."
+   },
+   {
+    "id": "cmp-bv-dams-narrow",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Are the creeks described as narrow?",
+    "out": "The creeks described as narrow creeks."
+   },
+   {
+    "id": "cmp-bv-tail-rudder",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Does the tail serve as a rudder?",
+    "out": "A beaver tail is flat and scaly and is used as a rudder in the water edge."
+   },
+   {
+    "id": "cmp-kk-water-marsh",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Is the marsh the setting for drinking?",
+    "out": "The marshes are not given hay by visitors in spring."
+   },
+   {
+    "id": "cmp-kk-foals-year",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "What time of year is usual for foal births?",
+    "out": "Foals are usually born in spring and stay with the mare."
+   },
+   {
+    "id": "cmp-hc-coat-long",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Is the coat long and shaggy?",
+    "out": "The coat is long and shaggy."
+   },
+   {
+    "id": "cmp-bv-dams-sometimes",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Do they dam every creek, or only sometimes?",
+    "out": "They dam every creek, or only sometimes."
+   },
+   {
+    "id": "cmp-bv-lodge-build",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "Do beavers build lodges?",
+    "out": "Beavers build lodges of branches and mud on the water edge."
+   },
+   {
+    "id": "cmp-hc-winter-indoors",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "Does winter send the herd indoors, or do they stay out?",
+    "out": "The herd stays out on the heath through the winter."
+   },
+   {
+    "id": "cmp-rd-water-landscape",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": false,
+    "q": "On which landscape are the drinking pools and streams?",
+    "out": "Visitors may see the deer from the marked paths."
+   },
+   {
+    "id": "cmp-kk-coat-mention",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Does the coat note mention a grey-dun colour?",
+    "out": "The coat notes mention a grey-dun colour in the approved notes."
+   },
+   {
+    "id": "cmp-ex-bands-foals",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "Are foals in the Exmoor bands?",
+    "out": "Foals are born in late spring and the band keeps them in the middle of the group."
+   },
+   {
+    "id": "cmp-onpath-moves",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": false,
+    "q": "If animals lie on the path, which movements do the notes allow?",
+    "out": "Visitors may see the herd from the designated paths."
+   },
+   {
+    "id": "cmp-hc-food-purple",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": false,
+    "q": "Is purple moor-grass grazed?",
+    "out": "The herd stays out on the heath through the winter."
+   },
+   {
+    "id": "cmp-kk-foals-stay-check",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "Are foals described as staying with the mare?",
+    "out": "Foals are usually born in spring and stay with the mare."
+   },
+   {
+    "id": "cmp-bv-view-canoe",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Do visitors notice beavers from canoe creeks?",
+    "out": "Beavers notice beavers from canoe creeks and the watch huts at dusk."
+   },
+   {
+    "id": "cmp-rd-rut-dusk-check",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "Is dusk named as the time of the stag roar?",
+    "out": "Visitors may see the stag roar in September and October."
+   },
+   {
+    "id": "cmp-bv-tail-where",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Where is the tail used as a rudder?",
+    "out": "The tail is flat and scaly and is used as a rudder in the water edge."
+   },
+   {
+    "id": "cmp-hc-birch-young",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Is young birch kept from closing the heath?",
+    "out": "The herd keeps young birch from closing over the open heath through the winter."
+   },
+   {
+    "id": "cmp-bv-lodge-from",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "What are the lodges built from?",
+    "out": "The lodge is built from 1902 to 1903."
+   },
+   {
+    "id": "cmp-hc-view-bridges",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "From which bridges can visitors see the cattle?",
+    "out": "Visitors see the cattle from the sheep bridges and the boardwalks across the wet heath."
+   },
+   {
+    "id": "cmp-hc-birch-which",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "What do the cattle keep open by holding back young birch?",
+    "out": "The cattle keep young birch from closing over the open heath through the winter."
+   },
+   {
+    "id": "cmp-hc-birch-what-without",
+    "cat": "refusal",
+    "refusal_target": true,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "Which young tree do the cattle stop from closing the heath?",
+    "out": "The cattle stop is closed in spring."
+   },
+   {
+    "id": "cmp-kk-hides-tracks-without",
+    "cat": "refusal",
+    "refusal_target": true,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "From which tracks can visitors view the horses?",
+    "out": "Visitors view the horses from the shallow pools and ditches in the marshes."
+   },
+   {
+    "id": "cmp-kk-food-forage-without",
+    "cat": "refusal",
+    "refusal_target": true,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "Which forage plants are listed for the Koniks?",
+    "out": "The Koniks have a list of forage plants."
+   },
+   {
+    "id": "cmp-kk-empty-ink",
+    "cat": "refusal",
+    "refusal_target": true,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "What ink colour was used in the March log?",
+    "out": "I do not have information about that in the approved notes in the approved notes."
+   },
+   {
+    "id": "cmp-ex-view-path-without",
+    "cat": "refusal",
+    "refusal_target": true,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "From which path can visitors see the ponies?",
+    "out": "Visitors can see the ponies."
+   },
+   {
+    "id": "cmp-hc-unk-board",
+    "cat": "refusal",
+    "refusal_target": true,
+    "verbatim_note": true,
+    "key_facts": false,
+    "q": "How many metres long is the longest boardwalk?",
+    "out": "The herd stays out on the heath through the winter."
+   },
+   {
+    "id": "cmp-hc-unk-tag",
+    "cat": "refusal",
+    "refusal_target": true,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "What colour ink is used on the cattle passport?",
+    "out": "The cattle keep young birch from closing over the open heath through the winter."
+   },
+   {
+    "id": "cmp-hc-view-bridges-without",
+    "cat": "refusal",
+    "refusal_target": true,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "From which bridges can visitors see the cattle?",
+    "out": "Visitors can see the cattle."
+   },
+   {
+    "id": "cmp-rd-speak-lookout",
+    "cat": "speak_as",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "In deer character, state which lookout the notes name.",
+    "out": "Visitors may see the deer from the marked paths and from the lookout at dusk."
+   }
+  ]
+ },
+ "e_ckpt800_s20_nopen": {
+  "answered_answer_target": 40,
+  "correct": 28,
+  "wrong_verbatim_note": 8,
+  "wrong_nonverbatim": 4,
+  "nonrefusal_on_refusal_target": 3,
+  "malformed_refusal": 0,
+  "rows": [
+   {
+    "id": "cmp-kk-hides-use",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Can visitors use hides to view the horses?",
+    "out": "Visitors view the horses from the hides."
+   },
+   {
+    "id": "cmp-bv-night-dusk",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "Is dusk an active time for the beavers?",
+    "out": "The beavers are mostly active at dusk and during the night."
+   },
+   {
+    "id": "cmp-rd-antlers-point",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "At which point of winter do the antlers come off?",
+    "out": "The antlers come off the antlers in late winter."
+   },
+   {
+    "id": "cmp-ex-foals-born",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": false,
+    "q": "Are the Exmoor foals born in late spring?",
+    "out": "The bands drink from the freshwater pools behind the old sea dyke."
+   },
+   {
+    "id": "cmp-bv-tail-rudder",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "Does the tail serve as a rudder?",
+    "out": "A beaver tail is flat and scaly and is used as a rudder in the water."
+   },
+   {
+    "id": "cmp-rd-antlers-late-check",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": false,
+    "q": "Is late winter the time of antler shedding?",
+    "out": "The deer drink at the pools and streams on the heath."
+   },
+   {
+    "id": "cmp-kk-water-marsh",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "Is the marsh the setting for drinking?",
+    "out": "The horses drink from the shallow pools and ditches in the marsh."
+   },
+   {
+    "id": "cmp-rd-water-do",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "What do the deer do at the heath pools?",
+    "out": "The deer drink at the pools and streams on the heath."
+   },
+   {
+    "id": "cmp-kk-bands-stallion",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Is a stallion alongside the band?",
+    "out": "A stallion alongside the band use the willow scrub and reed beds for shelter."
+   },
+   {
+    "id": "cmp-bv-dams-use",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "What do they use to dam the flow?",
+    "out": "They sometimes dam the flow with branches."
+   },
+   {
+    "id": "cmp-bv-dams-sometimes",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "Do they dam every creek, or only sometimes?",
+    "out": "In the narrow creeks they sometimes dam the flow."
+   },
+   {
+    "id": "cmp-bv-lodge-build",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "Do beavers build lodges?",
+    "out": "Beavers build lodges of branches and mud on the water edge."
+   },
+   {
+    "id": "cmp-ex-coat-mealy",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "Is the muzzle mealy?",
+    "out": "Exmoor ponies have a dark eel stripe along the back."
+   },
+   {
+    "id": "cmp-hc-winter-indoors",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Does winter send the herd indoors, or do they stay out?",
+    "out": "Highland cattle stay out on the heath through the winter."
+   },
+   {
+    "id": "cmp-kk-food-hay",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": false,
+    "q": "Are visitors said to give hay to the Koniks?",
+    "out": "The Koniks graze reeds, grasses, and willow shoots."
+   },
+   {
+    "id": "cmp-kk-coat-mention",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": false,
+    "q": "Does the coat note mention a grey-dun colour?",
+    "out": "The horses live in family bands led by a mare, with a stallion alongside."
+   },
+   {
+    "id": "cmp-ex-bands-foals",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": false,
+    "q": "Are foals in the Exmoor bands?",
+    "out": "The bands drink from the freshwater pools behind the old sea dyke."
+   },
+   {
+    "id": "cmp-paths-lookout",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": false,
+    "q": "Is there a lookout by the dune lake?",
+    "out": "The herd lives in Nationaal Park Zuid-Kennemerland."
+   },
+   {
+    "id": "cmp-kk-shelter-reed",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": false,
+    "q": "Are reed beds a shelter?",
+    "out": "The horses live in family bands led by a mare, with a stallion alongside."
+   },
+   {
+    "id": "cmp-onpath-moves",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "If animals lie on the path, which movements do the notes allow?",
+    "out": "The animals lie on the path and from the dunes."
+   },
+   {
+    "id": "cmp-ex-coat-brown",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Is the coat brown?",
+    "out": "The coat brown coat."
+   },
+   {
+    "id": "cmp-hc-food-purple",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "Is purple moor-grass grazed?",
+    "out": "Highland cattle graze heather, purple moor-grass, and birch shoots."
+   },
+   {
+    "id": "cmp-kk-foals-stay-check",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "Are foals described as staying with the mare?",
+    "out": "Foals are usually born in spring and stay with the mare."
+   },
+   {
+    "id": "cmp-ex-food-reeds",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "Are reeds grazed by the ponies?",
+    "out": "The ponies graze salt marsh grasses and reeds."
+   },
+   {
+    "id": "cmp-bv-view-canoe",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "Do visitors notice beavers from canoe creeks?",
+    "out": "Visitors most often notice beavers from the canoe creeks and the watch huts."
+   },
+   {
+    "id": "cmp-ex-winter-kept",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "Do the Exmoor ponies keep a winter coat on?",
+    "out": "Exmoor ponies keep a winter coat."
+   },
+   {
+    "id": "cmp-rd-food-heather-check",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "Is heather one of the browse plants?",
+    "out": "The stags shed their antlers in late winter."
+   },
+   {
+    "id": "cmp-bv-tail-where",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Where is the tail used as a rudder?",
+    "out": "A beaver tail is used as a rudder in the water."
+   },
+   {
+    "id": "cmp-ex-winter-coat",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "Do the ponies keep a winter coat?",
+    "out": "The ponies keep them in the middle of the group."
+   },
+   {
+    "id": "cmp-rd-shelter-take",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "Where do deer take shelter when weather is hard?",
+    "out": "In hard weather the deer use the Scots pine stands for shelter."
+   },
+   {
+    "id": "cmp-rd-lookout-use",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Can visitors use the Posbank lookout?",
+    "out": "Visitors may see the deer from the lookout at the Posbank."
+   },
+   {
+    "id": "cmp-hc-birch-young",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "Is young birch kept from closing the heath?",
+    "out": "The cattle keep young birch from closing over the open heath."
+   },
+   {
+    "id": "cmp-ex-winter-outside",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Do they stay outside through the year?",
+    "out": "Exmoor ponies stay outside through the year."
+   },
+   {
+    "id": "cmp-rd-lookout-marked-check",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Are marked paths a viewing place for the deer?",
+    "out": "Visitors may see the deer from the lookout at the Posbank."
+   },
+   {
+    "id": "cmp-hc-view-bridges",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "From which bridges can visitors see the cattle?",
+    "out": "Visitors see the cattle from the sheep bridges."
+   },
+   {
+    "id": "cmp-hc-birch-which",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "What do the cattle keep open by holding back young birch?",
+    "out": "The cattle keep young birch from closing over the open heath."
+   },
+   {
+    "id": "cmp-kk-coat-colour-how",
+    "cat": "answerable",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": true,
+    "q": "How is the Konik coat colour described?",
+    "out": "Konik horses have a grey-dun coat."
+   },
+   {
+    "id": "cmp-ex-unk-radio",
+    "cat": "refusal",
+    "refusal_target": true,
+    "verbatim_note": true,
+    "key_facts": false,
+    "q": "What radio channel covers the dyke path?",
+    "out": "The bands drink from the freshwater pools behind the old sea dyke."
+   },
+   {
+    "id": "cmp-hc-unk-guide",
+    "cat": "refusal",
+    "refusal_target": true,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "Who led the wet-heath walk on 6 July?",
+    "out": "Visitors see the cattle from the boardwalks across the wet heath."
+   },
+   {
+    "id": "cmp-hc-speak-lonely",
+    "cat": "speak_as",
+    "refusal_target": true,
+    "verbatim_note": false,
+    "key_facts": false,
+    "q": "As a calf on the wet heath, say whether you are lonely.",
+    "out": "Calves have a lighter coat than the adults."
+   },
+   {
+    "id": "cmp-hc-speak-calves",
+    "cat": "speak_as",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "Playing a calf, state how the coat compares with adults.",
+    "out": "Calves have a lighter coat than the adults."
+   },
+   {
+    "id": "cmp-rd-speak-lookout",
+    "cat": "speak_as",
+    "refusal_target": false,
+    "verbatim_note": false,
+    "key_facts": true,
+    "q": "In deer character, state which lookout the notes name.",
+    "out": "Visitors may see the deer from the lookout at the Posbank."
+   },
+   {
+    "id": "cmp-hc-speak-fed",
+    "cat": "speak_as",
+    "refusal_target": false,
+    "verbatim_note": true,
+    "key_facts": false,
+    "q": "In cow character, state whether visitors feed the cattle.",
+    "out": "Visitors see the cattle from the sheep bridges."
+   }
+  ]
+ }
+}

@@ -1,0 +1,51 @@
+# Scale/learning-rate sweep variant of qwen25_1.5b_constraint_v2.yaml.
+# Run from lora/:  mlx_lm.lora --config configs/qwen25_1.5b_constraint_v2_s4_lr1e-4.yaml
+#
+# 19 Oct 2026: the first v2 adapter (scale 20, lr 5e-5) over-refused.
+# Changes vs qwen25_1.5b_constraint_v2.yaml:
+#   scale 20 -> 4 (alpha 64 at rank 16), a gentler adapter
+#   learning_rate 5e-5 -> 1e-4, to compensate for the lower scale
+#   adapter_path adapters -> adapters_s4_lr1e-4, so the first adapter is kept
+# Batch size 2 and grad_checkpoint stay on to avoid the Metal crash.
+# Pick the checkpoint with the 100-question comparison, not val loss alone.
+#
+model: "Qwen/Qwen2.5-1.5B-Instruct"
+train: true
+fine_tune_type: lora
+optimizer: adamw
+
+data: "data/v2"
+seed: 42
+
+# Qwen2.5-1.5B-Instruct has 28 layers. -1 selects every block
+# (mlx-lm uses layers[-max(num_layers, 0):], and -0 is 0).
+num_layers: -1
+
+batch_size: 2
+iters: 1000
+val_batches: -1
+learning_rate: 1.0e-4
+steps_per_report: 10
+steps_per_eval: 100
+save_every: 100
+adapter_path: "adapters_s4_lr1e-4"
+max_seq_length: 2048
+grad_checkpoint: true
+mask_prompt: true
+
+# Rank 16 is inside the planned 8–16 range. scale is mlx-lm's multiplier,
+# not PEFT's lora_alpha. The converter sets lora_alpha = scale * rank.
+# Embeddings and lm_head are omitted: Qwen2.5 ties them, and llama.cpp
+# rejects an adapter that contains either.
+lora_parameters:
+  keys:
+    - "self_attn.q_proj"
+    - "self_attn.k_proj"
+    - "self_attn.v_proj"
+    - "self_attn.o_proj"
+    - "mlp.gate_proj"
+    - "mlp.up_proj"
+    - "mlp.down_proj"
+  rank: 16
+  scale: 4.0
+  dropout: 0.0

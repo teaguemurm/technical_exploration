@@ -6,6 +6,7 @@ import 'dart:isolate';
 import 'package:ffi/ffi.dart';
 import 'package:llm_llamacpp/src/backend_initializer.dart';
 import 'package:llm_llamacpp/src/bindings/llama_bindings.dart';
+import 'package:llm_llamacpp/src/chat_template_apply.dart';
 import 'package:llm_llamacpp/src/generation_options.dart';
 import 'package:llm_llamacpp/src/isolate_messages.dart';
 import 'package:llm_llamacpp/src/lora_context_adapters.dart';

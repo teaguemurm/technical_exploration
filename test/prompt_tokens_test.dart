@@ -75,14 +75,17 @@ void main() {
       });
       // ignore: avoid_print
       print(
-        'gemma B-sim since-when=${counts['since-when-bsim']} '
-        'calves=${counts['calves-bsim']} A=${counts['since-when-a']}',
+        'gemma B-sim since-when=${counts['since-when-bsim']!.tokenCount} '
+        'calves=${counts['calves-bsim']!.tokenCount} '
+        'A=${counts['since-when-a']!.tokenCount}',
       );
-      final sinceWhen = counts['since-when-bsim']!;
-      final calves = counts['calves-bsim']!;
-      final conditionA = counts['since-when-a']!;
+      final sinceWhen = counts['since-when-bsim']!.tokenCount;
+      final calves = counts['calves-bsim']!.tokenCount;
+      final conditionA = counts['since-when-a']!.tokenCount;
+      expect(counts['since-when-bsim']!.formatter, promptFormatterGemma4);
       expect((sinceWhen - calves).abs(), lessThanOrEqualTo(5));
       expect(sinceWhen, greaterThan(conditionA + 15));
+      _expectGemmaProtocolCounts(bindings, gemmaPath, catalog, messagesFor);
     }
 
     final qwenPath = Platform.environment['QWEN_GGUF'];
@@ -100,18 +103,20 @@ void main() {
       });
       // ignore: avoid_print
       print(
-        'qwen what-animal A=${counts['A']} B=${counts['B']} '
-        'B-sim=${counts['Bsim']} C=${counts['C']}',
+        'qwen what-animal A=${counts['A']!.tokenCount} '
+        'B=${counts['B']!.tokenCount} '
+        'B-sim=${counts['Bsim']!.tokenCount} C=${counts['C']!.tokenCount}',
       );
-      expect(counts['A'], 58);
-      expect(counts['B'], 274);
-      expect(counts['Bsim'], 115);
-      expect(counts['C'], 420);
+      expect(counts['A']!.formatter, promptFormatterNative);
+      expect(counts['A']!.tokenCount, 58);
+      expect(counts['B']!.tokenCount, 274);
+      expect(counts['Bsim']!.tokenCount, 115);
+      expect(counts['C']!.tokenCount, 420);
     }
   });
 }
 
-Map<String, int> _countsFor(
+Map<String, CountedPrompt> _countsFor(
   LlamaBindings bindings,
   String modelPath,
   Map<String, List<LLMMessage>> labeled,
@@ -138,4 +143,39 @@ Map<String, int> _countsFor(
   } finally {
     bindings.llama_model_free(model);
   }
+}
+
+/// what-animal on this GGUF.
+///
+/// Condition A is 60, the Gemma 4 count for the 11 Oct prompt. Conditions B
+/// and C are 280 and 434. The 11 Oct figures 330 and 484 counted the same
+/// turns while every note still began with "EXAMPLE, not approved: ". That
+/// prefix is 50 tokens and is not in the current notes, so B and C are each
+/// 50 below those figures. The ChatML counts for the same messages are
+/// 87/318/472; the 11 Oct log's 368/522 is the same 50-token prefix.
+void _expectGemmaProtocolCounts(
+  LlamaBindings bindings,
+  String modelPath,
+  CatalogData catalog,
+  List<LLMMessage> Function(PromptSpec prompt, PromptCondition condition)
+  messagesFor,
+) {
+  final prompt = catalog.prompts.firstWhere((item) => item.id == 'what-animal');
+  final counted = _countsFor(bindings, modelPath, {
+    'A': messagesFor(prompt, PromptCondition.conditionA),
+    'B': messagesFor(prompt, PromptCondition.conditionB),
+    'C': messagesFor(prompt, PromptCondition.conditionC),
+  });
+  // ignore: avoid_print
+  print(
+    'gemma what-animal A=${counted['A']!.tokenCount} '
+    'B=${counted['B']!.tokenCount} C=${counted['C']!.tokenCount} '
+    'formatter=${counted['A']!.formatter}',
+  );
+  expect(counted['A']!.formatter, promptFormatterGemma4);
+  expect(counted['B']!.formatter, promptFormatterGemma4);
+  expect(counted['C']!.formatter, promptFormatterGemma4);
+  expect(counted['A']!.tokenCount, 60);
+  expect(counted['B']!.tokenCount, 280);
+  expect(counted['C']!.tokenCount, 434);
 }

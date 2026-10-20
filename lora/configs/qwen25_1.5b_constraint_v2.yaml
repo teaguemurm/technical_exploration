@@ -1,8 +1,16 @@
 # mlx-lm LoRA config for the v2 app-layout constraint adapter.
 # Run from lora/:  mlx_lm.lora --config configs/qwen25_1.5b_constraint_v2.yaml
 #
-# Same settings as qwen25_1.5b_constraint.yaml. The only change is data,
-# which points at the app condition-B set in data/v2.
+# Based on qwen25_1.5b_constraint.yaml, with data pointing at the app
+# condition-B set in data/v2.
+#
+# 19 Oct 2026: first run crashed at iter ~50 with a Metal
+# "Command buffer execution failed" error, and loss spiked (0.70 -> 7.38,
+# val 3.57 -> 4.85). Changes vs the original config:
+#   batch_size 4 -> 2 and grad_checkpoint on, to lower GPU memory pressure
+#   iters 500 -> 1000, so the number of examples seen stays the same
+#   learning_rate 1e-4 -> 5e-5, to stabilise training
+#   eval/save every 100 iters instead of 50
 #
 # Paths are relative to the working directory, not to this file.
 # Use the bf16 Hugging Face repo. If --model points at a quantized MLX
@@ -20,16 +28,16 @@ seed: 42
 # (mlx-lm uses layers[-max(num_layers, 0):], and -0 is 0).
 num_layers: -1
 
-batch_size: 4
-iters: 500
+batch_size: 2
+iters: 1000
 val_batches: -1
-learning_rate: 1.0e-4
+learning_rate: 5.0e-5
 steps_per_report: 10
-steps_per_eval: 50
-save_every: 50
+steps_per_eval: 100
+save_every: 100
 adapter_path: "adapters"
 max_seq_length: 2048
-grad_checkpoint: false
+grad_checkpoint: true
 mask_prompt: true
 
 # Rank 16 is inside the planned 8–16 range. scale is mlx-lm's multiplier,

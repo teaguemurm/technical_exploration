@@ -378,32 +378,33 @@ List<LLMMessage> buildConditionMessages({
   }
 }
 
+/// Patterns that mark a thought block, including a block the model never closed.
+final List<RegExp> _thoughtPatterns = [
+  RegExp(r'<(think|thought)>[\s\S]*?</\1>', caseSensitive: false),
+  RegExp(r'<\|thought\|>[\s\S]*?</\|thought\|>', caseSensitive: false),
+  RegExp(
+    r'<\|channel\>thought[\s\S]*?(<channel\|>|<\|channel>|$)',
+    caseSensitive: false,
+  ),
+  RegExp(r'<(think|thought)>[\s\S]*$', caseSensitive: false),
+  RegExp(r'<\|thought\|>[\s\S]*$', caseSensitive: false),
+];
+
+/// True when [text] contains a thought block. The text is not modified.
+bool outputContainsThought(String text) {
+  for (final pattern in _thoughtPatterns) {
+    if (pattern.hasMatch(text)) return true;
+  }
+  return false;
+}
+
 /// Strips reasoning/thinking tags (e.g. `<think>...</think>`, `<thought>...</thought>`,
 /// `<|thought|>...</|thought|>`, and `<|channel>thought...`) from model outputs.
 String stripThinkingBlocks(String text) {
-  var cleaned = text.replaceAll(
-    RegExp(r'<(think|thought)>[\s\S]*?</\1>', caseSensitive: false),
-    '',
-  );
-  cleaned = cleaned.replaceAll(
-    RegExp(r'<\|thought\|>[\s\S]*?</\|thought\|>', caseSensitive: false),
-    '',
-  );
-  cleaned = cleaned.replaceAll(
-    RegExp(
-      r'<\|channel\>thought[\s\S]*?(<channel\|>|<\|channel\>|$)',
-      caseSensitive: false,
-    ),
-    '',
-  );
-  cleaned = cleaned.replaceAll(
-    RegExp(r'<(think|thought)>[\s\S]*$', caseSensitive: false),
-    '',
-  );
-  cleaned = cleaned.replaceAll(
-    RegExp(r'<\|thought\|>[\s\S]*$', caseSensitive: false),
-    '',
-  );
+  var cleaned = text;
+  for (final pattern in _thoughtPatterns) {
+    cleaned = cleaned.replaceAll(pattern, '');
+  }
   return cleaned.trim();
 }
 
@@ -418,13 +419,20 @@ const stopSequences = [
   '<start_of_turn>',
 ];
 
-/// Sanitizes model output by stripping reasoning/thinking blocks and truncating
-/// at the earliest occurrence of any stop sequence or role boundary marker.
-String sanitizeModelOutput(String text) {
-  var cleaned = stripThinkingBlocks(text);
+/// Sanitizes model output by truncating at the earliest stop sequence.
+///
+/// Thought blocks are removed unless [keepThoughts] is set. Gemma 4 sets that
+/// so a thought the model still emitted stays in the stored output. `<eos>` is
+/// cut only in that case; the other stop strings were already recognised.
+String sanitizeModelOutput(String text, {bool keepThoughts = false}) {
+  var cleaned = keepThoughts ? text : stripThinkingBlocks(text);
+  final stops = <String>[
+    ...stopSequences,
+    if (keepThoughts) '<eos>',
+  ];
 
   int? earliestStop;
-  for (final stop in stopSequences) {
+  for (final stop in stops) {
     final idx = cleaned.indexOf(stop);
     if (idx != -1) {
       if (earliestStop == null || idx < earliestStop) {

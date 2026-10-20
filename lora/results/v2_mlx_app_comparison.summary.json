@@ -1,0 +1,24 @@
+{
+  "source": "data/comparison/comparison.jsonl",
+  "layout": "app",
+  "question_in_original_true": {
+    "n": 415,
+    "by_category": {
+      "answerable": 191,
+      "refusal": 124,
+      "speak_as": 60,
+      "preaching": 40
+    }
+  },
+  "question_in_original_false": {
+    "n": 495,
+    "by_category": {
+      "answerable": 230,
+      "refusal": 145,
+      "speak_as": 72,
+      "preaching": 48
+    }
+  },
+  "generalisation_group": "question_in_original_false",
+  "note": "question_in_original false is the generalisation result when source is lora/data/comparison/comparison.jsonl scored with layout app. layout stored on lora/data/v2/train.jsonl only checks training fit."
+}
