@@ -10,6 +10,7 @@ import 'package:technical_exploration/build_variant.dart';
 import 'package:technical_exploration/device_probe.dart';
 import 'package:technical_exploration/kernel_diag.dart';
 import 'package:technical_exploration/kleidi_sme.dart';
+import 'package:technical_exploration/lora_match.dart';
 import 'package:technical_exploration/messages.dart';
 import 'package:technical_exploration/model_integrity.dart';
 import 'package:technical_exploration/prompt_tokens.dart';
@@ -17,8 +18,12 @@ import 'package:technical_exploration/public_exports.dart';
 import 'package:technical_exploration/run_flags.dart';
 import 'package:technical_exploration/sanity_check.dart';
 import 'package:technical_exploration/system_metrics.dart';
-import 'package:technical_exploration/widgets/comparison_view.dart';
+import 'package:technical_exploration/widgets/config_card.dart';
+import 'package:technical_exploration/widgets/diagnostics_card.dart';
+import 'package:technical_exploration/widgets/messages_card.dart';
 import 'package:technical_exploration/widgets/metrics_dashboard.dart';
+import 'package:technical_exploration/widgets/report_surface.dart';
+import 'package:technical_exploration/widgets/setup_card.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -31,11 +36,25 @@ class TechnicalExplorationApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = ColorScheme.fromSeed(
+      seedColor: const Color(0xFF3F6B4A),
+      brightness: Brightness.light,
+    );
     return MaterialApp(
       title: 'technical_exploration',
       theme: ThemeData(
-        colorSchemeSeed: const Color(0xFF3F6B4A),
+        colorScheme: scheme,
+        brightness: Brightness.light,
         useMaterial3: true,
+        cardTheme: CardThemeData(
+          color: scheme.surface,
+          elevation: 0,
+          margin: EdgeInsets.zero,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+            side: BorderSide(color: scheme.outlineVariant),
+          ),
+        ),
       ),
       home: const NoteScreen(),
     );
@@ -60,6 +79,21 @@ class _NoteScreenState extends State<NoteScreen> {
 
   String? _modelPath;
   String? _modelFileName;
+  int? _modelSizeBytes;
+  String? _verifiedPath;
+  String? _adapterPath;
+  String? _adapterFileName;
+  String? _loadedAdapterPath;
+  String? _loadedAdapterFileName;
+  String? _loadedAdapterSha256;
+  double? _loadedAdapterScale;
+  int? _baseLoadMs;
+  int? _adapterLoadMs;
+  int? _parameterCount;
+  String _deviceLabel = '';
+  DateTime? _lastRunAt;
+  PromptCondition? _shownCondition;
+  List<LLMMessage> _sentMessages = const [];
   String _architecture = 'unknown';
   String _quantization = 'unknown';
   String _backend = 'CPU';
@@ -84,7 +118,6 @@ class _NoteScreenState extends State<NoteScreen> {
   int? _ramBeforeLoadBytes;
   int? _ramIdleBytes;
   int? _peakRssBytes;
-  int? _currentRssBytes;
 
   String? _loadError;
   String? _catalogError;
@@ -137,11 +170,14 @@ class _NoteScreenState extends State<NoteScreen> {
   @override
   void initState() {
     super.initState();
-    _currentRssBytes = MemorySnapshot.capture().currentRssBytes;
     _nGpuLayers =
         gpuLayersFromBuildDefine() ?? BackendDetector.getRecommendedGpuLayers();
     _backend = _nGpuLayers > 0 ? 'GPU' : 'CPU';
-    unawaited(refreshDeviceIdentity());
+    _deviceLabel = readDeviceModel();
+    unawaited(refreshDeviceIdentity().then((_) {
+      if (!mounted) return;
+      setState(() => _deviceLabel = readDeviceModel());
+    }));
     unawaited(_initApp());
   }
 
@@ -208,6 +244,7 @@ class _NoteScreenState extends State<NoteScreen> {
           _loaded = false;
           _sanityOk = false;
           _sanityRan = false;
+          _verifiedPath = null;
           _status = report.mismatchMessage;
           _loadError = report.mismatchMessage;
         });
@@ -216,6 +253,7 @@ class _NoteScreenState extends State<NoteScreen> {
       setState(() {
         _loading = false;
         _loadError = null;
+        _verifiedPath = path;
         _status =
             'Verified ${report.fileName} sha256=${report.sha256} '
             'knownQwenMatch=${report.matchesKnownQwen}.';
@@ -246,13 +284,40 @@ class _NoteScreenState extends State<NoteScreen> {
   /// Mac-only. Android always runs the sanity prompts.
   bool get _skipSanityEffective => _skipSanityRequested && !Platform.isAndroid;
 
+  bool get _adapterStale => _loaded && _adapterPath != _loadedAdapterPath;
+
   bool get _canRun =>
       _loaded &&
       _sanityOk &&
       _selected != null &&
       !_running &&
       !_loading &&
-      _catalog != null;
+      _catalog != null &&
+      !_adapterStale;
+
+  String? get _runBlockedReason {
+    if (_running || _canRun) return null;
+    if (_loading) return 'The model is still loading';
+    if (_adapterStale) return 'Load the model to apply the adapter';
+    if (_modelPath == null || _modelPath!.isEmpty) return 'Pick a model first';
+    if (!_loaded) return 'Load a model first';
+    if (!_sanityOk) {
+      return _sanityFailure ?? 'Sanity check failed';
+    }
+    if (_catalog == null || _selected == null) {
+      return 'Choose a visitor question first';
+    }
+    return 'Load a model first';
+  }
+
+  String get _modelStatusLine {
+    if (_loading) return 'Loading…';
+    if (_loaded && _verifiedPath != null && _verifiedPath == _modelPath) {
+      return 'Verified';
+    }
+    if (_loaded) return 'Loaded';
+    return 'Not loaded';
+  }
 
   DecodingSettings get _currentDecodingSettings => DecodingSettings(
     temperature: _temperature,
@@ -325,15 +390,112 @@ class _NoteScreenState extends State<NoteScreen> {
     setState(() {
       _modelPath = path;
       _modelFileName = file.name;
+      _modelSizeBytes = _fileSize(path);
       _pathInputController.text = path;
       _loaded = false;
       _loadError = null;
     });
   }
 
+  Future<void> _pickAdapter() async {
+    final file = await FilePicker.pickFile(
+      dialogTitle: 'Choose a LoRA adapter GGUF',
+      type: FileType.any,
+    );
+    if (!mounted || file == null) return;
+    final path = file.path;
+    if (path == null) {
+      setState(() => _loadError = 'The picker did not return a local path.');
+      return;
+    }
+    setState(() {
+      _adapterPath = path;
+      _adapterFileName = file.name;
+      _loadError = null;
+    });
+  }
+
+  void _clearAdapter() {
+    setState(() {
+      _adapterPath = null;
+      _adapterFileName = null;
+    });
+  }
+
+  int? _fileSize(String path) {
+    try {
+      return File(path).lengthSync();
+    } catch (_) {
+      return null;
+    }
+  }
+
+  String? _readArchitecture(String path) {
+    try {
+      return GgufMetadata.fromFileSync(path).architecture;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  void _rememberLoad({
+    required int baseMs,
+    required int adapterMs,
+    required int? idleBytes,
+    required bool isCold,
+    required ModelFileReport? adapterReport,
+  }) {
+    final total = baseMs + adapterMs;
+    _baseLoadMs = baseMs;
+    _adapterLoadMs = adapterMs;
+    _loadDurationMs = total;
+    if (isCold) _coldLoadMs = total;
+    _ramIdleBytes = idleBytes;
+    if (adapterReport == null) {
+      _loadedAdapterPath = null;
+      _loadedAdapterFileName = null;
+      _loadedAdapterSha256 = null;
+      _loadedAdapterScale = null;
+    } else {
+      _loadedAdapterPath = adapterReport.path;
+      _loadedAdapterFileName = adapterReport.fileName;
+      _loadedAdapterSha256 = adapterReport.sha256;
+      _loadedAdapterScale = protocolLoraScale;
+    }
+    // ignore: avoid_print
+    print(
+      '[technical_exploration] load-time: base=${baseMs}ms '
+      'adapter=${adapterMs}ms total=${total}ms',
+    );
+  }
+
+  Future<void> _finishSanity() async {
+    if (_skipSanityEffective) {
+      _sanityRan = false;
+      _sanityOk = true;
+      _sanityFailure = null;
+    } else {
+      await _runSanityChecks();
+    }
+  }
+
+  void _failLoad(String message) {
+    if (!mounted) return;
+    setState(() {
+      _loading = false;
+      _loaded = false;
+      _sanityOk = false;
+      _loadDurationMs = null;
+      _parameterCount = null;
+      _status = message;
+      _loadError = message;
+    });
+  }
+
   Future<void> _loadModel() async {
     final path = _modelPath;
     if (path == null || _loading) return;
+    final adapterPath = _adapterPath;
 
     setState(() {
       _loading = true;
@@ -343,6 +505,21 @@ class _NoteScreenState extends State<NoteScreen> {
       _sanityRan = false;
       _sanityFailure = null;
       _kernelLine = null;
+      _loadedAdapterPath = null;
+      _loadedAdapterFileName = null;
+      _loadedAdapterSha256 = null;
+      _loadedAdapterScale = null;
+      _hasRun = false;
+      _ttftMs = null;
+      _tokensPerSecond = null;
+      _evalCount = null;
+      _peakRssBytes = null;
+      _generationDuration = null;
+      _lastRunAt = null;
+      _shownCondition = null;
+      _sentMessages = const [];
+      _outputController.text = '';
+      _messagesController.text = '';
       _status = 'Checking cached model hash...';
     });
 
@@ -352,6 +529,33 @@ class _NoteScreenState extends State<NoteScreen> {
       _repo = null;
       // Brief pause to allow memory release before measuring pre-load RAM
       await Future<void>.delayed(const Duration(milliseconds: 150));
+    }
+
+    GgufMetadata? ggufMeta;
+    try {
+      ggufMeta = GgufMetadata.fromFileSync(path);
+    } catch (_) {
+      ggufMeta = null;
+    }
+
+    ModelFileReport? adapterReport;
+    if (adapterPath != null) {
+      final refusal = adapterArchitectureRefusal(
+        modelArchitecture: ggufMeta?.architecture,
+        adapterArchitecture: _readArchitecture(adapterPath),
+      );
+      if (refusal != null) {
+        _failLoad(refusal);
+        return;
+      }
+      try {
+        final store = await _ensureHashStore();
+        adapterReport = await inspectModelFile(adapterPath, cache: store.cache);
+        await store.save();
+      } catch (error) {
+        _failLoad('Could not hash the adapter: $error');
+        return;
+      }
     }
 
     final ModelFileReport fileReport;
@@ -369,6 +573,16 @@ class _NoteScreenState extends State<NoteScreen> {
     }
     // ignore: avoid_print
     print('[technical_exploration] ${fileReport.logLine}');
+    if (adapterReport == null) {
+      // ignore: avoid_print
+      print('[technical_exploration] adapter-file: none');
+    } else {
+      // ignore: avoid_print
+      print(
+        '[technical_exploration] adapter-file: name=${adapterReport.fileName} '
+        'sha256=${adapterReport.sha256} scale=$protocolLoraScale',
+      );
+    }
     if (fileReport.hashMismatch) {
       if (!mounted) return;
       setState(() {
@@ -381,21 +595,11 @@ class _NoteScreenState extends State<NoteScreen> {
       return;
     }
 
-    // Capture baseline RAM before allocating model
-    final preSnap = MemorySnapshot.capture();
-    _ramBeforeLoadBytes = preSnap.currentRssBytes;
-
-    final isCold = !_hasLoadedEver;
-    _hasLoadedEver = true;
-    _isColdLoad = isCold;
-
-    // Inspect GGUF header for architecture & quantization
-    GgufMetadata? ggufMeta;
-    try {
-      ggufMeta = GgufMetadata.fromFileSync(path);
+    if (ggufMeta != null) {
       _architecture = ggufMeta.architecture ?? 'unknown';
       _quantization = ggufMeta.quantizationType ?? 'unknown';
-    } catch (_) {
+    } else {
+      // Unchanged fallback for a base file whose header cannot be read.
       _architecture = 'qwen2.5';
       _quantization = 'Q4_K_M';
     }
@@ -404,6 +608,14 @@ class _NoteScreenState extends State<NoteScreen> {
       '[technical_exploration] gguf arch=$_architecture quant=$_quantization '
       'tensors=${ggufMeta?.tensorCount ?? 'n/a'}',
     );
+
+    // Capture baseline RAM before allocating model
+    final preSnap = MemorySnapshot.capture();
+    _ramBeforeLoadBytes = preSnap.currentRssBytes;
+
+    final isCold = !_hasLoadedEver;
+    _hasLoadedEver = true;
+    _isColdLoad = isCold;
 
     final repo = LlamaCppChatRepository(
       contextSize: _contextSize,
@@ -431,29 +643,61 @@ class _NoteScreenState extends State<NoteScreen> {
         ),
       );
       watch.stop();
-
-      final postSnap = MemorySnapshot.capture();
-      final duration = watch.elapsedMilliseconds;
+      final baseMs = watch.elapsedMilliseconds;
       _runIndexSinceLoad = 0;
+      _modelSizeBytes = _fileSize(path) ?? _modelSizeBytes;
+      // ignore: deprecated_member_use
+      final params = repo.model?.parameterCount;
+      _parameterCount = params == null || params <= 0 ? null : params;
 
-      if (!mounted) return;
-      setState(() {
-        _loaded = true;
-        _loadDurationMs = duration;
-        if (isCold) _coldLoadMs = duration;
-        _ramIdleBytes = postSnap.currentRssBytes;
-        _currentRssBytes = postSnap.currentRssBytes;
-        _status = _skipSanityEffective
-            ? 'Sanity check skipped.'
-            : 'Running sanity check...';
-      });
-      if (_skipSanityEffective) {
-        _sanityRan = false;
-        _sanityOk = true;
-        _sanityFailure = null;
+      if (adapterPath == null) {
+        final postSnap = MemorySnapshot.capture();
+        _rememberLoad(
+          baseMs: baseMs,
+          adapterMs: 0,
+          idleBytes: postSnap.currentRssBytes,
+          isCold: isCold,
+          adapterReport: null,
+        );
+        if (!mounted) return;
+        setState(() {
+          _loaded = true;
+          _status = _skipSanityEffective
+              ? 'Sanity check skipped.'
+              : 'Running sanity check...';
+        });
+        await _finishSanity();
       } else {
-        await _runSanityChecks();
+        if (!mounted) return;
+        setState(() {
+          _status = _skipSanityEffective
+              ? 'Sanity check skipped.'
+              : 'Running sanity check...';
+        });
+        await _finishSanity();
+        if (!mounted) return;
+        await Future<void>.delayed(const Duration(milliseconds: 150));
+        final adapterWatch = Stopwatch()..start();
+        try {
+          repo.attachLora(adapterPath, scale: protocolLoraScale);
+        } catch (error) {
+          adapterWatch.stop();
+          repo.dispose();
+          _repo = null;
+          _failLoad('Could not load this adapter. $error');
+          return;
+        }
+        adapterWatch.stop();
+        final postSnap = MemorySnapshot.capture();
+        _rememberLoad(
+          baseMs: baseMs,
+          adapterMs: adapterWatch.elapsedMilliseconds,
+          idleBytes: postSnap.currentRssBytes,
+          isCold: isCold,
+          adapterReport: adapterReport,
+        );
       }
+
       final kernel = collectKernelReport(
         useMemoryMap: _useMemoryMap,
         nGpuLayers: _nGpuLayers,
@@ -466,6 +710,7 @@ class _NoteScreenState extends State<NoteScreen> {
       if (!mounted) return;
       setState(() {
         _loading = false;
+        _loaded = true;
         _kernelLine = kernel.line;
         _status = _skipSanityEffective
             ? 'Sanity check skipped. The first protocol run can be a cold load.'
@@ -481,6 +726,7 @@ class _NoteScreenState extends State<NoteScreen> {
         _loaded = false;
         _sanityOk = false;
         _loadDurationMs = null;
+        _parameterCount = null;
         _loadError = error.toString();
         _status = error.toString();
         _loading = false;
@@ -606,33 +852,6 @@ class _NoteScreenState extends State<NoteScreen> {
     print('[technical_exploration] soc-thermal $when $line');
   }
 
-  Future<void> _choosePrompt() async {
-    final catalog = _catalog;
-    if (catalog == null) return;
-
-    final picked = await showDialog<PromptSpec>(
-      context: context,
-      builder: (context) {
-        return SimpleDialog(
-          title: const Text('Prompts'),
-          children: [
-            for (final prompt in catalog.prompts)
-              SimpleDialogOption(
-                onPressed: () => Navigator.pop(context, prompt),
-                child: Text(prompt.label),
-              ),
-          ],
-        );
-      },
-    );
-    if (picked != null && mounted) {
-      setState(() {
-        _selected = picked;
-        _comparisonResults.clear();
-      });
-    }
-  }
-
   /// Runs inference for a given condition and updates state.
   Future<RunRecord?> _runCondition(
     PromptCondition condition, {
@@ -707,7 +926,11 @@ class _NoteScreenState extends State<NoteScreen> {
     _preflightPromptFormatter = counted?.formatter;
 
     setState(() {
-      _selectedCondition = condition;
+      _selectedCondition = switch (condition) {
+        PromptCondition.conditionBSimRag => PromptCondition.conditionB,
+        PromptCondition.conditionCSimRag => PromptCondition.conditionC,
+        _ => condition,
+      };
       _running = true;
       _hasRun = true;
       _stopRequested = false;
@@ -719,9 +942,10 @@ class _NoteScreenState extends State<NoteScreen> {
       _status = null;
       _firstTokenAt = null;
       _peakRssBytes = initialSnap.currentRssBytes;
-      _currentRssBytes = initialSnap.currentRssBytes;
       _outputController.text = '';
       _messagesController.text = formatMessages(messages);
+      _sentMessages = messages;
+      _shownCondition = condition;
     });
 
     final watch = Stopwatch()..start();
@@ -1017,6 +1241,9 @@ class _NoteScreenState extends State<NoteScreen> {
       thinkingDisabled: thinkingDisabledValue,
       promptFormatter: formatterForRecord,
       thoughtEmitted: thoughtEmitted,
+      adapterFileName: _loadedAdapterFileName ?? '',
+      adapterSha256: _loadedAdapterSha256 ?? '',
+      adapterScale: _loadedAdapterScale,
     );
 
     _history.add(record);
@@ -1027,6 +1254,7 @@ class _NoteScreenState extends State<NoteScreen> {
       _running = false;
       _subscription = null;
       _batteryTempCelsius = batteryTempAfter;
+      _lastRunAt = DateTime.now();
       if (_stopRequested && _tokensPerSecond == null) {
         _status = 'Stopped before token count reported.';
       }
@@ -1078,11 +1306,17 @@ class _NoteScreenState extends State<NoteScreen> {
             PromptCondition.conditionC,
           ];
 
+    var compareIndex = 0;
     for (final condition in conditions) {
       if (!mounted || _stopRequested) break;
+      compareIndex++;
+      setState(() {
+        _batchProgressStatus = 'Compare $compareIndex/${conditions.length}';
+      });
       await _runCondition(condition);
       await Future<void>.delayed(const Duration(milliseconds: 300));
     }
+    if (mounted) setState(() => _batchProgressStatus = null);
   }
 
   /// Runs the full empirical protocol pass across all 10 prompts.
@@ -1121,8 +1355,7 @@ class _NoteScreenState extends State<NoteScreen> {
         if (!mounted || _stopRequested) break;
         currentCount++;
         setState(() {
-          _batchProgressStatus =
-              'Batch: $currentCount/$totalRuns [${condition.shortCode}] ${prompt.id}';
+          _batchProgressStatus = 'Batch $currentCount/$totalRuns';
         });
 
         await _runCondition(condition);
@@ -1169,8 +1402,7 @@ class _NoteScreenState extends State<NoteScreen> {
     for (var i = 1; i <= totalRuns; i++) {
       if (!mounted || _stopRequested) break;
       setState(() {
-        _batchProgressStatus =
-            'Heat Test: Run $i/$totalRuns (who-manages, Cond B)';
+        _batchProgressStatus = 'Heat $i/$totalRuns';
       });
 
       await _runCondition(PromptCondition.conditionB, isHeatTest: true);
@@ -1397,473 +1629,233 @@ class _NoteScreenState extends State<NoteScreen> {
     );
   }
 
+  String get _messagesHeader {
+    final condition = _shownCondition ?? _effectiveCondition;
+    final rag = condition.isSimulatedRag ? 'RAG on' : 'RAG off';
+    if (_running) return '${condition.code} · $rag · Streaming';
+    if (_hasRun && _runIndexSinceLoad > 0) {
+      final duration = _generationDuration;
+      final seconds = duration == null
+          ? ''
+          : ' · ${(duration.inMilliseconds / 1000).toStringAsFixed(1)} s';
+      return '${condition.code} · $rag · Run $_runIndexSinceLoad$seconds';
+    }
+    return '${condition.code} · $rag';
+  }
+
+  String get _telemetryContext {
+    final model = _loaded ? (_modelFileName ?? emDash) : emDash;
+    final adapter = !_loaded ? emDash : (_loadedAdapterFileName ?? 'None');
+    final condition = (_shownCondition ?? _effectiveCondition).shortCode;
+    final backend = _loaded ? _backend : emDash;
+    final device = _deviceLabel.isEmpty ? emDash : _deviceLabel;
+    return '$model · $adapter · $condition · $backend · $device · '
+        '${formatClock(_lastRunAt)}';
+  }
+
+  String get _overheadLabel {
+    final idle = _ramIdleBytes;
+    final before = _ramBeforeLoadBytes;
+    if (idle == null || before == null) return emDash;
+    return '${((idle - before) / (1024 * 1024)).toStringAsFixed(1)} MB';
+  }
+
+  String? get _loadSplitLabel {
+    final base = _baseLoadMs;
+    if (base == null) return null;
+    final adapter = _adapterLoadMs ?? 0;
+    final total = _loadDurationMs ?? base + adapter;
+    if (_loadedAdapterPath == null) return 'Load $total ms';
+    return 'Load $total ms (base $base ms, adapter $adapter ms)';
+  }
+
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final colorScheme = Theme.of(context).colorScheme;
+    final setup = SetupCard(
+      modelName: _modelFileName ?? 'No file selected',
+      modelSizeLabel: formatFileSizeLabel(_modelSizeBytes),
+      statusLine: _modelStatusLine,
+      adapterLabel: _adapterFileName ?? 'None',
+      canPick: !_running && !_loading,
+      canLoad: _canLoad,
+      onPickModel: _pickModel,
+      onLoad: _loadModel,
+      onPickAdapter: _pickAdapter,
+      onClearAdapter: _clearAdapter,
+      adapterSelected: _adapterPath != null,
+      condition: _selectedCondition,
+      onCondition: (value) => setState(() => _selectedCondition = value),
+      simulatedRag: _simulatedRagEnabled,
+      onSimulatedRag: (value) => setState(() => _simulatedRagEnabled = value),
+      prompts: _catalog?.prompts ?? const [],
+      selectedPromptId: _selected?.id,
+      onSelectPrompt: (prompt) {
+        setState(() {
+          _selected = prompt;
+          _comparisonResults.clear();
+        });
+      },
+      running: _running,
+      catalogError: _catalogError,
+      errorText: _loadError,
+    );
+    final actions = RunActionsBar(
+      running: _running,
+      canRun: _canRun,
+      blockedReason: _runBlockedReason,
+      progressLabel: _batchProgressStatus,
+      onRun: () => _runCondition(_effectiveCondition),
+      onStop: () => unawaited(_stop()),
+      onBatch: () => unawaited(_runBatchProtocol()),
+      onCompare: () => unawaited(_runCompareAll()),
+      onHeat: () => unawaited(_runHeatTest()),
+      compareLabel: _simulatedRagEnabled ? 'Compare all 5' : 'Compare all 3',
+    );
+    final telemetry = TelemetryCard(
+      coldLoadMs: _coldLoadMs,
+      idleRamBytes: _ramIdleBytes,
+      peakRamBytes: _hasRun ? _peakRssBytes : null,
+      ttftMs: _ttftMs,
+      tokensPerSecond: _tokensPerSecond,
+      tokensGenerated: _evalCount,
+      hasRun: _hasRun,
+      contextLine: _telemetryContext,
+    );
+    final config = ConfigCard(
+      loaded: _loaded,
+      modelFile: _modelFileName ?? emDash,
+      architecture: _architecture,
+      parameterCount: _parameterCount,
+      quantization: _quantization,
+      fileSizeLabel: formatFileSizeLabel(_modelSizeBytes),
+      backend: _backend,
+      threadsLabel: _threads == null ? emDash : '$_threads',
+      contextSize: _contextSize,
+      adapterLabel: _loadedAdapterFileName ?? 'None',
+      temperature: _temperature,
+      seed: _seed,
+      topK: _topK,
+      topP: _topP,
+      repeatPenalty: _repeatPenalty,
+      maxTokens: _maxTokens,
+    );
+    final history = HistoryCard(
+      prompt: _selected,
+      results: _comparisonResults,
+      showSimRag: _simulatedRagEnabled,
+    );
+    final battery = _batteryTempCelsius == null
+        ? emDash
+        : '${_batteryTempCelsius!.toStringAsFixed(1)} °C';
+    final throttle = _heatTestThrottlePercentage == null
+        ? emDash
+        : '${_heatTestThrottlePercentage!.toStringAsFixed(1)}%';
+    final canShare =
+        _history.isNotEmpty || (_lastPublicExportUris?.isNotEmpty ?? false);
+    final diagnostics = DiagnosticsCard(
+      canVerify: _canLoad,
+      onVerify: () => unawaited(_verifyModel()),
+      skipSanity: _skipSanityEffective,
+      onSkipSanity: Platform.isAndroid || _running || _loading
+          ? null
+          : (value) => setState(() => _skipSanityRequested = value),
+      kernelLine: _kernelLine,
+      statusMessage: _status,
+      overheadLabel: _overheadLabel,
+      batteryLabel: battery,
+      throttleLabel: throttle,
+      loadSplitLabel: _loadSplitLabel,
+      canExport: _history.isNotEmpty,
+      onCopyCsv: _copyCsvToClipboard,
+      onCopyJson: _copyJsonToClipboard,
+      onExport: () => unawaited(_exportFiles()),
+      onClearHistory: _clearHistory,
+      showShare: Platform.isAndroid,
+      onShare: canShare ? () => unawaited(_shareExports()) : null,
+    );
+
+    Widget messagesCard() {
+      return ListenableBuilder(
+        listenable: _outputController,
+        builder: (context, _) {
+          return MessagesCard(
+            header: _messagesHeader,
+            messages: _sentMessages,
+            output: _outputController.text,
+            streaming: _running,
+            hasRun: _hasRun,
+          );
+        },
+      );
+    }
+
+    const gap = SizedBox(height: reportGap);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Visitor note & Benchmark'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.file_download),
-            tooltip: 'Export CSV & JSON',
-            onPressed: _history.isNotEmpty ? _exportFiles : null,
-          ),
-          PopupMenuButton<String>(
-            onSelected: (val) {
-              if (val == 'copyCsv') {
-                _copyCsvToClipboard();
-              } else if (val == 'copyJson') {
-                _copyJsonToClipboard();
-              } else if (val == 'clear') {
-                _clearHistory();
-              }
-            },
-            itemBuilder: (context) => [
-              const PopupMenuItem(
-                value: 'copyCsv',
-                child: Text('Copy CSV to Clipboard'),
-              ),
-              const PopupMenuItem(
-                value: 'copyJson',
-                child: Text('Copy JSON to Clipboard'),
-              ),
-              const PopupMenuDivider(),
-              const PopupMenuItem(value: 'clear', child: Text('Clear History')),
-            ],
-          ),
-        ],
-      ),
+      appBar: AppBar(title: const Text('Visitor note & Benchmark')),
       body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.all(20),
-          children: [
-            // Telemetry dashboard
-            MetricsDashboard(
-              coldLoadMs: _coldLoadMs,
-              baselineRssBytes: _ramBeforeLoadBytes,
-              idleModelRssBytes:
-                  _ramIdleBytes != null && _ramBeforeLoadBytes != null
-                  ? (_ramIdleBytes! - _ramBeforeLoadBytes!)
-                  : null,
-              peakRssBytes: _peakRssBytes,
-              currentRssBytes: _currentRssBytes,
-              ttftMs: _ttftMs,
-              tokensPerSecond: _tokensPerSecond,
-              evalCount: _evalCount,
-              generationDuration: _generationDuration,
-              runCount: _sessionRunCount,
-              throttlePercentage: _heatTestThrottlePercentage,
-              batteryTempCelsius: _batteryTempCelsius,
-            ),
-            const SizedBox(height: 20),
-
-            // Model Selection
-            Text('Model', style: textTheme.titleMedium),
-            const SizedBox(height: 6),
-            Text(
-              _modelFileName ?? 'No file selected',
-              style: TextStyle(
-                fontWeight: _modelFileName != null
-                    ? FontWeight.w600
-                    : FontWeight.normal,
-              ),
-            ),
-            if (_loaded) ...[
-              const SizedBox(height: 4),
-              Text(
-                'Arch: $_architecture | Quant: $_quantization | Backend: $_backend (${_nGpuLayers}L) | ${_isColdLoad ? "Cold load" : "Warm load"}: ${_loadDurationMs ?? "--"} ms',
-                style: textTheme.bodySmall?.copyWith(
-                  color: colorScheme.onSurfaceVariant,
-                ),
-              ),
-              if (_kernelLine != null) ...[
-                const SizedBox(height: 4),
-                Text(_kernelLine!, style: textTheme.bodySmall),
-              ],
-              if (_status != null) ...[
-                const SizedBox(height: 4),
-                Text(
-                  _status!,
-                  style: textTheme.bodySmall?.copyWith(
-                    color: _sanityOk
-                        ? colorScheme.onSurfaceVariant
-                        : colorScheme.error,
-                  ),
-                ),
-              ],
-            ],
-            const SizedBox(height: 10),
-            Wrap(
-              spacing: 12,
-              runSpacing: 12,
-              crossAxisAlignment: WrapCrossAlignment.center,
-              children: [
-                FilledButton.tonal(
-                  onPressed: _running || _loading ? null : _pickModel,
-                  child: const Text('Pick GGUF'),
-                ),
-                FilledButton(
-                  onPressed: _canLoad ? _loadModel : null,
-                  child: Text(_loaded ? 'Reload Model' : 'Load'),
-                ),
-                FilledButton.tonal(
-                  onPressed: _canLoad ? _verifyModel : null,
-                  child: const Text('Verify model'),
-                ),
-                if (_loading)
-                  const SizedBox(
-                    width: 24,
-                    height: 24,
-                    child: CircularProgressIndicator(strokeWidth: 2.5),
-                  ),
-              ],
-            ),
-            if (_loading && _status != null) ...[
-              const SizedBox(height: 6),
-              Text(_status!, style: textTheme.bodySmall),
-            ],
-            if (_loadError != null) ...[
-              const SizedBox(height: 6),
-              Text(_loadError!, style: TextStyle(color: colorScheme.error)),
-            ],
-            SwitchListTile(
-              contentPadding: EdgeInsets.zero,
-              title: const Text('Skip sanity check'),
-              subtitle: Text(
-                Platform.isAndroid
-                    ? 'Ignored on Android. Sanity always runs before a protocol batch.'
-                    : 'Off by default. On: sanity does not run, so the first protocol run after a cold load stays cold.',
-                style: textTheme.bodySmall,
-              ),
-              value: _skipSanityEffective,
-              onChanged: Platform.isAndroid || _running || _loading
-                  ? null
-                  : (value) => setState(() => _skipSanityRequested = value),
-            ),
-
-            const Divider(height: 32),
-
-            // Prompt & Condition Section
-            Text('Evaluation & Prompting', style: textTheme.titleMedium),
-            const SizedBox(height: 10),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: FilledButton.tonal(
-                onPressed: _catalog == null || _running ? null : _choosePrompt,
-                child: Text(_selected?.label ?? 'Choose prompt'),
-              ),
-            ),
-            if (_catalogError != null) ...[
-              const SizedBox(height: 8),
-              Text(_catalogError!, style: TextStyle(color: colorScheme.error)),
-            ],
-            const SizedBox(height: 14),
-
-            // Protocol Condition Selector
-            Text('Prompt Condition', style: textTheme.labelLarge),
-            const SizedBox(height: 6),
-            SegmentedButton<PromptCondition>(
-              segments: const [
-                ButtonSegment(
-                  value: PromptCondition.conditionA,
-                  label: Text('A: Base'),
-                  tooltip: 'System prompt only',
-                ),
-                ButtonSegment(
-                  value: PromptCondition.conditionB,
-                  label: Text('B: Dataset'),
-                  tooltip: 'Include local dataset notes',
-                ),
-                ButtonSegment(
-                  value: PromptCondition.conditionC,
-                  label: Text('C: Constraints'),
-                  tooltip:
-                      'Strict grounding, 1-3 sentences, and behavioural bans',
-                ),
-              ],
-              selected: {
-                _selectedCondition == PromptCondition.conditionBSimRag
-                    ? PromptCondition.conditionB
-                    : (_selectedCondition == PromptCondition.conditionCSimRag
-                          ? PromptCondition.conditionC
-                          : _selectedCondition),
-              },
-              onSelectionChanged: _running
-                  ? null
-                  : (set) => setState(() => _selectedCondition = set.first),
-            ),
-            const SizedBox(height: 6),
-            Text(
-              _effectiveCondition.shortDescription,
-              style: textTheme.bodySmall?.copyWith(
-                color: colorScheme.onSurfaceVariant,
-              ),
-            ),
-
-            const SizedBox(height: 10),
-            // Simulated RAG Toggle (off by default)
-            SwitchListTile(
-              contentPadding: EdgeInsets.zero,
-              title: const Text('Simulated RAG (fixed note selection)'),
-              subtitle: Text(
-                _simulatedRagEnabled
-                    ? 'Active: Condition B and C use fixed top-k notes (k=2) with near misses'
-                    : 'Off (Default): Condition B and C receive all 10 locked notes',
-                style: textTheme.bodySmall,
-              ),
-              value: _simulatedRagEnabled,
-              onChanged: _running
-                  ? null
-                  : (val) => setState(() => _simulatedRagEnabled = val),
-            ),
-
-            const SizedBox(height: 8),
-
-            // Reproducible Decoding Defaults (Protocol Locked)
-            ExpansionTile(
-              title: const Text('Reproducible Decoding Settings (Locked)'),
-              subtitle: Text(
-                'Temp: $_temperature (Greedy) | Seed: $_seed | MaxTok: $_maxTokens | Ctx: $_contextSize',
-                style: textTheme.bodySmall,
-              ),
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Temperature: $_temperature (Greedy, deterministic)',
-                        style: textTheme.bodyMedium,
-                      ),
-                      Text('Seed: $_seed', style: textTheme.bodyMedium),
-                      Text(
-                        'Top-K: $_topK | Top-P: $_topP',
-                        style: textTheme.bodyMedium,
-                      ),
-                      Text(
-                        'Repeat Penalty: $_repeatPenalty',
-                        style: textTheme.bodyMedium,
-                      ),
-                      Text(
-                        'Max Tokens: $_maxTokens',
-                        style: textTheme.bodyMedium,
-                      ),
-                      Text(
-                        'Context Size: $_contextSize',
-                        style: textTheme.bodyMedium,
-                      ),
-                      Text(
-                        'Thinking toggle: not applied (export column is N/A)',
-                        style: textTheme.bodySmall,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 16),
-
-            if (_batchProgressStatus != null) ...[
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: colorScheme.primaryContainer,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Row(
-                  children: [
-                    const SizedBox(
-                      width: 18,
-                      height: 18,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        _batchProgressStatus!,
-                        style: TextStyle(
-                          color: colorScheme.onPrimaryContainer,
-                          fontWeight: FontWeight.bold,
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final width = constraints.maxWidth;
+            final wide = width >= 840;
+            final columnWidth = wide
+                ? math.min(width, 1200).toDouble()
+                : (width >= 600 ? math.min(width, 720).toDouble() : width);
+            final children = wide
+                ? <Widget>[
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          flex: 4,
+                          child: Column(
+                            children: [setup, gap, actions, gap, config],
+                          ),
                         ),
-                      ),
+                        const SizedBox(width: reportGap),
+                        Expanded(
+                          flex: 8,
+                          child: Column(
+                            children: [
+                              telemetry,
+                              gap,
+                              messagesCard(),
+                              gap,
+                              history,
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
+                    gap,
+                    diagnostics,
+                  ]
+                : <Widget>[
+                    setup,
+                    gap,
+                    actions,
+                    gap,
+                    messagesCard(),
+                    gap,
+                    telemetry,
+                    gap,
+                    config,
+                    gap,
+                    history,
+                    gap,
+                    diagnostics,
+                  ];
+            return Align(
+              alignment: Alignment.topCenter,
+              child: SizedBox(
+                width: columnWidth,
+                child: ListView(
+                  padding: const EdgeInsets.all(reportGap),
+                  children: children,
                 ),
               ),
-              const SizedBox(height: 12),
-            ],
-
-            // Action Run Buttons
-            Wrap(
-              spacing: 12,
-              runSpacing: 12,
-              children: [
-                FilledButton(
-                  onPressed: _canRun
-                      ? () => _runCondition(_effectiveCondition)
-                      : null,
-                  child: Text('Run (${_effectiveCondition.shortCode})'),
-                ),
-                FilledButton.tonal(
-                  onPressed: _canRun ? _runCompareAll : null,
-                  child: Text(
-                    _simulatedRagEnabled
-                        ? 'Compare All (A vs B vs B-sim vs C vs C-sim)'
-                        : 'Compare All 3 (A vs B vs C)',
-                  ),
-                ),
-                FilledButton.icon(
-                  icon: const Icon(Icons.playlist_play, size: 18),
-                  onPressed: _canRun ? _runBatchProtocol : null,
-                  label: Text(
-                    _simulatedRagEnabled
-                        ? 'Run Batch Pass (50 runs)'
-                        : 'Run Batch Pass (30 runs)',
-                  ),
-                ),
-                OutlinedButton.icon(
-                  icon: const Icon(Icons.local_fire_department, size: 18),
-                  onPressed: _canRun ? _runHeatTest : null,
-                  label: const Text('10-Run Heat Test'),
-                ),
-                OutlinedButton(
-                  onPressed: _running ? _stop : null,
-                  child: const Text('Stop'),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 12),
-
-            // Export & Copy Buttons (Mobile Friendly)
-            Wrap(
-              spacing: 12,
-              runSpacing: 8,
-              children: [
-                OutlinedButton.icon(
-                  icon: const Icon(Icons.table_chart, size: 16),
-                  onPressed: _history.isNotEmpty ? _copyCsvToClipboard : null,
-                  label: const Text('Copy CSV'),
-                ),
-                OutlinedButton.icon(
-                  icon: const Icon(Icons.code, size: 16),
-                  onPressed: _history.isNotEmpty ? _copyJsonToClipboard : null,
-                  label: const Text('Copy JSON'),
-                ),
-                OutlinedButton.icon(
-                  icon: const Icon(Icons.file_download, size: 16),
-                  onPressed: _history.isNotEmpty ? _exportFiles : null,
-                  label: const Text('Export Files'),
-                ),
-                if (Platform.isAndroid)
-                  OutlinedButton.icon(
-                    icon: const Icon(Icons.share, size: 16),
-                    onPressed:
-                        _history.isNotEmpty ||
-                            (_lastPublicExportUris?.isNotEmpty ?? false)
-                        ? _shareExports
-                        : null,
-                    label: const Text('Share'),
-                  ),
-              ],
-            ),
-
-            const SizedBox(height: 24),
-
-            // Live Output Box
-            TextField(
-              controller: _outputController,
-              readOnly: true,
-              minLines: 6,
-              maxLines: 16,
-              decoration: InputDecoration(
-                labelText: 'Live Output (${_effectiveCondition.code})',
-                alignLabelWithHint: true,
-                border: const OutlineInputBorder(),
-              ),
-            ),
-
-            if (_hasRun && !_running) ...[
-              const SizedBox(height: 10),
-              Wrap(
-                spacing: 16,
-                runSpacing: 6,
-                children: [
-                  if (_ttftMs != null)
-                    Text(
-                      'TTFT: $_ttftMs ms',
-                      style: const TextStyle(fontWeight: FontWeight.w600),
-                    ),
-                  if (_tokensPerSecond != null)
-                    Text(
-                      'TPS: ${_tokensPerSecond!.toStringAsFixed(2)} tok/s',
-                      style: const TextStyle(fontWeight: FontWeight.w600),
-                    ),
-                  if (_evalCount != null) Text('Tokens: $_evalCount'),
-                  if (_status != null)
-                    Text(_status!, style: TextStyle(color: colorScheme.error)),
-                ],
-              ),
-            ],
-
-            // Neutral Condition Comparison View
-            if (_selected != null && _comparisonResults.isNotEmpty) ...[
-              ComparisonView(
-                prompt: _selected!,
-                results: _comparisonResults,
-                showSimRag: _simulatedRagEnabled,
-              ),
-            ],
-
-            const SizedBox(height: 24),
-            Row(
-              children: [
-                Text('Messages sent', style: textTheme.titleMedium),
-                const SizedBox(width: 8),
-                if (_messagesController.text.isNotEmpty)
-                  Text(
-                    '(~${_estimatePromptTokens(_messagesController.text)} tokens)',
-                    style: textTheme.bodySmall?.copyWith(
-                      color: colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                const Spacer(),
-                IconButton(
-                  icon: const Icon(Icons.copy, size: 16),
-                  tooltip: 'Copy full prompt sent',
-                  visualDensity: VisualDensity.compact,
-                  onPressed: _messagesController.text.isNotEmpty
-                      ? () {
-                          Clipboard.setData(
-                            ClipboardData(text: _messagesController.text),
-                          );
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Prompt copied to clipboard'),
-                            ),
-                          );
-                        }
-                      : null,
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            TextField(
-              controller: _messagesController,
-              readOnly: true,
-              minLines: 6,
-              maxLines: 14,
-              decoration: const InputDecoration(
-                alignLabelWithHint: true,
-                border: OutlineInputBorder(),
-              ),
-            ),
-          ],
+            );
+          },
         ),
       ),
     );

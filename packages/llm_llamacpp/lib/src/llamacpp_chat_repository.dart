@@ -135,9 +135,21 @@ class LlamaCppChatRepository extends LLMChatRepository {
   /// This is used when the repository is created with withModelPath constructor.
   String? _modelPath;
 
-  // LoRA configuration
+  // LoRA configuration. [_loraPath] is what the next chat request applies.
+  // [_attachedLora] is the copy kept on this process's loaded model so a
+  // load-time memory reading includes the adapter weights.
   String? _loraPath;
   double _loraScale;
+  LoraManager? _loraManager;
+  LlamaLoraAdapter? _attachedLora;
+
+  void _releaseAttachedLora() {
+    final attached = _attachedLora;
+    _attachedLora = null;
+    if (attached != null) {
+      _loraManager?.unloadLora(attached, force: true);
+    }
+  }
 
   /// The currently loaded model, if any.
   @Deprecated('Use LlamaCppRepository for model management')
@@ -151,6 +163,9 @@ class LlamaCppChatRepository extends LLMChatRepository {
   bool get hasLora => _loraPath != null;
 
   void setLora(String path, {double scale = 1.0}) {
+    if (_attachedLora != null && _attachedLora!.path != path) {
+      _releaseAttachedLora();
+    }
     _loraPath = path;
     _loraScale = scale;
   }
@@ -162,6 +177,38 @@ class LlamaCppChatRepository extends LLMChatRepository {
   void clearLora() {
     _loraPath = null;
     _loraScale = 1.0;
+    _releaseAttachedLora();
+  }
+
+  /// Keeps [path] resident on the loaded model and uses it for later chats.
+  ///
+  /// The model must already be loaded in this process. A second call with the
+  /// same path only updates [scale]. Failure leaves no adapter path set.
+  void attachLora(String path, {double scale = 1.0}) {
+    final model = _model;
+    final bindings = _bindings;
+    if (model == null || bindings == null) {
+      throw StateError('Load a model before attaching a LoRA adapter.');
+    }
+    if (_attachedLora?.path == path) {
+      _loraPath = path;
+      _loraScale = scale;
+      return;
+    }
+    if (_attachedLora != null) {
+      _releaseAttachedLora();
+    }
+    _loraManager ??= LoraManager(bindings);
+    try {
+      _attachedLora = _loraManager!.loadLora(path, model);
+      _loraPath = path;
+      _loraScale = scale;
+    } catch (error) {
+      _attachedLora = null;
+      _loraPath = null;
+      _loraScale = 1.0;
+      rethrow;
+    }
   }
 
   @Deprecated('Use LlamaCppRepository for backend management')
@@ -244,6 +291,9 @@ class LlamaCppChatRepository extends LLMChatRepository {
   }
 
   void dispose() {
+    _releaseAttachedLora();
+    _loraManager?.dispose();
+    _loraManager = null;
     if (_ownsModel) {
       // ignore: deprecated_member_use_from_same_package
       unloadModel();

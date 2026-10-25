@@ -740,10 +740,63 @@ void main() {
     expect(
       csv,
       contains(
-        'Thinking Disabled,Prompt Formatter,Thought Emitted,Output',
+        'Thinking Disabled,Prompt Formatter,Thought Emitted,Output,Adapter File,Adapter SHA-256,Adapter Scale',
+      ),
+    );
+    expect(
+      csv,
+      contains(
+        'Timestamp,Adapter File,Adapter SHA-256,Adapter Scale',
       ),
     );
     expect(csv, contains('gemma4'));
+
+    final legacyAdapter = Map<String, dynamic>.from(json)
+      ..remove('adapterFileName')
+      ..remove('adapterSha256')
+      ..remove('adapterScale');
+    final withoutAdapter = RunRecord.fromJson(legacyAdapter);
+    expect(withoutAdapter.adapterFileName, isEmpty);
+    expect(withoutAdapter.adapterSha256, isEmpty);
+    expect(withoutAdapter.adapterScale, isNull);
+
+    final withAdapter = RunRecord.fromJson(json);
+    expect(withAdapter.adapterFileName, isEmpty);
+    expect(withAdapter.adapterScale, isNull);
+
+    final lora = RunRecord(
+      runIndex: 2,
+      runIndexSinceLoad: 1,
+      isColdLoad: true,
+      loadDurationMs: 10,
+      timestamp: DateTime.utc(2026, 10, 20),
+      deviceModel: 'Test Device',
+      osVersion: 'Test OS',
+      modelFileName: 'gemma-4.gguf',
+      architecture: 'gemma4',
+      quantization: 'Q3_K_M',
+      backend: 'CPU',
+      nGpuLayers: 0,
+      condition: 'C',
+      notesMode: 'all',
+      k: 0,
+      injectedNoteIds: const [],
+      promptId: 'what-animal',
+      promptText: 'What animal is this?',
+      decodingSettings: const DecodingSettings(),
+      systemPrompt: 'System',
+      messagesSent: 'Msg',
+      output: 'A wisent.',
+      hitMaxTokens: false,
+      adapterFileName: 'gemma4-e2b-constraint-s4-lora-f16.gguf',
+      adapterSha256: 'abc123',
+      adapterScale: 1,
+    );
+    final loraCsv = BenchmarkExporter.exportCsv([lora]);
+    expect(loraCsv, contains('gemma4-e2b-constraint-s4-lora-f16.gguf,abc123,1.0'));
+    final loraJson = lora.toJson();
+    expect(loraJson.keys.last, 'adapterScale');
+    expect(loraJson['adapterScale'], 1);
   });
 }
 
