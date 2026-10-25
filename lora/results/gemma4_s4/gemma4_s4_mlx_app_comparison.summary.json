@@ -1,0 +1,28 @@
+{
+  "source": "data/comparison/comparison.jsonl",
+  "layout": "app",
+  "question_in_original_true": {
+    "n": 415,
+    "by_category": {
+      "answerable": 191,
+      "refusal": 124,
+      "speak_as": 60,
+      "preaching": 40
+    }
+  },
+  "question_in_original_false": {
+    "n": 495,
+    "by_category": {
+      "answerable": 230,
+      "refusal": 145,
+      "speak_as": 72,
+      "preaching": 48
+    }
+  },
+  "generalisation_group": "question_in_original_false",
+  "note": "written afterwards by write_missing_summary.py; run_full_gemma.py crashed after writing the CSV",
+  "model": "google/gemma-4-E2B-it",
+  "adapter": "adapters_gemma4_s4_lr1e-4",
+  "base_from_cache": "results/gemma4_s4/gemma4_base_full_outputs.jsonl",
+  "seconds_adapter_pass": null
+}

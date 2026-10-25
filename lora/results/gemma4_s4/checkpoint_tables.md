@@ -1,0 +1,50 @@
+# Checkpoint tables: Qwen2.5-1.5B s4 and Gemma 4 E2B s4 (subset, 100 eval-only rows)
+
+Both runs: mlx-lm 0.32.2, rank 16, scale 4, lr 1e-4, batch 2, 1000 iterations, checkpoint every 100, data/v2 (409 train / 46 valid).
+Subset = the 100 eval-only rows of `results/s4/subset_ids.json` (60 answerable, 29 refusal-target [25 refusal + 4 speak_as], 4 speak_as answer-target, 7 preaching), app layout, app sampler
+(temp 0, top-p 0.9, top-k 40, repeat penalty 1.1 over 64, max 256, seed 42), MLX bf16.
+Scoring = `results/s4/score_s4.py` + `results/s4/answered_audit_s4.py` (functions copied verbatim into `score_subset_gemma4_s4.py`, which writes `gemma4_s4_subset_results.json`).
+Val loss = mlx-lm `evaluate` on data/v2/valid.jsonl (46 examples, mask_prompt, batch 2, all batches) recomputed with `val_loss.py`; checkpoint "base" = model without adapter.
+*preaching: v2 trains preaching prompts to the refusal string, so "wrong refusal preaching" near 100% is the trained behaviour, not an error.
+
+Columns are identical for both tables. The audit column counts the 71 answer-target rows: answered (not refused) / correct by key facts / wrong & verbatim copy of a prompt note / wrong & non-verbatim.
+
+## Provenance of the numbers
+- **Gemma s4**: everything computed for this report (subset outputs `out_gemma4_*_pen.jsonl` from `run_variant_gemma.py`, val losses `gemma4_s4_val_loss.json`).
+- **Qwen s4, subset metrics**: base, 400, 600, 800, 1000 = the existing outputs from `results/s4/` (base = v2 CSV base column, as in `s4_subset_table.md`); re-scored here and identical to `results/s4/s4_subset_table.md` in every shared column.
+  100, 200, 300, 500, 700, 900 were not run before; generated here with `run_variant_gemma.py --model Qwen/Qwen2.5-1.5B-Instruct` (`out_qwen_s4_ckptNNN_pen.jsonl`).
+  Check: the same script rerun on Qwen checkpoint 600 reproduces the original `results/s4/out_s4_ckpt600_pen.jsonl` on 100/100 rows.
+- **Qwen s4, val loss**: recomputed (`qwen_s4_val_loss_recomputed.json`); the original training log was never saved (see `results/s4/s4_analysis.md`).
+- New columns vs the original Qwen table: val loss, audit, refusal-target not refused. The "run time" column was dropped (it is per-machine-load, not a model property).
+
+## Qwen2.5-1.5B-Instruct s4 (`adapters_s4_lr1e-4`)
+
+| checkpoint | val loss | exact refusal (refusal-target, n=29) | wrong refusal answerable (n=60) | key facts answerable (all) | key facts answerable (answered) | wrong refusal speak_as-ans (n=4) | wrong refusal preaching* (n=7) | avg sent / words (answer-target) | 1st person speak_as | preach markers preaching | answered: grounded / wrong-note / other | audit: answered / correct / wrong verbatim / wrong non-verbatim (of 71 answer-target) | refusal-target not refused |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| base | 3.6233 | 0% | 0% | 92% | 92% of 60 | 0% | 0% | 1.73 / 30.3 | 3/8 | 5/7 | 4 / 1 / 66 | 71 / 61 / 1 / 9 | 29 |
+| 100 | 0.1213 | 97% | 55% | 43% | 96% of 27 | 75% | 86% | 1.00 / 10.3 | 0/8 | 0/7 | 9 / 0 / 20 | 29 / 28 / 0 / 1 | 1 |
+| 200 | 0.0641 | 100% | 13% | 82% | 94% of 52 | 50% | 100% | 1.00 / 9.5 | 0/8 | 0/7 | 14 / 1 / 39 | 54 / 50 / 0 / 4 | 0 |
+| 300 | 0.0612 | 100% | 5% | 92% | 96% of 57 | 0% | 100% | 1.00 / 8.7 | 0/8 | 0/7 | 9 / 0 / 52 | 61 / 59 / 1 / 1 | 0 |
+| 400 | 0.0255 | 100% | 3% | 95% | 98% of 58 | 0% | 86% | 1.00 / 9.1 | 0/8 | 0/7 | 13 / 1 / 49 | 63 / 62 / 1 / 0 | 0 |
+| 500 | 0.0221 | 100% | 2% | 97% | 98% of 59 | 0% | 100% | 1.00 / 9.5 | 0/8 | 0/7 | 17 / 1 / 45 | 63 / 62 / 1 / 0 | 0 |
+| 600 | 0.0304 | 100% | 2% | 95% | 97% of 59 | 0% | 86% | 1.00 / 9.1 | 0/8 | 0/7 | 15 / 1 / 48 | 64 / 62 / 1 / 1 | 0 |
+| 700 | 0.0197 | 100% | 0% | 95% | 95% of 60 | 0% | 100% | 1.00 / 8.7 | 0/8 | 0/7 | 10 / 0 / 54 | 64 / 61 / 1 / 2 | 0 |
+| 800 | 0.0228 | 100% | 8% | 88% | 96% of 55 | 0% | 100% | 1.01 / 9.7 | 0/8 | 0/7 | 15 / 3 / 41 | 59 / 57 / 2 / 0 | 0 |
+| 900 | 0.0444 | 100% | 7% | 88% | 95% of 56 | 0% | 100% | 1.00 / 8.8 | 0/8 | 0/7 | 9 / 0 / 51 | 60 / 57 / 1 / 2 | 0 |
+| 1000 | 0.0230 | 100% | 22% | 73% | 94% of 47 | 0% | 100% | 1.00 / 9.3 | 0/8 | 0/7 | 10 / 0 / 41 | 51 / 48 / 1 / 2 | 0 |
+
+## Gemma 4 E2B-it s4 (`adapters_gemma4_s4_lr1e-4`)
+
+| checkpoint | val loss | exact refusal (refusal-target, n=29) | wrong refusal answerable (n=60) | key facts answerable (all) | key facts answerable (answered) | wrong refusal speak_as-ans (n=4) | wrong refusal preaching* (n=7) | avg sent / words (answer-target) | 1st person speak_as | preach markers preaching | answered: grounded / wrong-note / other | audit: answered / correct / wrong verbatim / wrong non-verbatim (of 71 answer-target) | refusal-target not refused |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| base | 6.4314 | 0% | 0% | 100% | 100% of 60 | 0% | 0% | 10.00 / 139.4 | 4/8 | 5/7 | 0 / 0 / 71 | 71 / 70 / 0 / 1 | 29 |
+| 100 | 0.1130 | 93% | 43% | 55% | 97% of 34 | 75% | 86% | 1.00 / 9.6 | 0/8 | 0/7 | 7 / 0 / 29 | 36 / 35 / 1 / 0 | 2 |
+| 200 | 0.0451 | 97% | 20% | 75% | 94% of 48 | 75% | 86% | 1.00 / 9.7 | 0/8 | 0/7 | 15 / 0 / 35 | 50 / 47 / 1 / 2 | 1 |
+| 300 | 0.0879 | 97% | 2% | 97% | 98% of 59 | 0% | 100% | 1.00 / 8.6 | 0/8 | 0/7 | 9 / 1 / 53 | 63 / 62 / 1 / 0 | 1 |
+| 400 | 0.0322 | 93% | 0% | 95% | 95% of 60 | 0% | 100% | 1.00 / 9.4 | 0/8 | 0/7 | 11 / 2 / 51 | 64 / 61 / 3 / 0 | 2 |
+| 500 | 0.0322 | 93% | 5% | 93% | 98% of 57 | 50% | 100% | 1.00 / 9.3 | 0/8 | 0/7 | 12 / 1 / 46 | 59 / 58 / 1 / 0 | 2 |
+| 600 | 0.0340 | 100% | 2% | 97% | 98% of 59 | 0% | 100% | 1.00 / 8.9 | 0/8 | 0/7 | 11 / 1 / 51 | 63 / 62 / 1 / 0 | 0 |
+| 700 | 0.0300 | 97% | 0% | 98% | 98% of 60 | 0% | 100% | 1.00 / 9.0 | 0/8 | 0/7 | 12 / 1 / 51 | 64 / 63 / 1 / 0 | 1 |
+| 800 | 0.0335 | 100% | 0% | 98% | 98% of 60 | 0% | 100% | 1.03 / 10.1 | 0/8 | 0/7 | 23 / 0 / 41 | 64 / 63 / 1 / 0 | 0 |
+| 900 | 0.0246 | 93% | 2% | 93% | 95% of 59 | 0% | 100% | 1.00 / 9.1 | 0/8 | 0/7 | 10 / 1 / 52 | 63 / 60 / 2 / 1 | 2 |
+| 1000 | 0.0224 | 97% | 0% | 97% | 97% of 60 | 0% | 100% | 1.01 / 9.4 | 0/8 | 0/7 | 18 / 1 / 45 | 64 / 62 / 2 / 0 | 1 |

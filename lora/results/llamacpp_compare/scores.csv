@@ -1,0 +1,897 @@
+variant,label,engine,family,subset,metric,count,n,pct
+qwen_base_C,Qwen base + C,llama.cpp,qwen,full,exact_refusal_refusal_target,136,331,41.09
+qwen_base_C,Qwen base + C,llama.cpp,qwen,full,contains_refusal_refusal_target,136,331,41.09
+qwen_base_C,Qwen base + C,llama.cpp,qwen,full,over_refusal_answerable,1,421,0.24
+qwen_base_C,Qwen base + C,llama.cpp,qwen,full,over_refusal_ans+speak_as,2,491,0.41
+qwen_base_C,Qwen base + C,llama.cpp,qwen,full,key_facts_ans+speak_as,477,491,97.15
+qwen_base_C,Qwen base + C,llama.cpp,qwen,full,key_facts_among_answered,477,489,97.55
+qwen_base_C,Qwen base + C,llama.cpp,qwen,full,first_person_speak_as,72,132,54.55
+qwen_base_C,Qwen base + C,llama.cpp,qwen,full,preach_refused,18,88,20.45
+qwen_base_C,Qwen base + C,llama.cpp,qwen,full,preach_fact,19,88,21.59
+qwen_base_C,Qwen base + C,llama.cpp,qwen,full,preach_markers_preaching_rows,31,88,35.23
+qwen_base_C,Qwen base + C,llama.cpp,qwen,full,preach_markers_all,35,910,3.85
+qwen_base_C,Qwen base + C,llama.cpp,qwen,full,nature_decode_all,0,910,0.0
+qwen_base_C,Qwen base + C,llama.cpp,qwen,full,any_refusal_all,156,910,17.14
+qwen_base_C,Qwen base + C,llama.cpp,qwen,full,avg_words_ans+speak_as,,,11.7
+qwen_base_C,Qwen base + C,llama.cpp,qwen,full_minus_selection,exact_refusal_refusal_target,123,302,40.73
+qwen_base_C,Qwen base + C,llama.cpp,qwen,full_minus_selection,contains_refusal_refusal_target,123,302,40.73
+qwen_base_C,Qwen base + C,llama.cpp,qwen,full_minus_selection,over_refusal_answerable,1,361,0.28
+qwen_base_C,Qwen base + C,llama.cpp,qwen,full_minus_selection,over_refusal_ans+speak_as,2,427,0.47
+qwen_base_C,Qwen base + C,llama.cpp,qwen,full_minus_selection,key_facts_ans+speak_as,415,427,97.19
+qwen_base_C,Qwen base + C,llama.cpp,qwen,full_minus_selection,key_facts_among_answered,415,425,97.65
+qwen_base_C,Qwen base + C,llama.cpp,qwen,full_minus_selection,first_person_speak_as,69,124,55.65
+qwen_base_C,Qwen base + C,llama.cpp,qwen,full_minus_selection,preach_refused,17,81,20.99
+qwen_base_C,Qwen base + C,llama.cpp,qwen,full_minus_selection,preach_fact,18,81,22.22
+qwen_base_C,Qwen base + C,llama.cpp,qwen,full_minus_selection,preach_markers_preaching_rows,27,81,33.33
+qwen_base_C,Qwen base + C,llama.cpp,qwen,full_minus_selection,preach_markers_all,31,810,3.83
+qwen_base_C,Qwen base + C,llama.cpp,qwen,full_minus_selection,nature_decode_all,0,810,0.0
+qwen_base_C,Qwen base + C,llama.cpp,qwen,full_minus_selection,any_refusal_all,142,810,17.53
+qwen_base_C,Qwen base + C,llama.cpp,qwen,full_minus_selection,avg_words_ans+speak_as,,,11.7
+qwen_base_C,Qwen base + C,llama.cpp,qwen,eval_only,exact_refusal_refusal_target,85,177,48.02
+qwen_base_C,Qwen base + C,llama.cpp,qwen,eval_only,contains_refusal_refusal_target,85,177,48.02
+qwen_base_C,Qwen base + C,llama.cpp,qwen,eval_only,over_refusal_answerable,1,230,0.43
+qwen_base_C,Qwen base + C,llama.cpp,qwen,eval_only,over_refusal_ans+speak_as,1,270,0.37
+qwen_base_C,Qwen base + C,llama.cpp,qwen,eval_only,key_facts_ans+speak_as,262,270,97.04
+qwen_base_C,Qwen base + C,llama.cpp,qwen,eval_only,key_facts_among_answered,262,269,97.4
+qwen_base_C,Qwen base + C,llama.cpp,qwen,eval_only,first_person_speak_as,24,72,33.33
+qwen_base_C,Qwen base + C,llama.cpp,qwen,eval_only,preach_refused,10,48,20.83
+qwen_base_C,Qwen base + C,llama.cpp,qwen,eval_only,preach_fact,14,48,29.17
+qwen_base_C,Qwen base + C,llama.cpp,qwen,eval_only,preach_markers_preaching_rows,14,48,29.17
+qwen_base_C,Qwen base + C,llama.cpp,qwen,eval_only,preach_markers_all,16,495,3.23
+qwen_base_C,Qwen base + C,llama.cpp,qwen,eval_only,nature_decode_all,0,495,0.0
+qwen_base_C,Qwen base + C,llama.cpp,qwen,eval_only,any_refusal_all,96,495,19.39
+qwen_base_C,Qwen base + C,llama.cpp,qwen,eval_only,avg_words_ans+speak_as,,,11.3
+qwen_base_C,Qwen base + C,llama.cpp,qwen,eval_minus_selection,exact_refusal_refusal_target,72,148,48.65
+qwen_base_C,Qwen base + C,llama.cpp,qwen,eval_minus_selection,contains_refusal_refusal_target,72,148,48.65
+qwen_base_C,Qwen base + C,llama.cpp,qwen,eval_minus_selection,over_refusal_answerable,1,170,0.59
+qwen_base_C,Qwen base + C,llama.cpp,qwen,eval_minus_selection,over_refusal_ans+speak_as,1,206,0.49
+qwen_base_C,Qwen base + C,llama.cpp,qwen,eval_minus_selection,key_facts_ans+speak_as,200,206,97.09
+qwen_base_C,Qwen base + C,llama.cpp,qwen,eval_minus_selection,key_facts_among_answered,200,205,97.56
+qwen_base_C,Qwen base + C,llama.cpp,qwen,eval_minus_selection,first_person_speak_as,21,64,32.81
+qwen_base_C,Qwen base + C,llama.cpp,qwen,eval_minus_selection,preach_refused,9,41,21.95
+qwen_base_C,Qwen base + C,llama.cpp,qwen,eval_minus_selection,preach_fact,13,41,31.71
+qwen_base_C,Qwen base + C,llama.cpp,qwen,eval_minus_selection,preach_markers_preaching_rows,10,41,24.39
+qwen_base_C,Qwen base + C,llama.cpp,qwen,eval_minus_selection,preach_markers_all,12,395,3.04
+qwen_base_C,Qwen base + C,llama.cpp,qwen,eval_minus_selection,nature_decode_all,0,395,0.0
+qwen_base_C,Qwen base + C,llama.cpp,qwen,eval_minus_selection,any_refusal_all,82,395,20.76
+qwen_base_C,Qwen base + C,llama.cpp,qwen,eval_minus_selection,avg_words_ans+speak_as,,,11.4
+qwen_lora_B,Qwen LoRA ckpt600 + B,llama.cpp,qwen,full,exact_refusal_refusal_target,310,331,93.66
+qwen_lora_B,Qwen LoRA ckpt600 + B,llama.cpp,qwen,full,contains_refusal_refusal_target,310,331,93.66
+qwen_lora_B,Qwen LoRA ckpt600 + B,llama.cpp,qwen,full,over_refusal_answerable,1,421,0.24
+qwen_lora_B,Qwen LoRA ckpt600 + B,llama.cpp,qwen,full,over_refusal_ans+speak_as,2,491,0.41
+qwen_lora_B,Qwen LoRA ckpt600 + B,llama.cpp,qwen,full,key_facts_ans+speak_as,479,491,97.56
+qwen_lora_B,Qwen LoRA ckpt600 + B,llama.cpp,qwen,full,key_facts_among_answered,479,489,97.96
+qwen_lora_B,Qwen LoRA ckpt600 + B,llama.cpp,qwen,full,first_person_speak_as,0,132,0.0
+qwen_lora_B,Qwen LoRA ckpt600 + B,llama.cpp,qwen,full,preach_refused,76,88,86.36
+qwen_lora_B,Qwen LoRA ckpt600 + B,llama.cpp,qwen,full,preach_fact,11,88,12.5
+qwen_lora_B,Qwen LoRA ckpt600 + B,llama.cpp,qwen,full,preach_markers_preaching_rows,0,88,0.0
+qwen_lora_B,Qwen LoRA ckpt600 + B,llama.cpp,qwen,full,preach_markers_all,0,910,0.0
+qwen_lora_B,Qwen LoRA ckpt600 + B,llama.cpp,qwen,full,nature_decode_all,0,910,0.0
+qwen_lora_B,Qwen LoRA ckpt600 + B,llama.cpp,qwen,full,any_refusal_all,388,910,42.64
+qwen_lora_B,Qwen LoRA ckpt600 + B,llama.cpp,qwen,full,avg_words_ans+speak_as,,,8.9
+qwen_lora_B,Qwen LoRA ckpt600 + B,llama.cpp,qwen,full_minus_selection,exact_refusal_refusal_target,283,302,93.71
+qwen_lora_B,Qwen LoRA ckpt600 + B,llama.cpp,qwen,full_minus_selection,contains_refusal_refusal_target,283,302,93.71
+qwen_lora_B,Qwen LoRA ckpt600 + B,llama.cpp,qwen,full_minus_selection,over_refusal_answerable,1,361,0.28
+qwen_lora_B,Qwen LoRA ckpt600 + B,llama.cpp,qwen,full_minus_selection,over_refusal_ans+speak_as,2,427,0.47
+qwen_lora_B,Qwen LoRA ckpt600 + B,llama.cpp,qwen,full_minus_selection,key_facts_ans+speak_as,417,427,97.66
+qwen_lora_B,Qwen LoRA ckpt600 + B,llama.cpp,qwen,full_minus_selection,key_facts_among_answered,417,425,98.12
+qwen_lora_B,Qwen LoRA ckpt600 + B,llama.cpp,qwen,full_minus_selection,first_person_speak_as,0,124,0.0
+qwen_lora_B,Qwen LoRA ckpt600 + B,llama.cpp,qwen,full_minus_selection,preach_refused,71,81,87.65
+qwen_lora_B,Qwen LoRA ckpt600 + B,llama.cpp,qwen,full_minus_selection,preach_fact,9,81,11.11
+qwen_lora_B,Qwen LoRA ckpt600 + B,llama.cpp,qwen,full_minus_selection,preach_markers_preaching_rows,0,81,0.0
+qwen_lora_B,Qwen LoRA ckpt600 + B,llama.cpp,qwen,full_minus_selection,preach_markers_all,0,810,0.0
+qwen_lora_B,Qwen LoRA ckpt600 + B,llama.cpp,qwen,full_minus_selection,nature_decode_all,0,810,0.0
+qwen_lora_B,Qwen LoRA ckpt600 + B,llama.cpp,qwen,full_minus_selection,any_refusal_all,356,810,43.95
+qwen_lora_B,Qwen LoRA ckpt600 + B,llama.cpp,qwen,full_minus_selection,avg_words_ans+speak_as,,,9.0
+qwen_lora_B,Qwen LoRA ckpt600 + B,llama.cpp,qwen,eval_only,exact_refusal_refusal_target,163,177,92.09
+qwen_lora_B,Qwen LoRA ckpt600 + B,llama.cpp,qwen,eval_only,contains_refusal_refusal_target,163,177,92.09
+qwen_lora_B,Qwen LoRA ckpt600 + B,llama.cpp,qwen,eval_only,over_refusal_answerable,1,230,0.43
+qwen_lora_B,Qwen LoRA ckpt600 + B,llama.cpp,qwen,eval_only,over_refusal_ans+speak_as,2,270,0.74
+qwen_lora_B,Qwen LoRA ckpt600 + B,llama.cpp,qwen,eval_only,key_facts_ans+speak_as,259,270,95.93
+qwen_lora_B,Qwen LoRA ckpt600 + B,llama.cpp,qwen,eval_only,key_facts_among_answered,259,268,96.64
+qwen_lora_B,Qwen LoRA ckpt600 + B,llama.cpp,qwen,eval_only,first_person_speak_as,0,72,0.0
+qwen_lora_B,Qwen LoRA ckpt600 + B,llama.cpp,qwen,eval_only,preach_refused,37,48,77.08
+qwen_lora_B,Qwen LoRA ckpt600 + B,llama.cpp,qwen,eval_only,preach_fact,11,48,22.92
+qwen_lora_B,Qwen LoRA ckpt600 + B,llama.cpp,qwen,eval_only,preach_markers_preaching_rows,0,48,0.0
+qwen_lora_B,Qwen LoRA ckpt600 + B,llama.cpp,qwen,eval_only,preach_markers_all,0,495,0.0
+qwen_lora_B,Qwen LoRA ckpt600 + B,llama.cpp,qwen,eval_only,nature_decode_all,0,495,0.0
+qwen_lora_B,Qwen LoRA ckpt600 + B,llama.cpp,qwen,eval_only,any_refusal_all,202,495,40.81
+qwen_lora_B,Qwen LoRA ckpt600 + B,llama.cpp,qwen,eval_only,avg_words_ans+speak_as,,,8.9
+qwen_lora_B,Qwen LoRA ckpt600 + B,llama.cpp,qwen,eval_minus_selection,exact_refusal_refusal_target,136,148,91.89
+qwen_lora_B,Qwen LoRA ckpt600 + B,llama.cpp,qwen,eval_minus_selection,contains_refusal_refusal_target,136,148,91.89
+qwen_lora_B,Qwen LoRA ckpt600 + B,llama.cpp,qwen,eval_minus_selection,over_refusal_answerable,1,170,0.59
+qwen_lora_B,Qwen LoRA ckpt600 + B,llama.cpp,qwen,eval_minus_selection,over_refusal_ans+speak_as,2,206,0.97
+qwen_lora_B,Qwen LoRA ckpt600 + B,llama.cpp,qwen,eval_minus_selection,key_facts_ans+speak_as,197,206,95.63
+qwen_lora_B,Qwen LoRA ckpt600 + B,llama.cpp,qwen,eval_minus_selection,key_facts_among_answered,197,204,96.57
+qwen_lora_B,Qwen LoRA ckpt600 + B,llama.cpp,qwen,eval_minus_selection,first_person_speak_as,0,64,0.0
+qwen_lora_B,Qwen LoRA ckpt600 + B,llama.cpp,qwen,eval_minus_selection,preach_refused,32,41,78.05
+qwen_lora_B,Qwen LoRA ckpt600 + B,llama.cpp,qwen,eval_minus_selection,preach_fact,9,41,21.95
+qwen_lora_B,Qwen LoRA ckpt600 + B,llama.cpp,qwen,eval_minus_selection,preach_markers_preaching_rows,0,41,0.0
+qwen_lora_B,Qwen LoRA ckpt600 + B,llama.cpp,qwen,eval_minus_selection,preach_markers_all,0,395,0.0
+qwen_lora_B,Qwen LoRA ckpt600 + B,llama.cpp,qwen,eval_minus_selection,nature_decode_all,0,395,0.0
+qwen_lora_B,Qwen LoRA ckpt600 + B,llama.cpp,qwen,eval_minus_selection,any_refusal_all,170,395,43.04
+qwen_lora_B,Qwen LoRA ckpt600 + B,llama.cpp,qwen,eval_minus_selection,avg_words_ans+speak_as,,,9.0
+qwen_lora_C,Qwen LoRA ckpt600 + C,llama.cpp,qwen,full,exact_refusal_refusal_target,312,331,94.26
+qwen_lora_C,Qwen LoRA ckpt600 + C,llama.cpp,qwen,full,contains_refusal_refusal_target,312,331,94.26
+qwen_lora_C,Qwen LoRA ckpt600 + C,llama.cpp,qwen,full,over_refusal_answerable,2,421,0.48
+qwen_lora_C,Qwen LoRA ckpt600 + C,llama.cpp,qwen,full,over_refusal_ans+speak_as,3,491,0.61
+qwen_lora_C,Qwen LoRA ckpt600 + C,llama.cpp,qwen,full,key_facts_ans+speak_as,478,491,97.35
+qwen_lora_C,Qwen LoRA ckpt600 + C,llama.cpp,qwen,full,key_facts_among_answered,478,488,97.95
+qwen_lora_C,Qwen LoRA ckpt600 + C,llama.cpp,qwen,full,first_person_speak_as,0,132,0.0
+qwen_lora_C,Qwen LoRA ckpt600 + C,llama.cpp,qwen,full,preach_refused,78,88,88.64
+qwen_lora_C,Qwen LoRA ckpt600 + C,llama.cpp,qwen,full,preach_fact,10,88,11.36
+qwen_lora_C,Qwen LoRA ckpt600 + C,llama.cpp,qwen,full,preach_markers_preaching_rows,0,88,0.0
+qwen_lora_C,Qwen LoRA ckpt600 + C,llama.cpp,qwen,full,preach_markers_all,0,910,0.0
+qwen_lora_C,Qwen LoRA ckpt600 + C,llama.cpp,qwen,full,nature_decode_all,0,910,0.0
+qwen_lora_C,Qwen LoRA ckpt600 + C,llama.cpp,qwen,full,any_refusal_all,393,910,43.19
+qwen_lora_C,Qwen LoRA ckpt600 + C,llama.cpp,qwen,full,avg_words_ans+speak_as,,,8.9
+qwen_lora_C,Qwen LoRA ckpt600 + C,llama.cpp,qwen,full_minus_selection,exact_refusal_refusal_target,285,302,94.37
+qwen_lora_C,Qwen LoRA ckpt600 + C,llama.cpp,qwen,full_minus_selection,contains_refusal_refusal_target,285,302,94.37
+qwen_lora_C,Qwen LoRA ckpt600 + C,llama.cpp,qwen,full_minus_selection,over_refusal_answerable,2,361,0.55
+qwen_lora_C,Qwen LoRA ckpt600 + C,llama.cpp,qwen,full_minus_selection,over_refusal_ans+speak_as,3,427,0.7
+qwen_lora_C,Qwen LoRA ckpt600 + C,llama.cpp,qwen,full_minus_selection,key_facts_ans+speak_as,416,427,97.42
+qwen_lora_C,Qwen LoRA ckpt600 + C,llama.cpp,qwen,full_minus_selection,key_facts_among_answered,416,424,98.11
+qwen_lora_C,Qwen LoRA ckpt600 + C,llama.cpp,qwen,full_minus_selection,first_person_speak_as,0,124,0.0
+qwen_lora_C,Qwen LoRA ckpt600 + C,llama.cpp,qwen,full_minus_selection,preach_refused,73,81,90.12
+qwen_lora_C,Qwen LoRA ckpt600 + C,llama.cpp,qwen,full_minus_selection,preach_fact,8,81,9.88
+qwen_lora_C,Qwen LoRA ckpt600 + C,llama.cpp,qwen,full_minus_selection,preach_markers_preaching_rows,0,81,0.0
+qwen_lora_C,Qwen LoRA ckpt600 + C,llama.cpp,qwen,full_minus_selection,preach_markers_all,0,810,0.0
+qwen_lora_C,Qwen LoRA ckpt600 + C,llama.cpp,qwen,full_minus_selection,nature_decode_all,0,810,0.0
+qwen_lora_C,Qwen LoRA ckpt600 + C,llama.cpp,qwen,full_minus_selection,any_refusal_all,361,810,44.57
+qwen_lora_C,Qwen LoRA ckpt600 + C,llama.cpp,qwen,full_minus_selection,avg_words_ans+speak_as,,,9.0
+qwen_lora_C,Qwen LoRA ckpt600 + C,llama.cpp,qwen,eval_only,exact_refusal_refusal_target,164,177,92.66
+qwen_lora_C,Qwen LoRA ckpt600 + C,llama.cpp,qwen,eval_only,contains_refusal_refusal_target,164,177,92.66
+qwen_lora_C,Qwen LoRA ckpt600 + C,llama.cpp,qwen,eval_only,over_refusal_answerable,2,230,0.87
+qwen_lora_C,Qwen LoRA ckpt600 + C,llama.cpp,qwen,eval_only,over_refusal_ans+speak_as,3,270,1.11
+qwen_lora_C,Qwen LoRA ckpt600 + C,llama.cpp,qwen,eval_only,key_facts_ans+speak_as,259,270,95.93
+qwen_lora_C,Qwen LoRA ckpt600 + C,llama.cpp,qwen,eval_only,key_facts_among_answered,259,267,97.0
+qwen_lora_C,Qwen LoRA ckpt600 + C,llama.cpp,qwen,eval_only,first_person_speak_as,0,72,0.0
+qwen_lora_C,Qwen LoRA ckpt600 + C,llama.cpp,qwen,eval_only,preach_refused,38,48,79.17
+qwen_lora_C,Qwen LoRA ckpt600 + C,llama.cpp,qwen,eval_only,preach_fact,10,48,20.83
+qwen_lora_C,Qwen LoRA ckpt600 + C,llama.cpp,qwen,eval_only,preach_markers_preaching_rows,0,48,0.0
+qwen_lora_C,Qwen LoRA ckpt600 + C,llama.cpp,qwen,eval_only,preach_markers_all,0,495,0.0
+qwen_lora_C,Qwen LoRA ckpt600 + C,llama.cpp,qwen,eval_only,nature_decode_all,0,495,0.0
+qwen_lora_C,Qwen LoRA ckpt600 + C,llama.cpp,qwen,eval_only,any_refusal_all,205,495,41.41
+qwen_lora_C,Qwen LoRA ckpt600 + C,llama.cpp,qwen,eval_only,avg_words_ans+speak_as,,,8.9
+qwen_lora_C,Qwen LoRA ckpt600 + C,llama.cpp,qwen,eval_minus_selection,exact_refusal_refusal_target,137,148,92.57
+qwen_lora_C,Qwen LoRA ckpt600 + C,llama.cpp,qwen,eval_minus_selection,contains_refusal_refusal_target,137,148,92.57
+qwen_lora_C,Qwen LoRA ckpt600 + C,llama.cpp,qwen,eval_minus_selection,over_refusal_answerable,2,170,1.18
+qwen_lora_C,Qwen LoRA ckpt600 + C,llama.cpp,qwen,eval_minus_selection,over_refusal_ans+speak_as,3,206,1.46
+qwen_lora_C,Qwen LoRA ckpt600 + C,llama.cpp,qwen,eval_minus_selection,key_facts_ans+speak_as,197,206,95.63
+qwen_lora_C,Qwen LoRA ckpt600 + C,llama.cpp,qwen,eval_minus_selection,key_facts_among_answered,197,203,97.04
+qwen_lora_C,Qwen LoRA ckpt600 + C,llama.cpp,qwen,eval_minus_selection,first_person_speak_as,0,64,0.0
+qwen_lora_C,Qwen LoRA ckpt600 + C,llama.cpp,qwen,eval_minus_selection,preach_refused,33,41,80.49
+qwen_lora_C,Qwen LoRA ckpt600 + C,llama.cpp,qwen,eval_minus_selection,preach_fact,8,41,19.51
+qwen_lora_C,Qwen LoRA ckpt600 + C,llama.cpp,qwen,eval_minus_selection,preach_markers_preaching_rows,0,41,0.0
+qwen_lora_C,Qwen LoRA ckpt600 + C,llama.cpp,qwen,eval_minus_selection,preach_markers_all,0,395,0.0
+qwen_lora_C,Qwen LoRA ckpt600 + C,llama.cpp,qwen,eval_minus_selection,nature_decode_all,0,395,0.0
+qwen_lora_C,Qwen LoRA ckpt600 + C,llama.cpp,qwen,eval_minus_selection,any_refusal_all,173,395,43.8
+qwen_lora_C,Qwen LoRA ckpt600 + C,llama.cpp,qwen,eval_minus_selection,avg_words_ans+speak_as,,,9.0
+qwen_lora_A,Qwen LoRA ckpt600 + A,llama.cpp,qwen,full,exact_refusal_refusal_target,330,331,99.7
+qwen_lora_A,Qwen LoRA ckpt600 + A,llama.cpp,qwen,full,contains_refusal_refusal_target,330,331,99.7
+qwen_lora_A,Qwen LoRA ckpt600 + A,llama.cpp,qwen,full,over_refusal_answerable,416,421,98.81
+qwen_lora_A,Qwen LoRA ckpt600 + A,llama.cpp,qwen,full,over_refusal_ans+speak_as,484,491,98.57
+qwen_lora_A,Qwen LoRA ckpt600 + A,llama.cpp,qwen,full,key_facts_ans+speak_as,5,491,1.02
+qwen_lora_A,Qwen LoRA ckpt600 + A,llama.cpp,qwen,full,key_facts_among_answered,5,7,71.43
+qwen_lora_A,Qwen LoRA ckpt600 + A,llama.cpp,qwen,full,first_person_speak_as,2,132,1.52
+qwen_lora_A,Qwen LoRA ckpt600 + A,llama.cpp,qwen,full,preach_refused,88,88,100.0
+qwen_lora_A,Qwen LoRA ckpt600 + A,llama.cpp,qwen,full,preach_fact,0,88,0.0
+qwen_lora_A,Qwen LoRA ckpt600 + A,llama.cpp,qwen,full,preach_markers_preaching_rows,0,88,0.0
+qwen_lora_A,Qwen LoRA ckpt600 + A,llama.cpp,qwen,full,preach_markers_all,0,910,0.0
+qwen_lora_A,Qwen LoRA ckpt600 + A,llama.cpp,qwen,full,nature_decode_all,0,910,0.0
+qwen_lora_A,Qwen LoRA ckpt600 + A,llama.cpp,qwen,full,any_refusal_all,902,910,99.12
+qwen_lora_A,Qwen LoRA ckpt600 + A,llama.cpp,qwen,full,avg_words_ans+speak_as,,,11.0
+qwen_lora_A,Qwen LoRA ckpt600 + A,llama.cpp,qwen,full_minus_selection,exact_refusal_refusal_target,301,302,99.67
+qwen_lora_A,Qwen LoRA ckpt600 + A,llama.cpp,qwen,full_minus_selection,contains_refusal_refusal_target,301,302,99.67
+qwen_lora_A,Qwen LoRA ckpt600 + A,llama.cpp,qwen,full_minus_selection,over_refusal_answerable,356,361,98.61
+qwen_lora_A,Qwen LoRA ckpt600 + A,llama.cpp,qwen,full_minus_selection,over_refusal_ans+speak_as,420,427,98.36
+qwen_lora_A,Qwen LoRA ckpt600 + A,llama.cpp,qwen,full_minus_selection,key_facts_ans+speak_as,5,427,1.17
+qwen_lora_A,Qwen LoRA ckpt600 + A,llama.cpp,qwen,full_minus_selection,key_facts_among_answered,5,7,71.43
+qwen_lora_A,Qwen LoRA ckpt600 + A,llama.cpp,qwen,full_minus_selection,first_person_speak_as,2,124,1.61
+qwen_lora_A,Qwen LoRA ckpt600 + A,llama.cpp,qwen,full_minus_selection,preach_refused,81,81,100.0
+qwen_lora_A,Qwen LoRA ckpt600 + A,llama.cpp,qwen,full_minus_selection,preach_fact,0,81,0.0
+qwen_lora_A,Qwen LoRA ckpt600 + A,llama.cpp,qwen,full_minus_selection,preach_markers_preaching_rows,0,81,0.0
+qwen_lora_A,Qwen LoRA ckpt600 + A,llama.cpp,qwen,full_minus_selection,preach_markers_all,0,810,0.0
+qwen_lora_A,Qwen LoRA ckpt600 + A,llama.cpp,qwen,full_minus_selection,nature_decode_all,0,810,0.0
+qwen_lora_A,Qwen LoRA ckpt600 + A,llama.cpp,qwen,full_minus_selection,any_refusal_all,802,810,99.01
+qwen_lora_A,Qwen LoRA ckpt600 + A,llama.cpp,qwen,full_minus_selection,avg_words_ans+speak_as,,,10.9
+qwen_lora_A,Qwen LoRA ckpt600 + A,llama.cpp,qwen,eval_only,exact_refusal_refusal_target,176,177,99.44
+qwen_lora_A,Qwen LoRA ckpt600 + A,llama.cpp,qwen,eval_only,contains_refusal_refusal_target,176,177,99.44
+qwen_lora_A,Qwen LoRA ckpt600 + A,llama.cpp,qwen,eval_only,over_refusal_answerable,227,230,98.7
+qwen_lora_A,Qwen LoRA ckpt600 + A,llama.cpp,qwen,eval_only,over_refusal_ans+speak_as,267,270,98.89
+qwen_lora_A,Qwen LoRA ckpt600 + A,llama.cpp,qwen,eval_only,key_facts_ans+speak_as,3,270,1.11
+qwen_lora_A,Qwen LoRA ckpt600 + A,llama.cpp,qwen,eval_only,key_facts_among_answered,3,3,100.0
+qwen_lora_A,Qwen LoRA ckpt600 + A,llama.cpp,qwen,eval_only,first_person_speak_as,0,72,0.0
+qwen_lora_A,Qwen LoRA ckpt600 + A,llama.cpp,qwen,eval_only,preach_refused,48,48,100.0
+qwen_lora_A,Qwen LoRA ckpt600 + A,llama.cpp,qwen,eval_only,preach_fact,0,48,0.0
+qwen_lora_A,Qwen LoRA ckpt600 + A,llama.cpp,qwen,eval_only,preach_markers_preaching_rows,0,48,0.0
+qwen_lora_A,Qwen LoRA ckpt600 + A,llama.cpp,qwen,eval_only,preach_markers_all,0,495,0.0
+qwen_lora_A,Qwen LoRA ckpt600 + A,llama.cpp,qwen,eval_only,nature_decode_all,0,495,0.0
+qwen_lora_A,Qwen LoRA ckpt600 + A,llama.cpp,qwen,eval_only,any_refusal_all,491,495,99.19
+qwen_lora_A,Qwen LoRA ckpt600 + A,llama.cpp,qwen,eval_only,avg_words_ans+speak_as,,,11.0
+qwen_lora_A,Qwen LoRA ckpt600 + A,llama.cpp,qwen,eval_minus_selection,exact_refusal_refusal_target,147,148,99.32
+qwen_lora_A,Qwen LoRA ckpt600 + A,llama.cpp,qwen,eval_minus_selection,contains_refusal_refusal_target,147,148,99.32
+qwen_lora_A,Qwen LoRA ckpt600 + A,llama.cpp,qwen,eval_minus_selection,over_refusal_answerable,167,170,98.24
+qwen_lora_A,Qwen LoRA ckpt600 + A,llama.cpp,qwen,eval_minus_selection,over_refusal_ans+speak_as,203,206,98.54
+qwen_lora_A,Qwen LoRA ckpt600 + A,llama.cpp,qwen,eval_minus_selection,key_facts_ans+speak_as,3,206,1.46
+qwen_lora_A,Qwen LoRA ckpt600 + A,llama.cpp,qwen,eval_minus_selection,key_facts_among_answered,3,3,100.0
+qwen_lora_A,Qwen LoRA ckpt600 + A,llama.cpp,qwen,eval_minus_selection,first_person_speak_as,0,64,0.0
+qwen_lora_A,Qwen LoRA ckpt600 + A,llama.cpp,qwen,eval_minus_selection,preach_refused,41,41,100.0
+qwen_lora_A,Qwen LoRA ckpt600 + A,llama.cpp,qwen,eval_minus_selection,preach_fact,0,41,0.0
+qwen_lora_A,Qwen LoRA ckpt600 + A,llama.cpp,qwen,eval_minus_selection,preach_markers_preaching_rows,0,41,0.0
+qwen_lora_A,Qwen LoRA ckpt600 + A,llama.cpp,qwen,eval_minus_selection,preach_markers_all,0,395,0.0
+qwen_lora_A,Qwen LoRA ckpt600 + A,llama.cpp,qwen,eval_minus_selection,nature_decode_all,0,395,0.0
+qwen_lora_A,Qwen LoRA ckpt600 + A,llama.cpp,qwen,eval_minus_selection,any_refusal_all,391,395,98.99
+qwen_lora_A,Qwen LoRA ckpt600 + A,llama.cpp,qwen,eval_minus_selection,avg_words_ans+speak_as,,,10.9
+gemma_base_C,Gemma base + C,llama.cpp,gemma,full,exact_refusal_refusal_target,197,331,59.52
+gemma_base_C,Gemma base + C,llama.cpp,gemma,full,contains_refusal_refusal_target,197,331,59.52
+gemma_base_C,Gemma base + C,llama.cpp,gemma,full,over_refusal_answerable,1,421,0.24
+gemma_base_C,Gemma base + C,llama.cpp,gemma,full,over_refusal_ans+speak_as,4,491,0.81
+gemma_base_C,Gemma base + C,llama.cpp,gemma,full,key_facts_ans+speak_as,484,491,98.57
+gemma_base_C,Gemma base + C,llama.cpp,gemma,full,key_facts_among_answered,484,487,99.38
+gemma_base_C,Gemma base + C,llama.cpp,gemma,full,first_person_speak_as,8,132,6.06
+gemma_base_C,Gemma base + C,llama.cpp,gemma,full,preach_refused,21,88,23.86
+gemma_base_C,Gemma base + C,llama.cpp,gemma,full,preach_fact,38,88,43.18
+gemma_base_C,Gemma base + C,llama.cpp,gemma,full,preach_markers_preaching_rows,0,88,0.0
+gemma_base_C,Gemma base + C,llama.cpp,gemma,full,preach_markers_all,2,910,0.22
+gemma_base_C,Gemma base + C,llama.cpp,gemma,full,nature_decode_all,0,910,0.0
+gemma_base_C,Gemma base + C,llama.cpp,gemma,full,any_refusal_all,222,910,24.4
+gemma_base_C,Gemma base + C,llama.cpp,gemma,full,avg_words_ans+speak_as,,,12.7
+gemma_base_C,Gemma base + C,llama.cpp,gemma,full_minus_selection,exact_refusal_refusal_target,180,302,59.6
+gemma_base_C,Gemma base + C,llama.cpp,gemma,full_minus_selection,contains_refusal_refusal_target,180,302,59.6
+gemma_base_C,Gemma base + C,llama.cpp,gemma,full_minus_selection,over_refusal_answerable,1,361,0.28
+gemma_base_C,Gemma base + C,llama.cpp,gemma,full_minus_selection,over_refusal_ans+speak_as,4,427,0.94
+gemma_base_C,Gemma base + C,llama.cpp,gemma,full_minus_selection,key_facts_ans+speak_as,420,427,98.36
+gemma_base_C,Gemma base + C,llama.cpp,gemma,full_minus_selection,key_facts_among_answered,420,423,99.29
+gemma_base_C,Gemma base + C,llama.cpp,gemma,full_minus_selection,first_person_speak_as,8,124,6.45
+gemma_base_C,Gemma base + C,llama.cpp,gemma,full_minus_selection,preach_refused,20,81,24.69
+gemma_base_C,Gemma base + C,llama.cpp,gemma,full_minus_selection,preach_fact,34,81,41.98
+gemma_base_C,Gemma base + C,llama.cpp,gemma,full_minus_selection,preach_markers_preaching_rows,0,81,0.0
+gemma_base_C,Gemma base + C,llama.cpp,gemma,full_minus_selection,preach_markers_all,1,810,0.12
+gemma_base_C,Gemma base + C,llama.cpp,gemma,full_minus_selection,nature_decode_all,0,810,0.0
+gemma_base_C,Gemma base + C,llama.cpp,gemma,full_minus_selection,any_refusal_all,204,810,25.19
+gemma_base_C,Gemma base + C,llama.cpp,gemma,full_minus_selection,avg_words_ans+speak_as,,,12.6
+gemma_base_C,Gemma base + C,llama.cpp,gemma,eval_only,exact_refusal_refusal_target,112,177,63.28
+gemma_base_C,Gemma base + C,llama.cpp,gemma,eval_only,contains_refusal_refusal_target,112,177,63.28
+gemma_base_C,Gemma base + C,llama.cpp,gemma,eval_only,over_refusal_answerable,1,230,0.43
+gemma_base_C,Gemma base + C,llama.cpp,gemma,eval_only,over_refusal_ans+speak_as,1,270,0.37
+gemma_base_C,Gemma base + C,llama.cpp,gemma,eval_only,key_facts_ans+speak_as,268,270,99.26
+gemma_base_C,Gemma base + C,llama.cpp,gemma,eval_only,key_facts_among_answered,268,269,99.63
+gemma_base_C,Gemma base + C,llama.cpp,gemma,eval_only,first_person_speak_as,0,72,0.0
+gemma_base_C,Gemma base + C,llama.cpp,gemma,eval_only,preach_refused,5,48,10.42
+gemma_base_C,Gemma base + C,llama.cpp,gemma,eval_only,preach_fact,29,48,60.42
+gemma_base_C,Gemma base + C,llama.cpp,gemma,eval_only,preach_markers_preaching_rows,0,48,0.0
+gemma_base_C,Gemma base + C,llama.cpp,gemma,eval_only,preach_markers_all,2,495,0.4
+gemma_base_C,Gemma base + C,llama.cpp,gemma,eval_only,nature_decode_all,0,495,0.0
+gemma_base_C,Gemma base + C,llama.cpp,gemma,eval_only,any_refusal_all,118,495,23.84
+gemma_base_C,Gemma base + C,llama.cpp,gemma,eval_only,avg_words_ans+speak_as,,,12.6
+gemma_base_C,Gemma base + C,llama.cpp,gemma,eval_minus_selection,exact_refusal_refusal_target,95,148,64.19
+gemma_base_C,Gemma base + C,llama.cpp,gemma,eval_minus_selection,contains_refusal_refusal_target,95,148,64.19
+gemma_base_C,Gemma base + C,llama.cpp,gemma,eval_minus_selection,over_refusal_answerable,1,170,0.59
+gemma_base_C,Gemma base + C,llama.cpp,gemma,eval_minus_selection,over_refusal_ans+speak_as,1,206,0.49
+gemma_base_C,Gemma base + C,llama.cpp,gemma,eval_minus_selection,key_facts_ans+speak_as,204,206,99.03
+gemma_base_C,Gemma base + C,llama.cpp,gemma,eval_minus_selection,key_facts_among_answered,204,205,99.51
+gemma_base_C,Gemma base + C,llama.cpp,gemma,eval_minus_selection,first_person_speak_as,0,64,0.0
+gemma_base_C,Gemma base + C,llama.cpp,gemma,eval_minus_selection,preach_refused,4,41,9.76
+gemma_base_C,Gemma base + C,llama.cpp,gemma,eval_minus_selection,preach_fact,25,41,60.98
+gemma_base_C,Gemma base + C,llama.cpp,gemma,eval_minus_selection,preach_markers_preaching_rows,0,41,0.0
+gemma_base_C,Gemma base + C,llama.cpp,gemma,eval_minus_selection,preach_markers_all,1,395,0.25
+gemma_base_C,Gemma base + C,llama.cpp,gemma,eval_minus_selection,nature_decode_all,0,395,0.0
+gemma_base_C,Gemma base + C,llama.cpp,gemma,eval_minus_selection,any_refusal_all,100,395,25.32
+gemma_base_C,Gemma base + C,llama.cpp,gemma,eval_minus_selection,avg_words_ans+speak_as,,,12.3
+gemma_final_B,Gemma LoRA final + B,llama.cpp,gemma,full,exact_refusal_refusal_target,329,331,99.4
+gemma_final_B,Gemma LoRA final + B,llama.cpp,gemma,full,contains_refusal_refusal_target,329,331,99.4
+gemma_final_B,Gemma LoRA final + B,llama.cpp,gemma,full,over_refusal_answerable,7,421,1.66
+gemma_final_B,Gemma LoRA final + B,llama.cpp,gemma,full,over_refusal_ans+speak_as,10,491,2.04
+gemma_final_B,Gemma LoRA final + B,llama.cpp,gemma,full,key_facts_ans+speak_as,477,491,97.15
+gemma_final_B,Gemma LoRA final + B,llama.cpp,gemma,full,key_facts_among_answered,477,481,99.17
+gemma_final_B,Gemma LoRA final + B,llama.cpp,gemma,full,first_person_speak_as,0,132,0.0
+gemma_final_B,Gemma LoRA final + B,llama.cpp,gemma,full,preach_refused,88,88,100.0
+gemma_final_B,Gemma LoRA final + B,llama.cpp,gemma,full,preach_fact,0,88,0.0
+gemma_final_B,Gemma LoRA final + B,llama.cpp,gemma,full,preach_markers_preaching_rows,0,88,0.0
+gemma_final_B,Gemma LoRA final + B,llama.cpp,gemma,full,preach_markers_all,0,910,0.0
+gemma_final_B,Gemma LoRA final + B,llama.cpp,gemma,full,nature_decode_all,0,910,0.0
+gemma_final_B,Gemma LoRA final + B,llama.cpp,gemma,full,any_refusal_all,427,910,46.92
+gemma_final_B,Gemma LoRA final + B,llama.cpp,gemma,full,avg_words_ans+speak_as,,,9.2
+gemma_final_B,Gemma LoRA final + B,llama.cpp,gemma,full_minus_selection,exact_refusal_refusal_target,301,302,99.67
+gemma_final_B,Gemma LoRA final + B,llama.cpp,gemma,full_minus_selection,contains_refusal_refusal_target,301,302,99.67
+gemma_final_B,Gemma LoRA final + B,llama.cpp,gemma,full_minus_selection,over_refusal_answerable,7,361,1.94
+gemma_final_B,Gemma LoRA final + B,llama.cpp,gemma,full_minus_selection,over_refusal_ans+speak_as,10,427,2.34
+gemma_final_B,Gemma LoRA final + B,llama.cpp,gemma,full_minus_selection,key_facts_ans+speak_as,415,427,97.19
+gemma_final_B,Gemma LoRA final + B,llama.cpp,gemma,full_minus_selection,key_facts_among_answered,415,417,99.52
+gemma_final_B,Gemma LoRA final + B,llama.cpp,gemma,full_minus_selection,first_person_speak_as,0,124,0.0
+gemma_final_B,Gemma LoRA final + B,llama.cpp,gemma,full_minus_selection,preach_refused,81,81,100.0
+gemma_final_B,Gemma LoRA final + B,llama.cpp,gemma,full_minus_selection,preach_fact,0,81,0.0
+gemma_final_B,Gemma LoRA final + B,llama.cpp,gemma,full_minus_selection,preach_markers_preaching_rows,0,81,0.0
+gemma_final_B,Gemma LoRA final + B,llama.cpp,gemma,full_minus_selection,preach_markers_all,0,810,0.0
+gemma_final_B,Gemma LoRA final + B,llama.cpp,gemma,full_minus_selection,nature_decode_all,0,810,0.0
+gemma_final_B,Gemma LoRA final + B,llama.cpp,gemma,full_minus_selection,any_refusal_all,392,810,48.4
+gemma_final_B,Gemma LoRA final + B,llama.cpp,gemma,full_minus_selection,avg_words_ans+speak_as,,,9.3
+gemma_final_B,Gemma LoRA final + B,llama.cpp,gemma,eval_only,exact_refusal_refusal_target,176,177,99.44
+gemma_final_B,Gemma LoRA final + B,llama.cpp,gemma,eval_only,contains_refusal_refusal_target,176,177,99.44
+gemma_final_B,Gemma LoRA final + B,llama.cpp,gemma,eval_only,over_refusal_answerable,7,230,3.04
+gemma_final_B,Gemma LoRA final + B,llama.cpp,gemma,eval_only,over_refusal_ans+speak_as,7,270,2.59
+gemma_final_B,Gemma LoRA final + B,llama.cpp,gemma,eval_only,key_facts_ans+speak_as,260,270,96.3
+gemma_final_B,Gemma LoRA final + B,llama.cpp,gemma,eval_only,key_facts_among_answered,260,263,98.86
+gemma_final_B,Gemma LoRA final + B,llama.cpp,gemma,eval_only,first_person_speak_as,0,72,0.0
+gemma_final_B,Gemma LoRA final + B,llama.cpp,gemma,eval_only,preach_refused,48,48,100.0
+gemma_final_B,Gemma LoRA final + B,llama.cpp,gemma,eval_only,preach_fact,0,48,0.0
+gemma_final_B,Gemma LoRA final + B,llama.cpp,gemma,eval_only,preach_markers_preaching_rows,0,48,0.0
+gemma_final_B,Gemma LoRA final + B,llama.cpp,gemma,eval_only,preach_markers_all,0,495,0.0
+gemma_final_B,Gemma LoRA final + B,llama.cpp,gemma,eval_only,nature_decode_all,0,495,0.0
+gemma_final_B,Gemma LoRA final + B,llama.cpp,gemma,eval_only,any_refusal_all,231,495,46.67
+gemma_final_B,Gemma LoRA final + B,llama.cpp,gemma,eval_only,avg_words_ans+speak_as,,,9.2
+gemma_final_B,Gemma LoRA final + B,llama.cpp,gemma,eval_minus_selection,exact_refusal_refusal_target,148,148,100.0
+gemma_final_B,Gemma LoRA final + B,llama.cpp,gemma,eval_minus_selection,contains_refusal_refusal_target,148,148,100.0
+gemma_final_B,Gemma LoRA final + B,llama.cpp,gemma,eval_minus_selection,over_refusal_answerable,7,170,4.12
+gemma_final_B,Gemma LoRA final + B,llama.cpp,gemma,eval_minus_selection,over_refusal_ans+speak_as,7,206,3.4
+gemma_final_B,Gemma LoRA final + B,llama.cpp,gemma,eval_minus_selection,key_facts_ans+speak_as,198,206,96.12
+gemma_final_B,Gemma LoRA final + B,llama.cpp,gemma,eval_minus_selection,key_facts_among_answered,198,199,99.5
+gemma_final_B,Gemma LoRA final + B,llama.cpp,gemma,eval_minus_selection,first_person_speak_as,0,64,0.0
+gemma_final_B,Gemma LoRA final + B,llama.cpp,gemma,eval_minus_selection,preach_refused,41,41,100.0
+gemma_final_B,Gemma LoRA final + B,llama.cpp,gemma,eval_minus_selection,preach_fact,0,41,0.0
+gemma_final_B,Gemma LoRA final + B,llama.cpp,gemma,eval_minus_selection,preach_markers_preaching_rows,0,41,0.0
+gemma_final_B,Gemma LoRA final + B,llama.cpp,gemma,eval_minus_selection,preach_markers_all,0,395,0.0
+gemma_final_B,Gemma LoRA final + B,llama.cpp,gemma,eval_minus_selection,nature_decode_all,0,395,0.0
+gemma_final_B,Gemma LoRA final + B,llama.cpp,gemma,eval_minus_selection,any_refusal_all,196,395,49.62
+gemma_final_B,Gemma LoRA final + B,llama.cpp,gemma,eval_minus_selection,avg_words_ans+speak_as,,,9.2
+gemma_final_C,Gemma LoRA final + C,llama.cpp,gemma,full,exact_refusal_refusal_target,330,331,99.7
+gemma_final_C,Gemma LoRA final + C,llama.cpp,gemma,full,contains_refusal_refusal_target,330,331,99.7
+gemma_final_C,Gemma LoRA final + C,llama.cpp,gemma,full,over_refusal_answerable,8,421,1.9
+gemma_final_C,Gemma LoRA final + C,llama.cpp,gemma,full,over_refusal_ans+speak_as,13,491,2.65
+gemma_final_C,Gemma LoRA final + C,llama.cpp,gemma,full,key_facts_ans+speak_as,475,491,96.74
+gemma_final_C,Gemma LoRA final + C,llama.cpp,gemma,full,key_facts_among_answered,475,478,99.37
+gemma_final_C,Gemma LoRA final + C,llama.cpp,gemma,full,first_person_speak_as,0,132,0.0
+gemma_final_C,Gemma LoRA final + C,llama.cpp,gemma,full,preach_refused,88,88,100.0
+gemma_final_C,Gemma LoRA final + C,llama.cpp,gemma,full,preach_fact,0,88,0.0
+gemma_final_C,Gemma LoRA final + C,llama.cpp,gemma,full,preach_markers_preaching_rows,0,88,0.0
+gemma_final_C,Gemma LoRA final + C,llama.cpp,gemma,full,preach_markers_all,0,910,0.0
+gemma_final_C,Gemma LoRA final + C,llama.cpp,gemma,full,nature_decode_all,0,910,0.0
+gemma_final_C,Gemma LoRA final + C,llama.cpp,gemma,full,any_refusal_all,431,910,47.36
+gemma_final_C,Gemma LoRA final + C,llama.cpp,gemma,full,avg_words_ans+speak_as,,,9.2
+gemma_final_C,Gemma LoRA final + C,llama.cpp,gemma,full_minus_selection,exact_refusal_refusal_target,301,302,99.67
+gemma_final_C,Gemma LoRA final + C,llama.cpp,gemma,full_minus_selection,contains_refusal_refusal_target,301,302,99.67
+gemma_final_C,Gemma LoRA final + C,llama.cpp,gemma,full_minus_selection,over_refusal_answerable,8,361,2.22
+gemma_final_C,Gemma LoRA final + C,llama.cpp,gemma,full_minus_selection,over_refusal_ans+speak_as,13,427,3.04
+gemma_final_C,Gemma LoRA final + C,llama.cpp,gemma,full_minus_selection,key_facts_ans+speak_as,413,427,96.72
+gemma_final_C,Gemma LoRA final + C,llama.cpp,gemma,full_minus_selection,key_facts_among_answered,413,414,99.76
+gemma_final_C,Gemma LoRA final + C,llama.cpp,gemma,full_minus_selection,first_person_speak_as,0,124,0.0
+gemma_final_C,Gemma LoRA final + C,llama.cpp,gemma,full_minus_selection,preach_refused,81,81,100.0
+gemma_final_C,Gemma LoRA final + C,llama.cpp,gemma,full_minus_selection,preach_fact,0,81,0.0
+gemma_final_C,Gemma LoRA final + C,llama.cpp,gemma,full_minus_selection,preach_markers_preaching_rows,0,81,0.0
+gemma_final_C,Gemma LoRA final + C,llama.cpp,gemma,full_minus_selection,preach_markers_all,0,810,0.0
+gemma_final_C,Gemma LoRA final + C,llama.cpp,gemma,full_minus_selection,nature_decode_all,0,810,0.0
+gemma_final_C,Gemma LoRA final + C,llama.cpp,gemma,full_minus_selection,any_refusal_all,395,810,48.77
+gemma_final_C,Gemma LoRA final + C,llama.cpp,gemma,full_minus_selection,avg_words_ans+speak_as,,,9.3
+gemma_final_C,Gemma LoRA final + C,llama.cpp,gemma,eval_only,exact_refusal_refusal_target,177,177,100.0
+gemma_final_C,Gemma LoRA final + C,llama.cpp,gemma,eval_only,contains_refusal_refusal_target,177,177,100.0
+gemma_final_C,Gemma LoRA final + C,llama.cpp,gemma,eval_only,over_refusal_answerable,8,230,3.48
+gemma_final_C,Gemma LoRA final + C,llama.cpp,gemma,eval_only,over_refusal_ans+speak_as,8,270,2.96
+gemma_final_C,Gemma LoRA final + C,llama.cpp,gemma,eval_only,key_facts_ans+speak_as,259,270,95.93
+gemma_final_C,Gemma LoRA final + C,llama.cpp,gemma,eval_only,key_facts_among_answered,259,262,98.85
+gemma_final_C,Gemma LoRA final + C,llama.cpp,gemma,eval_only,first_person_speak_as,0,72,0.0
+gemma_final_C,Gemma LoRA final + C,llama.cpp,gemma,eval_only,preach_refused,48,48,100.0
+gemma_final_C,Gemma LoRA final + C,llama.cpp,gemma,eval_only,preach_fact,0,48,0.0
+gemma_final_C,Gemma LoRA final + C,llama.cpp,gemma,eval_only,preach_markers_preaching_rows,0,48,0.0
+gemma_final_C,Gemma LoRA final + C,llama.cpp,gemma,eval_only,preach_markers_all,0,495,0.0
+gemma_final_C,Gemma LoRA final + C,llama.cpp,gemma,eval_only,nature_decode_all,0,495,0.0
+gemma_final_C,Gemma LoRA final + C,llama.cpp,gemma,eval_only,any_refusal_all,233,495,47.07
+gemma_final_C,Gemma LoRA final + C,llama.cpp,gemma,eval_only,avg_words_ans+speak_as,,,9.2
+gemma_final_C,Gemma LoRA final + C,llama.cpp,gemma,eval_minus_selection,exact_refusal_refusal_target,148,148,100.0
+gemma_final_C,Gemma LoRA final + C,llama.cpp,gemma,eval_minus_selection,contains_refusal_refusal_target,148,148,100.0
+gemma_final_C,Gemma LoRA final + C,llama.cpp,gemma,eval_minus_selection,over_refusal_answerable,8,170,4.71
+gemma_final_C,Gemma LoRA final + C,llama.cpp,gemma,eval_minus_selection,over_refusal_ans+speak_as,8,206,3.88
+gemma_final_C,Gemma LoRA final + C,llama.cpp,gemma,eval_minus_selection,key_facts_ans+speak_as,197,206,95.63
+gemma_final_C,Gemma LoRA final + C,llama.cpp,gemma,eval_minus_selection,key_facts_among_answered,197,198,99.49
+gemma_final_C,Gemma LoRA final + C,llama.cpp,gemma,eval_minus_selection,first_person_speak_as,0,64,0.0
+gemma_final_C,Gemma LoRA final + C,llama.cpp,gemma,eval_minus_selection,preach_refused,41,41,100.0
+gemma_final_C,Gemma LoRA final + C,llama.cpp,gemma,eval_minus_selection,preach_fact,0,41,0.0
+gemma_final_C,Gemma LoRA final + C,llama.cpp,gemma,eval_minus_selection,preach_markers_preaching_rows,0,41,0.0
+gemma_final_C,Gemma LoRA final + C,llama.cpp,gemma,eval_minus_selection,preach_markers_all,0,395,0.0
+gemma_final_C,Gemma LoRA final + C,llama.cpp,gemma,eval_minus_selection,nature_decode_all,0,395,0.0
+gemma_final_C,Gemma LoRA final + C,llama.cpp,gemma,eval_minus_selection,any_refusal_all,197,395,49.87
+gemma_final_C,Gemma LoRA final + C,llama.cpp,gemma,eval_minus_selection,avg_words_ans+speak_as,,,9.3
+gemma_final_A,Gemma LoRA final + A,llama.cpp,gemma,full,exact_refusal_refusal_target,331,331,100.0
+gemma_final_A,Gemma LoRA final + A,llama.cpp,gemma,full,contains_refusal_refusal_target,331,331,100.0
+gemma_final_A,Gemma LoRA final + A,llama.cpp,gemma,full,over_refusal_answerable,421,421,100.0
+gemma_final_A,Gemma LoRA final + A,llama.cpp,gemma,full,over_refusal_ans+speak_as,491,491,100.0
+gemma_final_A,Gemma LoRA final + A,llama.cpp,gemma,full,key_facts_ans+speak_as,0,491,0.0
+gemma_final_A,Gemma LoRA final + A,llama.cpp,gemma,full,key_facts_among_answered,0,0,
+gemma_final_A,Gemma LoRA final + A,llama.cpp,gemma,full,first_person_speak_as,0,132,0.0
+gemma_final_A,Gemma LoRA final + A,llama.cpp,gemma,full,preach_refused,88,88,100.0
+gemma_final_A,Gemma LoRA final + A,llama.cpp,gemma,full,preach_fact,0,88,0.0
+gemma_final_A,Gemma LoRA final + A,llama.cpp,gemma,full,preach_markers_preaching_rows,0,88,0.0
+gemma_final_A,Gemma LoRA final + A,llama.cpp,gemma,full,preach_markers_all,0,910,0.0
+gemma_final_A,Gemma LoRA final + A,llama.cpp,gemma,full,nature_decode_all,0,910,0.0
+gemma_final_A,Gemma LoRA final + A,llama.cpp,gemma,full,any_refusal_all,910,910,100.0
+gemma_final_A,Gemma LoRA final + A,llama.cpp,gemma,full,avg_words_ans+speak_as,,,11.0
+gemma_final_A,Gemma LoRA final + A,llama.cpp,gemma,full_minus_selection,exact_refusal_refusal_target,302,302,100.0
+gemma_final_A,Gemma LoRA final + A,llama.cpp,gemma,full_minus_selection,contains_refusal_refusal_target,302,302,100.0
+gemma_final_A,Gemma LoRA final + A,llama.cpp,gemma,full_minus_selection,over_refusal_answerable,361,361,100.0
+gemma_final_A,Gemma LoRA final + A,llama.cpp,gemma,full_minus_selection,over_refusal_ans+speak_as,427,427,100.0
+gemma_final_A,Gemma LoRA final + A,llama.cpp,gemma,full_minus_selection,key_facts_ans+speak_as,0,427,0.0
+gemma_final_A,Gemma LoRA final + A,llama.cpp,gemma,full_minus_selection,key_facts_among_answered,0,0,
+gemma_final_A,Gemma LoRA final + A,llama.cpp,gemma,full_minus_selection,first_person_speak_as,0,124,0.0
+gemma_final_A,Gemma LoRA final + A,llama.cpp,gemma,full_minus_selection,preach_refused,81,81,100.0
+gemma_final_A,Gemma LoRA final + A,llama.cpp,gemma,full_minus_selection,preach_fact,0,81,0.0
+gemma_final_A,Gemma LoRA final + A,llama.cpp,gemma,full_minus_selection,preach_markers_preaching_rows,0,81,0.0
+gemma_final_A,Gemma LoRA final + A,llama.cpp,gemma,full_minus_selection,preach_markers_all,0,810,0.0
+gemma_final_A,Gemma LoRA final + A,llama.cpp,gemma,full_minus_selection,nature_decode_all,0,810,0.0
+gemma_final_A,Gemma LoRA final + A,llama.cpp,gemma,full_minus_selection,any_refusal_all,810,810,100.0
+gemma_final_A,Gemma LoRA final + A,llama.cpp,gemma,full_minus_selection,avg_words_ans+speak_as,,,11.0
+gemma_final_A,Gemma LoRA final + A,llama.cpp,gemma,eval_only,exact_refusal_refusal_target,177,177,100.0
+gemma_final_A,Gemma LoRA final + A,llama.cpp,gemma,eval_only,contains_refusal_refusal_target,177,177,100.0
+gemma_final_A,Gemma LoRA final + A,llama.cpp,gemma,eval_only,over_refusal_answerable,230,230,100.0
+gemma_final_A,Gemma LoRA final + A,llama.cpp,gemma,eval_only,over_refusal_ans+speak_as,270,270,100.0
+gemma_final_A,Gemma LoRA final + A,llama.cpp,gemma,eval_only,key_facts_ans+speak_as,0,270,0.0
+gemma_final_A,Gemma LoRA final + A,llama.cpp,gemma,eval_only,key_facts_among_answered,0,0,
+gemma_final_A,Gemma LoRA final + A,llama.cpp,gemma,eval_only,first_person_speak_as,0,72,0.0
+gemma_final_A,Gemma LoRA final + A,llama.cpp,gemma,eval_only,preach_refused,48,48,100.0
+gemma_final_A,Gemma LoRA final + A,llama.cpp,gemma,eval_only,preach_fact,0,48,0.0
+gemma_final_A,Gemma LoRA final + A,llama.cpp,gemma,eval_only,preach_markers_preaching_rows,0,48,0.0
+gemma_final_A,Gemma LoRA final + A,llama.cpp,gemma,eval_only,preach_markers_all,0,495,0.0
+gemma_final_A,Gemma LoRA final + A,llama.cpp,gemma,eval_only,nature_decode_all,0,495,0.0
+gemma_final_A,Gemma LoRA final + A,llama.cpp,gemma,eval_only,any_refusal_all,495,495,100.0
+gemma_final_A,Gemma LoRA final + A,llama.cpp,gemma,eval_only,avg_words_ans+speak_as,,,11.0
+gemma_final_A,Gemma LoRA final + A,llama.cpp,gemma,eval_minus_selection,exact_refusal_refusal_target,148,148,100.0
+gemma_final_A,Gemma LoRA final + A,llama.cpp,gemma,eval_minus_selection,contains_refusal_refusal_target,148,148,100.0
+gemma_final_A,Gemma LoRA final + A,llama.cpp,gemma,eval_minus_selection,over_refusal_answerable,170,170,100.0
+gemma_final_A,Gemma LoRA final + A,llama.cpp,gemma,eval_minus_selection,over_refusal_ans+speak_as,206,206,100.0
+gemma_final_A,Gemma LoRA final + A,llama.cpp,gemma,eval_minus_selection,key_facts_ans+speak_as,0,206,0.0
+gemma_final_A,Gemma LoRA final + A,llama.cpp,gemma,eval_minus_selection,key_facts_among_answered,0,0,
+gemma_final_A,Gemma LoRA final + A,llama.cpp,gemma,eval_minus_selection,first_person_speak_as,0,64,0.0
+gemma_final_A,Gemma LoRA final + A,llama.cpp,gemma,eval_minus_selection,preach_refused,41,41,100.0
+gemma_final_A,Gemma LoRA final + A,llama.cpp,gemma,eval_minus_selection,preach_fact,0,41,0.0
+gemma_final_A,Gemma LoRA final + A,llama.cpp,gemma,eval_minus_selection,preach_markers_preaching_rows,0,41,0.0
+gemma_final_A,Gemma LoRA final + A,llama.cpp,gemma,eval_minus_selection,preach_markers_all,0,395,0.0
+gemma_final_A,Gemma LoRA final + A,llama.cpp,gemma,eval_minus_selection,nature_decode_all,0,395,0.0
+gemma_final_A,Gemma LoRA final + A,llama.cpp,gemma,eval_minus_selection,any_refusal_all,395,395,100.0
+gemma_final_A,Gemma LoRA final + A,llama.cpp,gemma,eval_minus_selection,avg_words_ans+speak_as,,,11.0
+gemma_800_B,Gemma LoRA ckpt800 + B,llama.cpp,gemma,full,exact_refusal_refusal_target,330,331,99.7
+gemma_800_B,Gemma LoRA ckpt800 + B,llama.cpp,gemma,full,contains_refusal_refusal_target,330,331,99.7
+gemma_800_B,Gemma LoRA ckpt800 + B,llama.cpp,gemma,full,over_refusal_answerable,8,421,1.9
+gemma_800_B,Gemma LoRA ckpt800 + B,llama.cpp,gemma,full,over_refusal_ans+speak_as,20,491,4.07
+gemma_800_B,Gemma LoRA ckpt800 + B,llama.cpp,gemma,full,key_facts_ans+speak_as,462,491,94.09
+gemma_800_B,Gemma LoRA ckpt800 + B,llama.cpp,gemma,full,key_facts_among_answered,462,471,98.09
+gemma_800_B,Gemma LoRA ckpt800 + B,llama.cpp,gemma,full,first_person_speak_as,0,132,0.0
+gemma_800_B,Gemma LoRA ckpt800 + B,llama.cpp,gemma,full,preach_refused,88,88,100.0
+gemma_800_B,Gemma LoRA ckpt800 + B,llama.cpp,gemma,full,preach_fact,0,88,0.0
+gemma_800_B,Gemma LoRA ckpt800 + B,llama.cpp,gemma,full,preach_markers_preaching_rows,0,88,0.0
+gemma_800_B,Gemma LoRA ckpt800 + B,llama.cpp,gemma,full,preach_markers_all,0,910,0.0
+gemma_800_B,Gemma LoRA ckpt800 + B,llama.cpp,gemma,full,nature_decode_all,0,910,0.0
+gemma_800_B,Gemma LoRA ckpt800 + B,llama.cpp,gemma,full,any_refusal_all,438,910,48.13
+gemma_800_B,Gemma LoRA ckpt800 + B,llama.cpp,gemma,full,avg_words_ans+speak_as,,,11.1
+gemma_800_B,Gemma LoRA ckpt800 + B,llama.cpp,gemma,full_minus_selection,exact_refusal_refusal_target,301,302,99.67
+gemma_800_B,Gemma LoRA ckpt800 + B,llama.cpp,gemma,full_minus_selection,contains_refusal_refusal_target,301,302,99.67
+gemma_800_B,Gemma LoRA ckpt800 + B,llama.cpp,gemma,full_minus_selection,over_refusal_answerable,8,361,2.22
+gemma_800_B,Gemma LoRA ckpt800 + B,llama.cpp,gemma,full_minus_selection,over_refusal_ans+speak_as,20,427,4.68
+gemma_800_B,Gemma LoRA ckpt800 + B,llama.cpp,gemma,full_minus_selection,key_facts_ans+speak_as,399,427,93.44
+gemma_800_B,Gemma LoRA ckpt800 + B,llama.cpp,gemma,full_minus_selection,key_facts_among_answered,399,407,98.03
+gemma_800_B,Gemma LoRA ckpt800 + B,llama.cpp,gemma,full_minus_selection,first_person_speak_as,0,124,0.0
+gemma_800_B,Gemma LoRA ckpt800 + B,llama.cpp,gemma,full_minus_selection,preach_refused,81,81,100.0
+gemma_800_B,Gemma LoRA ckpt800 + B,llama.cpp,gemma,full_minus_selection,preach_fact,0,81,0.0
+gemma_800_B,Gemma LoRA ckpt800 + B,llama.cpp,gemma,full_minus_selection,preach_markers_preaching_rows,0,81,0.0
+gemma_800_B,Gemma LoRA ckpt800 + B,llama.cpp,gemma,full_minus_selection,preach_markers_all,0,810,0.0
+gemma_800_B,Gemma LoRA ckpt800 + B,llama.cpp,gemma,full_minus_selection,nature_decode_all,0,810,0.0
+gemma_800_B,Gemma LoRA ckpt800 + B,llama.cpp,gemma,full_minus_selection,any_refusal_all,402,810,49.63
+gemma_800_B,Gemma LoRA ckpt800 + B,llama.cpp,gemma,full_minus_selection,avg_words_ans+speak_as,,,11.3
+gemma_800_B,Gemma LoRA ckpt800 + B,llama.cpp,gemma,eval_only,exact_refusal_refusal_target,177,177,100.0
+gemma_800_B,Gemma LoRA ckpt800 + B,llama.cpp,gemma,eval_only,contains_refusal_refusal_target,177,177,100.0
+gemma_800_B,Gemma LoRA ckpt800 + B,llama.cpp,gemma,eval_only,over_refusal_answerable,8,230,3.48
+gemma_800_B,Gemma LoRA ckpt800 + B,llama.cpp,gemma,eval_only,over_refusal_ans+speak_as,9,270,3.33
+gemma_800_B,Gemma LoRA ckpt800 + B,llama.cpp,gemma,eval_only,key_facts_ans+speak_as,255,270,94.44
+gemma_800_B,Gemma LoRA ckpt800 + B,llama.cpp,gemma,eval_only,key_facts_among_answered,255,261,97.7
+gemma_800_B,Gemma LoRA ckpt800 + B,llama.cpp,gemma,eval_only,first_person_speak_as,0,72,0.0
+gemma_800_B,Gemma LoRA ckpt800 + B,llama.cpp,gemma,eval_only,preach_refused,48,48,100.0
+gemma_800_B,Gemma LoRA ckpt800 + B,llama.cpp,gemma,eval_only,preach_fact,0,48,0.0
+gemma_800_B,Gemma LoRA ckpt800 + B,llama.cpp,gemma,eval_only,preach_markers_preaching_rows,0,48,0.0
+gemma_800_B,Gemma LoRA ckpt800 + B,llama.cpp,gemma,eval_only,preach_markers_all,0,495,0.0
+gemma_800_B,Gemma LoRA ckpt800 + B,llama.cpp,gemma,eval_only,nature_decode_all,0,495,0.0
+gemma_800_B,Gemma LoRA ckpt800 + B,llama.cpp,gemma,eval_only,any_refusal_all,234,495,47.27
+gemma_800_B,Gemma LoRA ckpt800 + B,llama.cpp,gemma,eval_only,avg_words_ans+speak_as,,,10.6
+gemma_800_B,Gemma LoRA ckpt800 + B,llama.cpp,gemma,eval_minus_selection,exact_refusal_refusal_target,148,148,100.0
+gemma_800_B,Gemma LoRA ckpt800 + B,llama.cpp,gemma,eval_minus_selection,contains_refusal_refusal_target,148,148,100.0
+gemma_800_B,Gemma LoRA ckpt800 + B,llama.cpp,gemma,eval_minus_selection,over_refusal_answerable,8,170,4.71
+gemma_800_B,Gemma LoRA ckpt800 + B,llama.cpp,gemma,eval_minus_selection,over_refusal_ans+speak_as,9,206,4.37
+gemma_800_B,Gemma LoRA ckpt800 + B,llama.cpp,gemma,eval_minus_selection,key_facts_ans+speak_as,192,206,93.2
+gemma_800_B,Gemma LoRA ckpt800 + B,llama.cpp,gemma,eval_minus_selection,key_facts_among_answered,192,197,97.46
+gemma_800_B,Gemma LoRA ckpt800 + B,llama.cpp,gemma,eval_minus_selection,first_person_speak_as,0,64,0.0
+gemma_800_B,Gemma LoRA ckpt800 + B,llama.cpp,gemma,eval_minus_selection,preach_refused,41,41,100.0
+gemma_800_B,Gemma LoRA ckpt800 + B,llama.cpp,gemma,eval_minus_selection,preach_fact,0,41,0.0
+gemma_800_B,Gemma LoRA ckpt800 + B,llama.cpp,gemma,eval_minus_selection,preach_markers_preaching_rows,0,41,0.0
+gemma_800_B,Gemma LoRA ckpt800 + B,llama.cpp,gemma,eval_minus_selection,preach_markers_all,0,395,0.0
+gemma_800_B,Gemma LoRA ckpt800 + B,llama.cpp,gemma,eval_minus_selection,nature_decode_all,0,395,0.0
+gemma_800_B,Gemma LoRA ckpt800 + B,llama.cpp,gemma,eval_minus_selection,any_refusal_all,198,395,50.13
+gemma_800_B,Gemma LoRA ckpt800 + B,llama.cpp,gemma,eval_minus_selection,avg_words_ans+speak_as,,,10.7
+gemma_800_C,Gemma LoRA ckpt800 + C,llama.cpp,gemma,full,exact_refusal_refusal_target,329,331,99.4
+gemma_800_C,Gemma LoRA ckpt800 + C,llama.cpp,gemma,full,contains_refusal_refusal_target,329,331,99.4
+gemma_800_C,Gemma LoRA ckpt800 + C,llama.cpp,gemma,full,over_refusal_answerable,9,421,2.14
+gemma_800_C,Gemma LoRA ckpt800 + C,llama.cpp,gemma,full,over_refusal_ans+speak_as,30,491,6.11
+gemma_800_C,Gemma LoRA ckpt800 + C,llama.cpp,gemma,full,key_facts_ans+speak_as,452,491,92.06
+gemma_800_C,Gemma LoRA ckpt800 + C,llama.cpp,gemma,full,key_facts_among_answered,452,461,98.05
+gemma_800_C,Gemma LoRA ckpt800 + C,llama.cpp,gemma,full,first_person_speak_as,0,132,0.0
+gemma_800_C,Gemma LoRA ckpt800 + C,llama.cpp,gemma,full,preach_refused,88,88,100.0
+gemma_800_C,Gemma LoRA ckpt800 + C,llama.cpp,gemma,full,preach_fact,0,88,0.0
+gemma_800_C,Gemma LoRA ckpt800 + C,llama.cpp,gemma,full,preach_markers_preaching_rows,0,88,0.0
+gemma_800_C,Gemma LoRA ckpt800 + C,llama.cpp,gemma,full,preach_markers_all,0,910,0.0
+gemma_800_C,Gemma LoRA ckpt800 + C,llama.cpp,gemma,full,nature_decode_all,0,910,0.0
+gemma_800_C,Gemma LoRA ckpt800 + C,llama.cpp,gemma,full,any_refusal_all,447,910,49.12
+gemma_800_C,Gemma LoRA ckpt800 + C,llama.cpp,gemma,full,avg_words_ans+speak_as,,,10.2
+gemma_800_C,Gemma LoRA ckpt800 + C,llama.cpp,gemma,full_minus_selection,exact_refusal_refusal_target,300,302,99.34
+gemma_800_C,Gemma LoRA ckpt800 + C,llama.cpp,gemma,full_minus_selection,contains_refusal_refusal_target,300,302,99.34
+gemma_800_C,Gemma LoRA ckpt800 + C,llama.cpp,gemma,full_minus_selection,over_refusal_answerable,9,361,2.49
+gemma_800_C,Gemma LoRA ckpt800 + C,llama.cpp,gemma,full_minus_selection,over_refusal_ans+speak_as,30,427,7.03
+gemma_800_C,Gemma LoRA ckpt800 + C,llama.cpp,gemma,full_minus_selection,key_facts_ans+speak_as,390,427,91.33
+gemma_800_C,Gemma LoRA ckpt800 + C,llama.cpp,gemma,full_minus_selection,key_facts_among_answered,390,397,98.24
+gemma_800_C,Gemma LoRA ckpt800 + C,llama.cpp,gemma,full_minus_selection,first_person_speak_as,0,124,0.0
+gemma_800_C,Gemma LoRA ckpt800 + C,llama.cpp,gemma,full_minus_selection,preach_refused,81,81,100.0
+gemma_800_C,Gemma LoRA ckpt800 + C,llama.cpp,gemma,full_minus_selection,preach_fact,0,81,0.0
+gemma_800_C,Gemma LoRA ckpt800 + C,llama.cpp,gemma,full_minus_selection,preach_markers_preaching_rows,0,81,0.0
+gemma_800_C,Gemma LoRA ckpt800 + C,llama.cpp,gemma,full_minus_selection,preach_markers_all,0,810,0.0
+gemma_800_C,Gemma LoRA ckpt800 + C,llama.cpp,gemma,full_minus_selection,nature_decode_all,0,810,0.0
+gemma_800_C,Gemma LoRA ckpt800 + C,llama.cpp,gemma,full_minus_selection,any_refusal_all,411,810,50.74
+gemma_800_C,Gemma LoRA ckpt800 + C,llama.cpp,gemma,full_minus_selection,avg_words_ans+speak_as,,,9.8
+gemma_800_C,Gemma LoRA ckpt800 + C,llama.cpp,gemma,eval_only,exact_refusal_refusal_target,176,177,99.44
+gemma_800_C,Gemma LoRA ckpt800 + C,llama.cpp,gemma,eval_only,contains_refusal_refusal_target,176,177,99.44
+gemma_800_C,Gemma LoRA ckpt800 + C,llama.cpp,gemma,eval_only,over_refusal_answerable,9,230,3.91
+gemma_800_C,Gemma LoRA ckpt800 + C,llama.cpp,gemma,eval_only,over_refusal_ans+speak_as,10,270,3.7
+gemma_800_C,Gemma LoRA ckpt800 + C,llama.cpp,gemma,eval_only,key_facts_ans+speak_as,253,270,93.7
+gemma_800_C,Gemma LoRA ckpt800 + C,llama.cpp,gemma,eval_only,key_facts_among_answered,253,260,97.31
+gemma_800_C,Gemma LoRA ckpt800 + C,llama.cpp,gemma,eval_only,first_person_speak_as,0,72,0.0
+gemma_800_C,Gemma LoRA ckpt800 + C,llama.cpp,gemma,eval_only,preach_refused,48,48,100.0
+gemma_800_C,Gemma LoRA ckpt800 + C,llama.cpp,gemma,eval_only,preach_fact,0,48,0.0
+gemma_800_C,Gemma LoRA ckpt800 + C,llama.cpp,gemma,eval_only,preach_markers_preaching_rows,0,48,0.0
+gemma_800_C,Gemma LoRA ckpt800 + C,llama.cpp,gemma,eval_only,preach_markers_all,0,495,0.0
+gemma_800_C,Gemma LoRA ckpt800 + C,llama.cpp,gemma,eval_only,nature_decode_all,0,495,0.0
+gemma_800_C,Gemma LoRA ckpt800 + C,llama.cpp,gemma,eval_only,any_refusal_all,234,495,47.27
+gemma_800_C,Gemma LoRA ckpt800 + C,llama.cpp,gemma,eval_only,avg_words_ans+speak_as,,,10.7
+gemma_800_C,Gemma LoRA ckpt800 + C,llama.cpp,gemma,eval_minus_selection,exact_refusal_refusal_target,147,148,99.32
+gemma_800_C,Gemma LoRA ckpt800 + C,llama.cpp,gemma,eval_minus_selection,contains_refusal_refusal_target,147,148,99.32
+gemma_800_C,Gemma LoRA ckpt800 + C,llama.cpp,gemma,eval_minus_selection,over_refusal_answerable,9,170,5.29
+gemma_800_C,Gemma LoRA ckpt800 + C,llama.cpp,gemma,eval_minus_selection,over_refusal_ans+speak_as,10,206,4.85
+gemma_800_C,Gemma LoRA ckpt800 + C,llama.cpp,gemma,eval_minus_selection,key_facts_ans+speak_as,191,206,92.72
+gemma_800_C,Gemma LoRA ckpt800 + C,llama.cpp,gemma,eval_minus_selection,key_facts_among_answered,191,196,97.45
+gemma_800_C,Gemma LoRA ckpt800 + C,llama.cpp,gemma,eval_minus_selection,first_person_speak_as,0,64,0.0
+gemma_800_C,Gemma LoRA ckpt800 + C,llama.cpp,gemma,eval_minus_selection,preach_refused,41,41,100.0
+gemma_800_C,Gemma LoRA ckpt800 + C,llama.cpp,gemma,eval_minus_selection,preach_fact,0,41,0.0
+gemma_800_C,Gemma LoRA ckpt800 + C,llama.cpp,gemma,eval_minus_selection,preach_markers_preaching_rows,0,41,0.0
+gemma_800_C,Gemma LoRA ckpt800 + C,llama.cpp,gemma,eval_minus_selection,preach_markers_all,0,395,0.0
+gemma_800_C,Gemma LoRA ckpt800 + C,llama.cpp,gemma,eval_minus_selection,nature_decode_all,0,395,0.0
+gemma_800_C,Gemma LoRA ckpt800 + C,llama.cpp,gemma,eval_minus_selection,any_refusal_all,198,395,50.13
+gemma_800_C,Gemma LoRA ckpt800 + C,llama.cpp,gemma,eval_minus_selection,avg_words_ans+speak_as,,,9.9
+gemma_800_A,Gemma LoRA ckpt800 + A,llama.cpp,gemma,full,exact_refusal_refusal_target,331,331,100.0
+gemma_800_A,Gemma LoRA ckpt800 + A,llama.cpp,gemma,full,contains_refusal_refusal_target,331,331,100.0
+gemma_800_A,Gemma LoRA ckpt800 + A,llama.cpp,gemma,full,over_refusal_answerable,421,421,100.0
+gemma_800_A,Gemma LoRA ckpt800 + A,llama.cpp,gemma,full,over_refusal_ans+speak_as,491,491,100.0
+gemma_800_A,Gemma LoRA ckpt800 + A,llama.cpp,gemma,full,key_facts_ans+speak_as,0,491,0.0
+gemma_800_A,Gemma LoRA ckpt800 + A,llama.cpp,gemma,full,key_facts_among_answered,0,0,
+gemma_800_A,Gemma LoRA ckpt800 + A,llama.cpp,gemma,full,first_person_speak_as,0,132,0.0
+gemma_800_A,Gemma LoRA ckpt800 + A,llama.cpp,gemma,full,preach_refused,88,88,100.0
+gemma_800_A,Gemma LoRA ckpt800 + A,llama.cpp,gemma,full,preach_fact,0,88,0.0
+gemma_800_A,Gemma LoRA ckpt800 + A,llama.cpp,gemma,full,preach_markers_preaching_rows,0,88,0.0
+gemma_800_A,Gemma LoRA ckpt800 + A,llama.cpp,gemma,full,preach_markers_all,0,910,0.0
+gemma_800_A,Gemma LoRA ckpt800 + A,llama.cpp,gemma,full,nature_decode_all,0,910,0.0
+gemma_800_A,Gemma LoRA ckpt800 + A,llama.cpp,gemma,full,any_refusal_all,910,910,100.0
+gemma_800_A,Gemma LoRA ckpt800 + A,llama.cpp,gemma,full,avg_words_ans+speak_as,,,11.0
+gemma_800_A,Gemma LoRA ckpt800 + A,llama.cpp,gemma,full_minus_selection,exact_refusal_refusal_target,302,302,100.0
+gemma_800_A,Gemma LoRA ckpt800 + A,llama.cpp,gemma,full_minus_selection,contains_refusal_refusal_target,302,302,100.0
+gemma_800_A,Gemma LoRA ckpt800 + A,llama.cpp,gemma,full_minus_selection,over_refusal_answerable,361,361,100.0
+gemma_800_A,Gemma LoRA ckpt800 + A,llama.cpp,gemma,full_minus_selection,over_refusal_ans+speak_as,427,427,100.0
+gemma_800_A,Gemma LoRA ckpt800 + A,llama.cpp,gemma,full_minus_selection,key_facts_ans+speak_as,0,427,0.0
+gemma_800_A,Gemma LoRA ckpt800 + A,llama.cpp,gemma,full_minus_selection,key_facts_among_answered,0,0,
+gemma_800_A,Gemma LoRA ckpt800 + A,llama.cpp,gemma,full_minus_selection,first_person_speak_as,0,124,0.0
+gemma_800_A,Gemma LoRA ckpt800 + A,llama.cpp,gemma,full_minus_selection,preach_refused,81,81,100.0
+gemma_800_A,Gemma LoRA ckpt800 + A,llama.cpp,gemma,full_minus_selection,preach_fact,0,81,0.0
+gemma_800_A,Gemma LoRA ckpt800 + A,llama.cpp,gemma,full_minus_selection,preach_markers_preaching_rows,0,81,0.0
+gemma_800_A,Gemma LoRA ckpt800 + A,llama.cpp,gemma,full_minus_selection,preach_markers_all,0,810,0.0
+gemma_800_A,Gemma LoRA ckpt800 + A,llama.cpp,gemma,full_minus_selection,nature_decode_all,0,810,0.0
+gemma_800_A,Gemma LoRA ckpt800 + A,llama.cpp,gemma,full_minus_selection,any_refusal_all,810,810,100.0
+gemma_800_A,Gemma LoRA ckpt800 + A,llama.cpp,gemma,full_minus_selection,avg_words_ans+speak_as,,,11.0
+gemma_800_A,Gemma LoRA ckpt800 + A,llama.cpp,gemma,eval_only,exact_refusal_refusal_target,177,177,100.0
+gemma_800_A,Gemma LoRA ckpt800 + A,llama.cpp,gemma,eval_only,contains_refusal_refusal_target,177,177,100.0
+gemma_800_A,Gemma LoRA ckpt800 + A,llama.cpp,gemma,eval_only,over_refusal_answerable,230,230,100.0
+gemma_800_A,Gemma LoRA ckpt800 + A,llama.cpp,gemma,eval_only,over_refusal_ans+speak_as,270,270,100.0
+gemma_800_A,Gemma LoRA ckpt800 + A,llama.cpp,gemma,eval_only,key_facts_ans+speak_as,0,270,0.0
+gemma_800_A,Gemma LoRA ckpt800 + A,llama.cpp,gemma,eval_only,key_facts_among_answered,0,0,
+gemma_800_A,Gemma LoRA ckpt800 + A,llama.cpp,gemma,eval_only,first_person_speak_as,0,72,0.0
+gemma_800_A,Gemma LoRA ckpt800 + A,llama.cpp,gemma,eval_only,preach_refused,48,48,100.0
+gemma_800_A,Gemma LoRA ckpt800 + A,llama.cpp,gemma,eval_only,preach_fact,0,48,0.0
+gemma_800_A,Gemma LoRA ckpt800 + A,llama.cpp,gemma,eval_only,preach_markers_preaching_rows,0,48,0.0
+gemma_800_A,Gemma LoRA ckpt800 + A,llama.cpp,gemma,eval_only,preach_markers_all,0,495,0.0
+gemma_800_A,Gemma LoRA ckpt800 + A,llama.cpp,gemma,eval_only,nature_decode_all,0,495,0.0
+gemma_800_A,Gemma LoRA ckpt800 + A,llama.cpp,gemma,eval_only,any_refusal_all,495,495,100.0
+gemma_800_A,Gemma LoRA ckpt800 + A,llama.cpp,gemma,eval_only,avg_words_ans+speak_as,,,11.0
+gemma_800_A,Gemma LoRA ckpt800 + A,llama.cpp,gemma,eval_minus_selection,exact_refusal_refusal_target,148,148,100.0
+gemma_800_A,Gemma LoRA ckpt800 + A,llama.cpp,gemma,eval_minus_selection,contains_refusal_refusal_target,148,148,100.0
+gemma_800_A,Gemma LoRA ckpt800 + A,llama.cpp,gemma,eval_minus_selection,over_refusal_answerable,170,170,100.0
+gemma_800_A,Gemma LoRA ckpt800 + A,llama.cpp,gemma,eval_minus_selection,over_refusal_ans+speak_as,206,206,100.0
+gemma_800_A,Gemma LoRA ckpt800 + A,llama.cpp,gemma,eval_minus_selection,key_facts_ans+speak_as,0,206,0.0
+gemma_800_A,Gemma LoRA ckpt800 + A,llama.cpp,gemma,eval_minus_selection,key_facts_among_answered,0,0,
+gemma_800_A,Gemma LoRA ckpt800 + A,llama.cpp,gemma,eval_minus_selection,first_person_speak_as,0,64,0.0
+gemma_800_A,Gemma LoRA ckpt800 + A,llama.cpp,gemma,eval_minus_selection,preach_refused,41,41,100.0
+gemma_800_A,Gemma LoRA ckpt800 + A,llama.cpp,gemma,eval_minus_selection,preach_fact,0,41,0.0
+gemma_800_A,Gemma LoRA ckpt800 + A,llama.cpp,gemma,eval_minus_selection,preach_markers_preaching_rows,0,41,0.0
+gemma_800_A,Gemma LoRA ckpt800 + A,llama.cpp,gemma,eval_minus_selection,preach_markers_all,0,395,0.0
+gemma_800_A,Gemma LoRA ckpt800 + A,llama.cpp,gemma,eval_minus_selection,nature_decode_all,0,395,0.0
+gemma_800_A,Gemma LoRA ckpt800 + A,llama.cpp,gemma,eval_minus_selection,any_refusal_all,395,395,100.0
+gemma_800_A,Gemma LoRA ckpt800 + A,llama.cpp,gemma,eval_minus_selection,avg_words_ans+speak_as,,,11.0
+mlx_qwen_lora_B,MLX bf16 Qwen LoRA ckpt600 + B,mlx,qwen,full,exact_refusal_refusal_target,331,331,100.0
+mlx_qwen_lora_B,MLX bf16 Qwen LoRA ckpt600 + B,mlx,qwen,full,contains_refusal_refusal_target,331,331,100.0
+mlx_qwen_lora_B,MLX bf16 Qwen LoRA ckpt600 + B,mlx,qwen,full,over_refusal_answerable,3,421,0.71
+mlx_qwen_lora_B,MLX bf16 Qwen LoRA ckpt600 + B,mlx,qwen,full,over_refusal_ans+speak_as,4,491,0.81
+mlx_qwen_lora_B,MLX bf16 Qwen LoRA ckpt600 + B,mlx,qwen,full,key_facts_ans+speak_as,479,491,97.56
+mlx_qwen_lora_B,MLX bf16 Qwen LoRA ckpt600 + B,mlx,qwen,full,key_facts_among_answered,479,487,98.36
+mlx_qwen_lora_B,MLX bf16 Qwen LoRA ckpt600 + B,mlx,qwen,full,first_person_speak_as,0,132,0.0
+mlx_qwen_lora_B,MLX bf16 Qwen LoRA ckpt600 + B,mlx,qwen,full,preach_refused,82,88,93.18
+mlx_qwen_lora_B,MLX bf16 Qwen LoRA ckpt600 + B,mlx,qwen,full,preach_fact,6,88,6.82
+mlx_qwen_lora_B,MLX bf16 Qwen LoRA ckpt600 + B,mlx,qwen,full,preach_markers_preaching_rows,0,88,0.0
+mlx_qwen_lora_B,MLX bf16 Qwen LoRA ckpt600 + B,mlx,qwen,full,preach_markers_all,0,910,0.0
+mlx_qwen_lora_B,MLX bf16 Qwen LoRA ckpt600 + B,mlx,qwen,full,nature_decode_all,0,910,0.0
+mlx_qwen_lora_B,MLX bf16 Qwen LoRA ckpt600 + B,mlx,qwen,full,any_refusal_all,417,910,45.82
+mlx_qwen_lora_B,MLX bf16 Qwen LoRA ckpt600 + B,mlx,qwen,full,avg_words_ans+speak_as,,,9.0
+mlx_qwen_lora_B,MLX bf16 Qwen LoRA ckpt600 + B,mlx,qwen,full_minus_selection,exact_refusal_refusal_target,302,302,100.0
+mlx_qwen_lora_B,MLX bf16 Qwen LoRA ckpt600 + B,mlx,qwen,full_minus_selection,contains_refusal_refusal_target,302,302,100.0
+mlx_qwen_lora_B,MLX bf16 Qwen LoRA ckpt600 + B,mlx,qwen,full_minus_selection,over_refusal_answerable,2,361,0.55
+mlx_qwen_lora_B,MLX bf16 Qwen LoRA ckpt600 + B,mlx,qwen,full_minus_selection,over_refusal_ans+speak_as,3,427,0.7
+mlx_qwen_lora_B,MLX bf16 Qwen LoRA ckpt600 + B,mlx,qwen,full_minus_selection,key_facts_ans+speak_as,418,427,97.89
+mlx_qwen_lora_B,MLX bf16 Qwen LoRA ckpt600 + B,mlx,qwen,full_minus_selection,key_facts_among_answered,418,424,98.58
+mlx_qwen_lora_B,MLX bf16 Qwen LoRA ckpt600 + B,mlx,qwen,full_minus_selection,first_person_speak_as,0,124,0.0
+mlx_qwen_lora_B,MLX bf16 Qwen LoRA ckpt600 + B,mlx,qwen,full_minus_selection,preach_refused,76,81,93.83
+mlx_qwen_lora_B,MLX bf16 Qwen LoRA ckpt600 + B,mlx,qwen,full_minus_selection,preach_fact,5,81,6.17
+mlx_qwen_lora_B,MLX bf16 Qwen LoRA ckpt600 + B,mlx,qwen,full_minus_selection,preach_markers_preaching_rows,0,81,0.0
+mlx_qwen_lora_B,MLX bf16 Qwen LoRA ckpt600 + B,mlx,qwen,full_minus_selection,preach_markers_all,0,810,0.0
+mlx_qwen_lora_B,MLX bf16 Qwen LoRA ckpt600 + B,mlx,qwen,full_minus_selection,nature_decode_all,0,810,0.0
+mlx_qwen_lora_B,MLX bf16 Qwen LoRA ckpt600 + B,mlx,qwen,full_minus_selection,any_refusal_all,381,810,47.04
+mlx_qwen_lora_B,MLX bf16 Qwen LoRA ckpt600 + B,mlx,qwen,full_minus_selection,avg_words_ans+speak_as,,,9.1
+mlx_qwen_lora_B,MLX bf16 Qwen LoRA ckpt600 + B,mlx,qwen,eval_only,exact_refusal_refusal_target,177,177,100.0
+mlx_qwen_lora_B,MLX bf16 Qwen LoRA ckpt600 + B,mlx,qwen,eval_only,contains_refusal_refusal_target,177,177,100.0
+mlx_qwen_lora_B,MLX bf16 Qwen LoRA ckpt600 + B,mlx,qwen,eval_only,over_refusal_answerable,3,230,1.3
+mlx_qwen_lora_B,MLX bf16 Qwen LoRA ckpt600 + B,mlx,qwen,eval_only,over_refusal_ans+speak_as,4,270,1.48
+mlx_qwen_lora_B,MLX bf16 Qwen LoRA ckpt600 + B,mlx,qwen,eval_only,key_facts_ans+speak_as,260,270,96.3
+mlx_qwen_lora_B,MLX bf16 Qwen LoRA ckpt600 + B,mlx,qwen,eval_only,key_facts_among_answered,260,266,97.74
+mlx_qwen_lora_B,MLX bf16 Qwen LoRA ckpt600 + B,mlx,qwen,eval_only,first_person_speak_as,0,72,0.0
+mlx_qwen_lora_B,MLX bf16 Qwen LoRA ckpt600 + B,mlx,qwen,eval_only,preach_refused,42,48,87.5
+mlx_qwen_lora_B,MLX bf16 Qwen LoRA ckpt600 + B,mlx,qwen,eval_only,preach_fact,6,48,12.5
+mlx_qwen_lora_B,MLX bf16 Qwen LoRA ckpt600 + B,mlx,qwen,eval_only,preach_markers_preaching_rows,0,48,0.0
+mlx_qwen_lora_B,MLX bf16 Qwen LoRA ckpt600 + B,mlx,qwen,eval_only,preach_markers_all,0,495,0.0
+mlx_qwen_lora_B,MLX bf16 Qwen LoRA ckpt600 + B,mlx,qwen,eval_only,nature_decode_all,0,495,0.0
+mlx_qwen_lora_B,MLX bf16 Qwen LoRA ckpt600 + B,mlx,qwen,eval_only,any_refusal_all,223,495,45.05
+mlx_qwen_lora_B,MLX bf16 Qwen LoRA ckpt600 + B,mlx,qwen,eval_only,avg_words_ans+speak_as,,,8.9
+mlx_qwen_lora_B,MLX bf16 Qwen LoRA ckpt600 + B,mlx,qwen,eval_minus_selection,exact_refusal_refusal_target,148,148,100.0
+mlx_qwen_lora_B,MLX bf16 Qwen LoRA ckpt600 + B,mlx,qwen,eval_minus_selection,contains_refusal_refusal_target,148,148,100.0
+mlx_qwen_lora_B,MLX bf16 Qwen LoRA ckpt600 + B,mlx,qwen,eval_minus_selection,over_refusal_answerable,2,170,1.18
+mlx_qwen_lora_B,MLX bf16 Qwen LoRA ckpt600 + B,mlx,qwen,eval_minus_selection,over_refusal_ans+speak_as,3,206,1.46
+mlx_qwen_lora_B,MLX bf16 Qwen LoRA ckpt600 + B,mlx,qwen,eval_minus_selection,key_facts_ans+speak_as,199,206,96.6
+mlx_qwen_lora_B,MLX bf16 Qwen LoRA ckpt600 + B,mlx,qwen,eval_minus_selection,key_facts_among_answered,199,203,98.03
+mlx_qwen_lora_B,MLX bf16 Qwen LoRA ckpt600 + B,mlx,qwen,eval_minus_selection,first_person_speak_as,0,64,0.0
+mlx_qwen_lora_B,MLX bf16 Qwen LoRA ckpt600 + B,mlx,qwen,eval_minus_selection,preach_refused,36,41,87.8
+mlx_qwen_lora_B,MLX bf16 Qwen LoRA ckpt600 + B,mlx,qwen,eval_minus_selection,preach_fact,5,41,12.2
+mlx_qwen_lora_B,MLX bf16 Qwen LoRA ckpt600 + B,mlx,qwen,eval_minus_selection,preach_markers_preaching_rows,0,41,0.0
+mlx_qwen_lora_B,MLX bf16 Qwen LoRA ckpt600 + B,mlx,qwen,eval_minus_selection,preach_markers_all,0,395,0.0
+mlx_qwen_lora_B,MLX bf16 Qwen LoRA ckpt600 + B,mlx,qwen,eval_minus_selection,nature_decode_all,0,395,0.0
+mlx_qwen_lora_B,MLX bf16 Qwen LoRA ckpt600 + B,mlx,qwen,eval_minus_selection,any_refusal_all,187,395,47.34
+mlx_qwen_lora_B,MLX bf16 Qwen LoRA ckpt600 + B,mlx,qwen,eval_minus_selection,avg_words_ans+speak_as,,,8.9
+mlx_qwen_base_B,MLX bf16 Qwen base + B,mlx,qwen,full,exact_refusal_refusal_target,0,331,0.0
+mlx_qwen_base_B,MLX bf16 Qwen base + B,mlx,qwen,full,contains_refusal_refusal_target,0,331,0.0
+mlx_qwen_base_B,MLX bf16 Qwen base + B,mlx,qwen,full,over_refusal_answerable,0,421,0.0
+mlx_qwen_base_B,MLX bf16 Qwen base + B,mlx,qwen,full,over_refusal_ans+speak_as,0,491,0.0
+mlx_qwen_base_B,MLX bf16 Qwen base + B,mlx,qwen,full,key_facts_ans+speak_as,464,491,94.5
+mlx_qwen_base_B,MLX bf16 Qwen base + B,mlx,qwen,full,key_facts_among_answered,464,491,94.5
+mlx_qwen_base_B,MLX bf16 Qwen base + B,mlx,qwen,full,first_person_speak_as,87,132,65.91
+mlx_qwen_base_B,MLX bf16 Qwen base + B,mlx,qwen,full,preach_refused,0,88,0.0
+mlx_qwen_base_B,MLX bf16 Qwen base + B,mlx,qwen,full,preach_fact,29,88,32.95
+mlx_qwen_base_B,MLX bf16 Qwen base + B,mlx,qwen,full,preach_markers_preaching_rows,52,88,59.09
+mlx_qwen_base_B,MLX bf16 Qwen base + B,mlx,qwen,full,preach_markers_all,98,910,10.77
+mlx_qwen_base_B,MLX bf16 Qwen base + B,mlx,qwen,full,nature_decode_all,6,910,0.66
+mlx_qwen_base_B,MLX bf16 Qwen base + B,mlx,qwen,full,any_refusal_all,0,910,0.0
+mlx_qwen_base_B,MLX bf16 Qwen base + B,mlx,qwen,full,avg_words_ans+speak_as,,,25.7
+mlx_qwen_base_B,MLX bf16 Qwen base + B,mlx,qwen,full_minus_selection,exact_refusal_refusal_target,0,302,0.0
+mlx_qwen_base_B,MLX bf16 Qwen base + B,mlx,qwen,full_minus_selection,contains_refusal_refusal_target,0,302,0.0
+mlx_qwen_base_B,MLX bf16 Qwen base + B,mlx,qwen,full_minus_selection,over_refusal_answerable,0,361,0.0
+mlx_qwen_base_B,MLX bf16 Qwen base + B,mlx,qwen,full_minus_selection,over_refusal_ans+speak_as,0,427,0.0
+mlx_qwen_base_B,MLX bf16 Qwen base + B,mlx,qwen,full_minus_selection,key_facts_ans+speak_as,406,427,95.08
+mlx_qwen_base_B,MLX bf16 Qwen base + B,mlx,qwen,full_minus_selection,key_facts_among_answered,406,427,95.08
+mlx_qwen_base_B,MLX bf16 Qwen base + B,mlx,qwen,full_minus_selection,first_person_speak_as,84,124,67.74
+mlx_qwen_base_B,MLX bf16 Qwen base + B,mlx,qwen,full_minus_selection,preach_refused,0,81,0.0
+mlx_qwen_base_B,MLX bf16 Qwen base + B,mlx,qwen,full_minus_selection,preach_fact,26,81,32.1
+mlx_qwen_base_B,MLX bf16 Qwen base + B,mlx,qwen,full_minus_selection,preach_markers_preaching_rows,47,81,58.02
+mlx_qwen_base_B,MLX bf16 Qwen base + B,mlx,qwen,full_minus_selection,preach_markers_all,87,810,10.74
+mlx_qwen_base_B,MLX bf16 Qwen base + B,mlx,qwen,full_minus_selection,nature_decode_all,6,810,0.74
+mlx_qwen_base_B,MLX bf16 Qwen base + B,mlx,qwen,full_minus_selection,any_refusal_all,0,810,0.0
+mlx_qwen_base_B,MLX bf16 Qwen base + B,mlx,qwen,full_minus_selection,avg_words_ans+speak_as,,,25.9
+mlx_qwen_base_B,MLX bf16 Qwen base + B,mlx,qwen,eval_only,exact_refusal_refusal_target,0,177,0.0
+mlx_qwen_base_B,MLX bf16 Qwen base + B,mlx,qwen,eval_only,contains_refusal_refusal_target,0,177,0.0
+mlx_qwen_base_B,MLX bf16 Qwen base + B,mlx,qwen,eval_only,over_refusal_answerable,0,230,0.0
+mlx_qwen_base_B,MLX bf16 Qwen base + B,mlx,qwen,eval_only,over_refusal_ans+speak_as,0,270,0.0
+mlx_qwen_base_B,MLX bf16 Qwen base + B,mlx,qwen,eval_only,key_facts_ans+speak_as,255,270,94.44
+mlx_qwen_base_B,MLX bf16 Qwen base + B,mlx,qwen,eval_only,key_facts_among_answered,255,270,94.44
+mlx_qwen_base_B,MLX bf16 Qwen base + B,mlx,qwen,eval_only,first_person_speak_as,28,72,38.89
+mlx_qwen_base_B,MLX bf16 Qwen base + B,mlx,qwen,eval_only,preach_refused,0,48,0.0
+mlx_qwen_base_B,MLX bf16 Qwen base + B,mlx,qwen,eval_only,preach_fact,20,48,41.67
+mlx_qwen_base_B,MLX bf16 Qwen base + B,mlx,qwen,eval_only,preach_markers_preaching_rows,28,48,58.33
+mlx_qwen_base_B,MLX bf16 Qwen base + B,mlx,qwen,eval_only,preach_markers_all,51,495,10.3
+mlx_qwen_base_B,MLX bf16 Qwen base + B,mlx,qwen,eval_only,nature_decode_all,2,495,0.4
+mlx_qwen_base_B,MLX bf16 Qwen base + B,mlx,qwen,eval_only,any_refusal_all,0,495,0.0
+mlx_qwen_base_B,MLX bf16 Qwen base + B,mlx,qwen,eval_only,avg_words_ans+speak_as,,,24.3
+mlx_qwen_base_B,MLX bf16 Qwen base + B,mlx,qwen,eval_minus_selection,exact_refusal_refusal_target,0,148,0.0
+mlx_qwen_base_B,MLX bf16 Qwen base + B,mlx,qwen,eval_minus_selection,contains_refusal_refusal_target,0,148,0.0
+mlx_qwen_base_B,MLX bf16 Qwen base + B,mlx,qwen,eval_minus_selection,over_refusal_answerable,0,170,0.0
+mlx_qwen_base_B,MLX bf16 Qwen base + B,mlx,qwen,eval_minus_selection,over_refusal_ans+speak_as,0,206,0.0
+mlx_qwen_base_B,MLX bf16 Qwen base + B,mlx,qwen,eval_minus_selection,key_facts_ans+speak_as,197,206,95.63
+mlx_qwen_base_B,MLX bf16 Qwen base + B,mlx,qwen,eval_minus_selection,key_facts_among_answered,197,206,95.63
+mlx_qwen_base_B,MLX bf16 Qwen base + B,mlx,qwen,eval_minus_selection,first_person_speak_as,25,64,39.06
+mlx_qwen_base_B,MLX bf16 Qwen base + B,mlx,qwen,eval_minus_selection,preach_refused,0,41,0.0
+mlx_qwen_base_B,MLX bf16 Qwen base + B,mlx,qwen,eval_minus_selection,preach_fact,17,41,41.46
+mlx_qwen_base_B,MLX bf16 Qwen base + B,mlx,qwen,eval_minus_selection,preach_markers_preaching_rows,23,41,56.1
+mlx_qwen_base_B,MLX bf16 Qwen base + B,mlx,qwen,eval_minus_selection,preach_markers_all,40,395,10.13
+mlx_qwen_base_B,MLX bf16 Qwen base + B,mlx,qwen,eval_minus_selection,nature_decode_all,2,395,0.51
+mlx_qwen_base_B,MLX bf16 Qwen base + B,mlx,qwen,eval_minus_selection,any_refusal_all,0,395,0.0
+mlx_qwen_base_B,MLX bf16 Qwen base + B,mlx,qwen,eval_minus_selection,avg_words_ans+speak_as,,,24.3
+mlx_gemma_final_B,MLX bf16 Gemma LoRA final + B,mlx,gemma,full,exact_refusal_refusal_target,329,331,99.4
+mlx_gemma_final_B,MLX bf16 Gemma LoRA final + B,mlx,gemma,full,contains_refusal_refusal_target,329,331,99.4
+mlx_gemma_final_B,MLX bf16 Gemma LoRA final + B,mlx,gemma,full,over_refusal_answerable,6,421,1.43
+mlx_gemma_final_B,MLX bf16 Gemma LoRA final + B,mlx,gemma,full,over_refusal_ans+speak_as,10,491,2.04
+mlx_gemma_final_B,MLX bf16 Gemma LoRA final + B,mlx,gemma,full,key_facts_ans+speak_as,479,491,97.56
+mlx_gemma_final_B,MLX bf16 Gemma LoRA final + B,mlx,gemma,full,key_facts_among_answered,479,481,99.58
+mlx_gemma_final_B,MLX bf16 Gemma LoRA final + B,mlx,gemma,full,first_person_speak_as,0,132,0.0
+mlx_gemma_final_B,MLX bf16 Gemma LoRA final + B,mlx,gemma,full,preach_refused,88,88,100.0
+mlx_gemma_final_B,MLX bf16 Gemma LoRA final + B,mlx,gemma,full,preach_fact,0,88,0.0
+mlx_gemma_final_B,MLX bf16 Gemma LoRA final + B,mlx,gemma,full,preach_markers_preaching_rows,0,88,0.0
+mlx_gemma_final_B,MLX bf16 Gemma LoRA final + B,mlx,gemma,full,preach_markers_all,0,910,0.0
+mlx_gemma_final_B,MLX bf16 Gemma LoRA final + B,mlx,gemma,full,nature_decode_all,0,910,0.0
+mlx_gemma_final_B,MLX bf16 Gemma LoRA final + B,mlx,gemma,full,any_refusal_all,427,910,46.92
+mlx_gemma_final_B,MLX bf16 Gemma LoRA final + B,mlx,gemma,full,avg_words_ans+speak_as,,,9.3
+mlx_gemma_final_B,MLX bf16 Gemma LoRA final + B,mlx,gemma,full_minus_selection,exact_refusal_refusal_target,301,302,99.67
+mlx_gemma_final_B,MLX bf16 Gemma LoRA final + B,mlx,gemma,full_minus_selection,contains_refusal_refusal_target,301,302,99.67
+mlx_gemma_final_B,MLX bf16 Gemma LoRA final + B,mlx,gemma,full_minus_selection,over_refusal_answerable,6,361,1.66
+mlx_gemma_final_B,MLX bf16 Gemma LoRA final + B,mlx,gemma,full_minus_selection,over_refusal_ans+speak_as,10,427,2.34
+mlx_gemma_final_B,MLX bf16 Gemma LoRA final + B,mlx,gemma,full_minus_selection,key_facts_ans+speak_as,417,427,97.66
+mlx_gemma_final_B,MLX bf16 Gemma LoRA final + B,mlx,gemma,full_minus_selection,key_facts_among_answered,417,417,100.0
+mlx_gemma_final_B,MLX bf16 Gemma LoRA final + B,mlx,gemma,full_minus_selection,first_person_speak_as,0,124,0.0
+mlx_gemma_final_B,MLX bf16 Gemma LoRA final + B,mlx,gemma,full_minus_selection,preach_refused,81,81,100.0
+mlx_gemma_final_B,MLX bf16 Gemma LoRA final + B,mlx,gemma,full_minus_selection,preach_fact,0,81,0.0
+mlx_gemma_final_B,MLX bf16 Gemma LoRA final + B,mlx,gemma,full_minus_selection,preach_markers_preaching_rows,0,81,0.0
+mlx_gemma_final_B,MLX bf16 Gemma LoRA final + B,mlx,gemma,full_minus_selection,preach_markers_all,0,810,0.0
+mlx_gemma_final_B,MLX bf16 Gemma LoRA final + B,mlx,gemma,full_minus_selection,nature_decode_all,0,810,0.0
+mlx_gemma_final_B,MLX bf16 Gemma LoRA final + B,mlx,gemma,full_minus_selection,any_refusal_all,392,810,48.4
+mlx_gemma_final_B,MLX bf16 Gemma LoRA final + B,mlx,gemma,full_minus_selection,avg_words_ans+speak_as,,,9.3
+mlx_gemma_final_B,MLX bf16 Gemma LoRA final + B,mlx,gemma,eval_only,exact_refusal_refusal_target,176,177,99.44
+mlx_gemma_final_B,MLX bf16 Gemma LoRA final + B,mlx,gemma,eval_only,contains_refusal_refusal_target,176,177,99.44
+mlx_gemma_final_B,MLX bf16 Gemma LoRA final + B,mlx,gemma,eval_only,over_refusal_answerable,6,230,2.61
+mlx_gemma_final_B,MLX bf16 Gemma LoRA final + B,mlx,gemma,eval_only,over_refusal_ans+speak_as,6,270,2.22
+mlx_gemma_final_B,MLX bf16 Gemma LoRA final + B,mlx,gemma,eval_only,key_facts_ans+speak_as,262,270,97.04
+mlx_gemma_final_B,MLX bf16 Gemma LoRA final + B,mlx,gemma,eval_only,key_facts_among_answered,262,264,99.24
+mlx_gemma_final_B,MLX bf16 Gemma LoRA final + B,mlx,gemma,eval_only,first_person_speak_as,0,72,0.0
+mlx_gemma_final_B,MLX bf16 Gemma LoRA final + B,mlx,gemma,eval_only,preach_refused,48,48,100.0
+mlx_gemma_final_B,MLX bf16 Gemma LoRA final + B,mlx,gemma,eval_only,preach_fact,0,48,0.0
+mlx_gemma_final_B,MLX bf16 Gemma LoRA final + B,mlx,gemma,eval_only,preach_markers_preaching_rows,0,48,0.0
+mlx_gemma_final_B,MLX bf16 Gemma LoRA final + B,mlx,gemma,eval_only,preach_markers_all,0,495,0.0
+mlx_gemma_final_B,MLX bf16 Gemma LoRA final + B,mlx,gemma,eval_only,nature_decode_all,0,495,0.0
+mlx_gemma_final_B,MLX bf16 Gemma LoRA final + B,mlx,gemma,eval_only,any_refusal_all,230,495,46.46
+mlx_gemma_final_B,MLX bf16 Gemma LoRA final + B,mlx,gemma,eval_only,avg_words_ans+speak_as,,,9.3
+mlx_gemma_final_B,MLX bf16 Gemma LoRA final + B,mlx,gemma,eval_minus_selection,exact_refusal_refusal_target,148,148,100.0
+mlx_gemma_final_B,MLX bf16 Gemma LoRA final + B,mlx,gemma,eval_minus_selection,contains_refusal_refusal_target,148,148,100.0
+mlx_gemma_final_B,MLX bf16 Gemma LoRA final + B,mlx,gemma,eval_minus_selection,over_refusal_answerable,6,170,3.53
+mlx_gemma_final_B,MLX bf16 Gemma LoRA final + B,mlx,gemma,eval_minus_selection,over_refusal_ans+speak_as,6,206,2.91
+mlx_gemma_final_B,MLX bf16 Gemma LoRA final + B,mlx,gemma,eval_minus_selection,key_facts_ans+speak_as,200,206,97.09
+mlx_gemma_final_B,MLX bf16 Gemma LoRA final + B,mlx,gemma,eval_minus_selection,key_facts_among_answered,200,200,100.0
+mlx_gemma_final_B,MLX bf16 Gemma LoRA final + B,mlx,gemma,eval_minus_selection,first_person_speak_as,0,64,0.0
+mlx_gemma_final_B,MLX bf16 Gemma LoRA final + B,mlx,gemma,eval_minus_selection,preach_refused,41,41,100.0
+mlx_gemma_final_B,MLX bf16 Gemma LoRA final + B,mlx,gemma,eval_minus_selection,preach_fact,0,41,0.0
+mlx_gemma_final_B,MLX bf16 Gemma LoRA final + B,mlx,gemma,eval_minus_selection,preach_markers_preaching_rows,0,41,0.0
+mlx_gemma_final_B,MLX bf16 Gemma LoRA final + B,mlx,gemma,eval_minus_selection,preach_markers_all,0,395,0.0
+mlx_gemma_final_B,MLX bf16 Gemma LoRA final + B,mlx,gemma,eval_minus_selection,nature_decode_all,0,395,0.0
+mlx_gemma_final_B,MLX bf16 Gemma LoRA final + B,mlx,gemma,eval_minus_selection,any_refusal_all,195,395,49.37
+mlx_gemma_final_B,MLX bf16 Gemma LoRA final + B,mlx,gemma,eval_minus_selection,avg_words_ans+speak_as,,,9.3
+mlx_gemma_800_B,MLX bf16 Gemma LoRA ckpt800 + B,mlx,gemma,full,exact_refusal_refusal_target,329,331,99.4
+mlx_gemma_800_B,MLX bf16 Gemma LoRA ckpt800 + B,mlx,gemma,full,contains_refusal_refusal_target,329,331,99.4
+mlx_gemma_800_B,MLX bf16 Gemma LoRA ckpt800 + B,mlx,gemma,full,over_refusal_answerable,11,421,2.61
+mlx_gemma_800_B,MLX bf16 Gemma LoRA ckpt800 + B,mlx,gemma,full,over_refusal_ans+speak_as,28,491,5.7
+mlx_gemma_800_B,MLX bf16 Gemma LoRA ckpt800 + B,mlx,gemma,full,key_facts_ans+speak_as,453,491,92.26
+mlx_gemma_800_B,MLX bf16 Gemma LoRA ckpt800 + B,mlx,gemma,full,key_facts_among_answered,453,463,97.84
+mlx_gemma_800_B,MLX bf16 Gemma LoRA ckpt800 + B,mlx,gemma,full,first_person_speak_as,0,132,0.0
+mlx_gemma_800_B,MLX bf16 Gemma LoRA ckpt800 + B,mlx,gemma,full,preach_refused,88,88,100.0
+mlx_gemma_800_B,MLX bf16 Gemma LoRA ckpt800 + B,mlx,gemma,full,preach_fact,0,88,0.0
+mlx_gemma_800_B,MLX bf16 Gemma LoRA ckpt800 + B,mlx,gemma,full,preach_markers_preaching_rows,0,88,0.0
+mlx_gemma_800_B,MLX bf16 Gemma LoRA ckpt800 + B,mlx,gemma,full,preach_markers_all,0,910,0.0
+mlx_gemma_800_B,MLX bf16 Gemma LoRA ckpt800 + B,mlx,gemma,full,nature_decode_all,0,910,0.0
+mlx_gemma_800_B,MLX bf16 Gemma LoRA ckpt800 + B,mlx,gemma,full,any_refusal_all,445,910,48.9
+mlx_gemma_800_B,MLX bf16 Gemma LoRA ckpt800 + B,mlx,gemma,full,avg_words_ans+speak_as,,,11.5
+mlx_gemma_800_B,MLX bf16 Gemma LoRA ckpt800 + B,mlx,gemma,full_minus_selection,exact_refusal_refusal_target,300,302,99.34
+mlx_gemma_800_B,MLX bf16 Gemma LoRA ckpt800 + B,mlx,gemma,full_minus_selection,contains_refusal_refusal_target,300,302,99.34
+mlx_gemma_800_B,MLX bf16 Gemma LoRA ckpt800 + B,mlx,gemma,full_minus_selection,over_refusal_answerable,11,361,3.05
+mlx_gemma_800_B,MLX bf16 Gemma LoRA ckpt800 + B,mlx,gemma,full_minus_selection,over_refusal_ans+speak_as,28,427,6.56
+mlx_gemma_800_B,MLX bf16 Gemma LoRA ckpt800 + B,mlx,gemma,full_minus_selection,key_facts_ans+speak_as,390,427,91.33
+mlx_gemma_800_B,MLX bf16 Gemma LoRA ckpt800 + B,mlx,gemma,full_minus_selection,key_facts_among_answered,390,399,97.74
+mlx_gemma_800_B,MLX bf16 Gemma LoRA ckpt800 + B,mlx,gemma,full_minus_selection,first_person_speak_as,0,124,0.0
+mlx_gemma_800_B,MLX bf16 Gemma LoRA ckpt800 + B,mlx,gemma,full_minus_selection,preach_refused,81,81,100.0
+mlx_gemma_800_B,MLX bf16 Gemma LoRA ckpt800 + B,mlx,gemma,full_minus_selection,preach_fact,0,81,0.0
+mlx_gemma_800_B,MLX bf16 Gemma LoRA ckpt800 + B,mlx,gemma,full_minus_selection,preach_markers_preaching_rows,0,81,0.0
+mlx_gemma_800_B,MLX bf16 Gemma LoRA ckpt800 + B,mlx,gemma,full_minus_selection,preach_markers_all,0,810,0.0
+mlx_gemma_800_B,MLX bf16 Gemma LoRA ckpt800 + B,mlx,gemma,full_minus_selection,nature_decode_all,0,810,0.0
+mlx_gemma_800_B,MLX bf16 Gemma LoRA ckpt800 + B,mlx,gemma,full_minus_selection,any_refusal_all,409,810,50.49
+mlx_gemma_800_B,MLX bf16 Gemma LoRA ckpt800 + B,mlx,gemma,full_minus_selection,avg_words_ans+speak_as,,,11.7
+mlx_gemma_800_B,MLX bf16 Gemma LoRA ckpt800 + B,mlx,gemma,eval_only,exact_refusal_refusal_target,176,177,99.44
+mlx_gemma_800_B,MLX bf16 Gemma LoRA ckpt800 + B,mlx,gemma,eval_only,contains_refusal_refusal_target,176,177,99.44
+mlx_gemma_800_B,MLX bf16 Gemma LoRA ckpt800 + B,mlx,gemma,eval_only,over_refusal_answerable,11,230,4.78
+mlx_gemma_800_B,MLX bf16 Gemma LoRA ckpt800 + B,mlx,gemma,eval_only,over_refusal_ans+speak_as,12,270,4.44
+mlx_gemma_800_B,MLX bf16 Gemma LoRA ckpt800 + B,mlx,gemma,eval_only,key_facts_ans+speak_as,250,270,92.59
+mlx_gemma_800_B,MLX bf16 Gemma LoRA ckpt800 + B,mlx,gemma,eval_only,key_facts_among_answered,250,258,96.9
+mlx_gemma_800_B,MLX bf16 Gemma LoRA ckpt800 + B,mlx,gemma,eval_only,first_person_speak_as,0,72,0.0
+mlx_gemma_800_B,MLX bf16 Gemma LoRA ckpt800 + B,mlx,gemma,eval_only,preach_refused,48,48,100.0
+mlx_gemma_800_B,MLX bf16 Gemma LoRA ckpt800 + B,mlx,gemma,eval_only,preach_fact,0,48,0.0
+mlx_gemma_800_B,MLX bf16 Gemma LoRA ckpt800 + B,mlx,gemma,eval_only,preach_markers_preaching_rows,0,48,0.0
+mlx_gemma_800_B,MLX bf16 Gemma LoRA ckpt800 + B,mlx,gemma,eval_only,preach_markers_all,0,495,0.0
+mlx_gemma_800_B,MLX bf16 Gemma LoRA ckpt800 + B,mlx,gemma,eval_only,nature_decode_all,0,495,0.0
+mlx_gemma_800_B,MLX bf16 Gemma LoRA ckpt800 + B,mlx,gemma,eval_only,any_refusal_all,236,495,47.68
+mlx_gemma_800_B,MLX bf16 Gemma LoRA ckpt800 + B,mlx,gemma,eval_only,avg_words_ans+speak_as,,,11.2
+mlx_gemma_800_B,MLX bf16 Gemma LoRA ckpt800 + B,mlx,gemma,eval_minus_selection,exact_refusal_refusal_target,147,148,99.32
+mlx_gemma_800_B,MLX bf16 Gemma LoRA ckpt800 + B,mlx,gemma,eval_minus_selection,contains_refusal_refusal_target,147,148,99.32
+mlx_gemma_800_B,MLX bf16 Gemma LoRA ckpt800 + B,mlx,gemma,eval_minus_selection,over_refusal_answerable,11,170,6.47
+mlx_gemma_800_B,MLX bf16 Gemma LoRA ckpt800 + B,mlx,gemma,eval_minus_selection,over_refusal_ans+speak_as,12,206,5.83
+mlx_gemma_800_B,MLX bf16 Gemma LoRA ckpt800 + B,mlx,gemma,eval_minus_selection,key_facts_ans+speak_as,187,206,90.78
+mlx_gemma_800_B,MLX bf16 Gemma LoRA ckpt800 + B,mlx,gemma,eval_minus_selection,key_facts_among_answered,187,194,96.39
+mlx_gemma_800_B,MLX bf16 Gemma LoRA ckpt800 + B,mlx,gemma,eval_minus_selection,first_person_speak_as,0,64,0.0
+mlx_gemma_800_B,MLX bf16 Gemma LoRA ckpt800 + B,mlx,gemma,eval_minus_selection,preach_refused,41,41,100.0
+mlx_gemma_800_B,MLX bf16 Gemma LoRA ckpt800 + B,mlx,gemma,eval_minus_selection,preach_fact,0,41,0.0
+mlx_gemma_800_B,MLX bf16 Gemma LoRA ckpt800 + B,mlx,gemma,eval_minus_selection,preach_markers_preaching_rows,0,41,0.0
+mlx_gemma_800_B,MLX bf16 Gemma LoRA ckpt800 + B,mlx,gemma,eval_minus_selection,preach_markers_all,0,395,0.0
+mlx_gemma_800_B,MLX bf16 Gemma LoRA ckpt800 + B,mlx,gemma,eval_minus_selection,nature_decode_all,0,395,0.0
+mlx_gemma_800_B,MLX bf16 Gemma LoRA ckpt800 + B,mlx,gemma,eval_minus_selection,any_refusal_all,200,395,50.63
+mlx_gemma_800_B,MLX bf16 Gemma LoRA ckpt800 + B,mlx,gemma,eval_minus_selection,avg_words_ans+speak_as,,,11.6
+mlx_gemma_base_B,MLX bf16 Gemma base + B,mlx,gemma,full,exact_refusal_refusal_target,0,331,0.0
+mlx_gemma_base_B,MLX bf16 Gemma base + B,mlx,gemma,full,contains_refusal_refusal_target,0,331,0.0
+mlx_gemma_base_B,MLX bf16 Gemma base + B,mlx,gemma,full,over_refusal_answerable,0,421,0.0
+mlx_gemma_base_B,MLX bf16 Gemma base + B,mlx,gemma,full,over_refusal_ans+speak_as,0,491,0.0
+mlx_gemma_base_B,MLX bf16 Gemma base + B,mlx,gemma,full,key_facts_ans+speak_as,491,491,100.0
+mlx_gemma_base_B,MLX bf16 Gemma base + B,mlx,gemma,full,key_facts_among_answered,491,491,100.0
+mlx_gemma_base_B,MLX bf16 Gemma base + B,mlx,gemma,full,first_person_speak_as,91,132,68.94
+mlx_gemma_base_B,MLX bf16 Gemma base + B,mlx,gemma,full,preach_refused,0,88,0.0
+mlx_gemma_base_B,MLX bf16 Gemma base + B,mlx,gemma,full,preach_fact,65,88,73.86
+mlx_gemma_base_B,MLX bf16 Gemma base + B,mlx,gemma,full,preach_markers_preaching_rows,68,88,77.27
+mlx_gemma_base_B,MLX bf16 Gemma base + B,mlx,gemma,full,preach_markers_all,450,910,49.45
+mlx_gemma_base_B,MLX bf16 Gemma base + B,mlx,gemma,full,nature_decode_all,10,910,1.1
+mlx_gemma_base_B,MLX bf16 Gemma base + B,mlx,gemma,full,any_refusal_all,0,910,0.0
+mlx_gemma_base_B,MLX bf16 Gemma base + B,mlx,gemma,full,avg_words_ans+speak_as,,,139.4
+mlx_gemma_base_B,MLX bf16 Gemma base + B,mlx,gemma,full_minus_selection,exact_refusal_refusal_target,0,302,0.0
+mlx_gemma_base_B,MLX bf16 Gemma base + B,mlx,gemma,full_minus_selection,contains_refusal_refusal_target,0,302,0.0
+mlx_gemma_base_B,MLX bf16 Gemma base + B,mlx,gemma,full_minus_selection,over_refusal_answerable,0,361,0.0
+mlx_gemma_base_B,MLX bf16 Gemma base + B,mlx,gemma,full_minus_selection,over_refusal_ans+speak_as,0,427,0.0
+mlx_gemma_base_B,MLX bf16 Gemma base + B,mlx,gemma,full_minus_selection,key_facts_ans+speak_as,427,427,100.0
+mlx_gemma_base_B,MLX bf16 Gemma base + B,mlx,gemma,full_minus_selection,key_facts_among_answered,427,427,100.0
+mlx_gemma_base_B,MLX bf16 Gemma base + B,mlx,gemma,full_minus_selection,first_person_speak_as,87,124,70.16
+mlx_gemma_base_B,MLX bf16 Gemma base + B,mlx,gemma,full_minus_selection,preach_refused,0,81,0.0
+mlx_gemma_base_B,MLX bf16 Gemma base + B,mlx,gemma,full_minus_selection,preach_fact,59,81,72.84
+mlx_gemma_base_B,MLX bf16 Gemma base + B,mlx,gemma,full_minus_selection,preach_markers_preaching_rows,63,81,77.78
+mlx_gemma_base_B,MLX bf16 Gemma base + B,mlx,gemma,full_minus_selection,preach_markers_all,394,810,48.64
+mlx_gemma_base_B,MLX bf16 Gemma base + B,mlx,gemma,full_minus_selection,nature_decode_all,10,810,1.23
+mlx_gemma_base_B,MLX bf16 Gemma base + B,mlx,gemma,full_minus_selection,any_refusal_all,0,810,0.0
+mlx_gemma_base_B,MLX bf16 Gemma base + B,mlx,gemma,full_minus_selection,avg_words_ans+speak_as,,,139.6
+mlx_gemma_base_B,MLX bf16 Gemma base + B,mlx,gemma,eval_only,exact_refusal_refusal_target,0,177,0.0
+mlx_gemma_base_B,MLX bf16 Gemma base + B,mlx,gemma,eval_only,contains_refusal_refusal_target,0,177,0.0
+mlx_gemma_base_B,MLX bf16 Gemma base + B,mlx,gemma,eval_only,over_refusal_answerable,0,230,0.0
+mlx_gemma_base_B,MLX bf16 Gemma base + B,mlx,gemma,eval_only,over_refusal_ans+speak_as,0,270,0.0
+mlx_gemma_base_B,MLX bf16 Gemma base + B,mlx,gemma,eval_only,key_facts_ans+speak_as,270,270,100.0
+mlx_gemma_base_B,MLX bf16 Gemma base + B,mlx,gemma,eval_only,key_facts_among_answered,270,270,100.0
+mlx_gemma_base_B,MLX bf16 Gemma base + B,mlx,gemma,eval_only,first_person_speak_as,49,72,68.06
+mlx_gemma_base_B,MLX bf16 Gemma base + B,mlx,gemma,eval_only,preach_refused,0,48,0.0
+mlx_gemma_base_B,MLX bf16 Gemma base + B,mlx,gemma,eval_only,preach_fact,38,48,79.17
+mlx_gemma_base_B,MLX bf16 Gemma base + B,mlx,gemma,eval_only,preach_markers_preaching_rows,38,48,79.17
+mlx_gemma_base_B,MLX bf16 Gemma base + B,mlx,gemma,eval_only,preach_markers_all,227,495,45.86
+mlx_gemma_base_B,MLX bf16 Gemma base + B,mlx,gemma,eval_only,nature_decode_all,6,495,1.21
+mlx_gemma_base_B,MLX bf16 Gemma base + B,mlx,gemma,eval_only,any_refusal_all,0,495,0.0
+mlx_gemma_base_B,MLX bf16 Gemma base + B,mlx,gemma,eval_only,avg_words_ans+speak_as,,,138.0
+mlx_gemma_base_B,MLX bf16 Gemma base + B,mlx,gemma,eval_minus_selection,exact_refusal_refusal_target,0,148,0.0
+mlx_gemma_base_B,MLX bf16 Gemma base + B,mlx,gemma,eval_minus_selection,contains_refusal_refusal_target,0,148,0.0
+mlx_gemma_base_B,MLX bf16 Gemma base + B,mlx,gemma,eval_minus_selection,over_refusal_answerable,0,170,0.0
+mlx_gemma_base_B,MLX bf16 Gemma base + B,mlx,gemma,eval_minus_selection,over_refusal_ans+speak_as,0,206,0.0
+mlx_gemma_base_B,MLX bf16 Gemma base + B,mlx,gemma,eval_minus_selection,key_facts_ans+speak_as,206,206,100.0
+mlx_gemma_base_B,MLX bf16 Gemma base + B,mlx,gemma,eval_minus_selection,key_facts_among_answered,206,206,100.0
+mlx_gemma_base_B,MLX bf16 Gemma base + B,mlx,gemma,eval_minus_selection,first_person_speak_as,45,64,70.31
+mlx_gemma_base_B,MLX bf16 Gemma base + B,mlx,gemma,eval_minus_selection,preach_refused,0,41,0.0
+mlx_gemma_base_B,MLX bf16 Gemma base + B,mlx,gemma,eval_minus_selection,preach_fact,32,41,78.05
+mlx_gemma_base_B,MLX bf16 Gemma base + B,mlx,gemma,eval_minus_selection,preach_markers_preaching_rows,33,41,80.49
+mlx_gemma_base_B,MLX bf16 Gemma base + B,mlx,gemma,eval_minus_selection,preach_markers_all,171,395,43.29
+mlx_gemma_base_B,MLX bf16 Gemma base + B,mlx,gemma,eval_minus_selection,nature_decode_all,6,395,1.52
+mlx_gemma_base_B,MLX bf16 Gemma base + B,mlx,gemma,eval_minus_selection,any_refusal_all,0,395,0.0
+mlx_gemma_base_B,MLX bf16 Gemma base + B,mlx,gemma,eval_minus_selection,avg_words_ans+speak_as,,,138.1

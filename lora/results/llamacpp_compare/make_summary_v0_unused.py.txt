@@ -1,0 +1,85 @@
+#!/usr/bin/env python3
+"""Build summary.md from scores.json, agreement.json, raw/*.meta.json and notes.md."""
+import json
+from pathlib import Path
+D = Path(__file__).resolve().parent
+S = json.load(open(D / "scores.json")); V = json.load(open(D / "variants.json")); A = json.load(open(D / "agreement.json"))
+def p(x): return "—" if x is None or x == "" else f"{100*x:.1f}"
+def g(name, subset, cat, key):
+    return S.get(name, {}).get(f"{subset}|{cat}", {}).get(key)
+COLS = [("Decision acc. (ALL)", "ALL", "refusal_decision_acc"),
+        ("Refusal: correct refusal", "refusal", "contains_refusal_on_refusal_target"),
+        ("Refusal: exact string", "refusal", "exact_refusal"),
+        ("Answerable: wrong refusal", "answerable", "wrong_refusal"),
+        ("Answerable: key facts", "answerable", "key_facts"),
+        ("Speak-as: refusal-target refused", "speak_as", "contains_refusal_on_refusal_target"),
+        ("Speak-as: answer-target key facts", "speak_as", "key_facts"),
+        ("Speak-as: first-person", "speak_as", "first_person"),
+        ("Preaching: refused", "preaching", "preach_refusal_correct"),
+        ("Preaching: fact (key facts)", "preaching", "preach_fact_correct"),
+        ("Preaching: preach markers", "preaching", "preach"),
+        ("ALL: nature/decode", "ALL", "nature_decode"),
+        ("ALL: wrong refusal (answer-target)", "ALL", "wrong_refusal"),
+        ("ALL: key facts (answer-target)", "ALL", "key_facts")]
+def table(fam, subset):
+    names = [n for n, v in V.items() if v["family"] == fam and n in S]
+    n_rows = g(names[0], subset, "ALL", "n") if names else 0
+    L = [f"| variant ({subset}, n={n_rows}) | " + " | ".join(c[0] for c in COLS) + " | avg words (answer-target) |",
+         "|---|" + "---:|" * (len(COLS) + 1)]
+    for n in names:
+        w = g(n, subset, "ALL", "words_mean")
+        L.append(f"| {V[n]['label']} | " + " | ".join(p(g(n, subset, c, k)) for _, c, k in COLS) + f" | {w:.1f} |")
+    return "\n".join(L)
+out = ["# llama.cpp (b10481) laptop comparison of the constraint LoRAs", "",
+       "All values are percentages of the rows in the category, scored with `results/s4/analyze_s4.py` (unchanged) plus the extras in `score.py`. "
+       "Decision acc. = refusal-target rows that contain the refusal string plus answer-target rows that do not (preaching scored as answer-target, as in the earlier results). "
+       "Preaching 'fact' = analyze_s4 key facts (the scoring the earlier results used); 'refused' = contains the refusal string (what training data v2 teaches). "
+       "Under condition A there are no notes, so refusals there are grounded behaviour, not errors; A rows are an over-refusal / leakage check.", ""]
+for fam, title in [("qwen", "Qwen2.5-1.5B-Instruct Q4_K_M + s4 ckpt600 LoRA"), ("gemma", "Gemma 4 E2B-it Q3_K_M + s4 LoRA")]:
+    out += [f"## 1{'a' if fam=='qwen' else 'b'}. {title}", ""]
+    for sub in ["full", "eval_minus_selection", "eval_only"]:
+        out += [table(fam, sub), ""]
+out += ["## 2. Qwen vs Gemma (llama.cpp, full set / eval-only minus selection)", ""]
+KEY = [("Decision acc.", "ALL", "refusal_decision_acc"), ("Correct refusal (refusal rows)", "refusal", "contains_refusal_on_refusal_target"),
+       ("Wrong refusal (answerable)", "answerable", "wrong_refusal"), ("Key facts (answerable)", "answerable", "key_facts"),
+       ("First-person (speak_as)", "speak_as", "first_person"), ("Preaching refused", "preaching", "preach_refusal_correct"),
+       ("Preaching fact", "preaching", "preach_fact_correct"), ("Preach markers (preaching)", "preaching", "preach"),
+       ("Any refusal, all rows", "ALL", "any_refusal_rate")]
+out.append("| variant | " + " | ".join(f"{k} Qwen | {k} Gemma" for k, _, _ in KEY) + " |")
+out.append("|---|" + "---:|" * (2 * len(KEY)))
+for lab in ["base_C", "lora_B", "lora_C", "lora_A", "base_B", "base_A"]:
+    q, gm = f"qwen_{lab}", f"gemma_{lab}"
+    if q not in S and gm not in S: continue
+    cells = []
+    for _, c, k in KEY:
+        for n in (q, gm):
+            cells.append(f"{p(g(n,'full',c,k))} / {p(g(n,'eval_minus_selection',c,k))}")
+    out.append(f"| {lab.replace('_', ' + ').replace('lora', 'LoRA')} | " + " | ".join(cells) + " |")
+out += ["", "## 3. MLX (bf16) vs llama.cpp agreement", ""]
+out.append("| pair | same outcome category | identical text | top disagreements |\n|---|---:|---:|---|")
+for k, v in A.items():
+    dis = ", ".join(f"{a}: {b}" for a, b in list(v["disagreements"].items())[:4])
+    out.append(f"| {k} | {p(v['same_outcome_category'])}% ({v['same_outcome_n']}/{v['n']}) | {p(v['identical_text'])}% ({v['identical_text_n']}) | {dis} |")
+out += ["", "Per-metric differences (full set, llama.cpp minus MLX, percentage points):", ""]
+MET = [("Decision acc.", "ALL", "refusal_decision_acc"), ("Correct refusal", "refusal", "contains_refusal_on_refusal_target"),
+       ("Wrong refusal (answerable)", "answerable", "wrong_refusal"), ("Key facts (answerable)", "answerable", "key_facts"),
+       ("First-person (speak_as)", "speak_as", "first_person"), ("Preaching refused", "preaching", "preach_refusal_correct"),
+       ("Preaching fact", "preaching", "preach_fact_correct"), ("Preach markers (ALL)", "ALL", "preach"), ("Nature/decode (ALL)", "ALL", "nature_decode")]
+out.append("| pair | " + " | ".join(m[0] for m in MET) + " |\n|---|" + "---:|" * len(MET))
+for k in A:
+    a, b = k.split(" vs ")
+    cells = []
+    for _, c, key in MET:
+        x, y = g(a, "full", c, key), g(b, "full", c, key)
+        cells.append("—" if x is None or y is None else f"{100*(x-y):+.1f} ({p(x)} vs {p(y)})")
+    out.append(f"| {a} − {b} | " + " | ".join(cells) + " |")
+out += ["", "## 4. Notes, settings, paths, runtimes", ""]
+rt = ["| variant | rows | seconds | generated tokens | tok/s (gen, wall) | max prompt tokens | stopped at 256 | adapter loaded (server /lora-adapters) |", "|---|---:|---:|---:|---:|---:|---:|---|"]
+for m in sorted((D / "raw").glob("out_*.meta.json")):
+    j = json.load(open(m))
+    la = "; ".join(f"{x.get('path','').split('/')[-1]} scale {x.get('scale')}" for x in j.get("lora_adapters_endpoint") or []) or "none"
+    rt.append(f"| {j['name']} | {j['rows']} | {j['seconds']} | {j['generated_tokens']} | {j['generated_tokens']/j['seconds']:.0f} | {j['max_prompt_tokens']} | {j['stopped_at_n_predict']} | {la} |")
+out += rt + [""]
+if (D / "notes.md").exists(): out.append((D / "notes.md").read_text())
+(D / "summary.md").write_text("\n".join(out) + "\n")
+print("wrote summary.md")
