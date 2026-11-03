@@ -33,7 +33,7 @@ lora/
   .gitignore
   configs/qwen25_1.5b_constraint.yaml
   wisent_lora/                  # builder, checks, conversion helpers
-  scripts/                      # CLIs
+  scripts/                      # CLIs, including the v2 and scale-4 scorers
   tests/
   data/
     held_out_paraphrases.json   # leakage probes, not training text
@@ -126,6 +126,30 @@ python3 scripts/run_comparison.py \
 ```
 
 `mlx` and `llama-cli` are not installed here. The script's CSV row and ChatML prompt are unit-tested; a real model run is not.
+
+## Scoring markers
+
+`scripts/analyze_v2_mlx_app.py` scored the v2 MLX app-layout comparison (base vs LoRA) on the 910-row set in `data/comparison/comparison.jsonl`. The CSV it reads, `results/v2_mlx_app_comparison.csv`, is not in this repo. `scripts/score_s4.py` scored a later scale-4 subset of that set (first person, preaching, the 150-word check, key facts, wrong refusals, and note-copy classes). Its checkpoint JSONL files, `results/s4/subset_ids.json`, the diag JSONL under `results/diag/`, and that same CSV are not in the repo either. Each script's docstring lists the input and output paths. Neither script's outputs are committed.
+
+The markers are heuristics and were followed by review. The refusal sentence (`I do not have information about that in the approved notes.`) is removed before matching.
+
+First person, as a substring of the stripped output padded with a space on each side:
+
+` I `, `I'm`, ` my `, `My `, ` we `, `We `
+
+Preaching (case-insensitive):
+
+```
+\b(should|must|respect|protect|remember|important|ought|responsib\w*|appreciate|cherish|treasure|care for|matter[s]?)\b
+```
+
+Nature/decoding, v2 scorer only (case-insensitive):
+
+```
+(\bMother Nature\b|\bas nature\b|\bnature (says|tells|wants|speaks|reminds|teaches)\b|\bI am nature\b|\bwe are nature\b|\btrying to (say|tell|communicate)\b|\b(is|are) (saying|telling us|communicating)\b|\bwhat (it|they|the \w+) (mean|means|is saying|are saying)\b|\bsignal(s|ling|ing)? (that|to)\b|\bexpress(es|ing)? (its|their) (feelings|emotions|joy|anger)\b|\bmeans (it|they|the \w+) (is|are|feel)\b|\btranslat\w*|\bdecod\w*)
+```
+
+Other flags in the v2 scorer: a token 4-gram (lowercase `[a-z0-9]+`) repeated 3 or more times; an output of 150 words or more; `truncated` when the output is 150 words or more and, after stripping trailing whitespace, does not end in `.`, `!`, `?`, `"`, or `)`. The scale-4 scorer records the 150-word count and does not apply the 4-gram or truncation flags.
 
 ## Train on the Mac
 
