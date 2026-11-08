@@ -1,0 +1,962 @@
+{
+ "all": {
+  "Gemma 4 E2B base (thinking off)": {
+   "exact_refusal_refusal_target": [
+    0,
+    331,
+    0.0
+   ],
+   "contains_refusal_refusal_target": [
+    0,
+    331,
+    0.0
+   ],
+   "over_refusal_answerable": [
+    0,
+    421,
+    0.0
+   ],
+   "over_refusal_answer_target_ans+speak_as": [
+    0,
+    491,
+    0.0
+   ],
+   "key_facts_answer_target_ans+speak_as": [
+    482,
+    491,
+    98.2
+   ],
+   "key_facts_among_answered": [
+    482,
+    491,
+    98.2
+   ],
+   "voice_first_person_speak_as_rows": [
+    109,
+    132,
+    82.6
+   ],
+   "preaching_rows_refused(trained)": [
+    0,
+    88,
+    0.0
+   ],
+   "preach_markers_all_rows": [
+    46,
+    910,
+    5.1
+   ],
+   "nature_decode_all_rows": [
+    0,
+    910,
+    0.0
+   ],
+   "avg_words_answer_target": 17.9
+  },
+  "Gemma s4 iter 600": {
+   "exact_refusal_refusal_target": [
+    330,
+    331,
+    99.7
+   ],
+   "contains_refusal_refusal_target": [
+    330,
+    331,
+    99.7
+   ],
+   "over_refusal_answerable": [
+    19,
+    421,
+    4.5
+   ],
+   "over_refusal_answer_target_ans+speak_as": [
+    26,
+    491,
+    5.3
+   ],
+   "key_facts_answer_target_ans+speak_as": [
+    463,
+    491,
+    94.3
+   ],
+   "key_facts_among_answered": [
+    463,
+    465,
+    99.6
+   ],
+   "voice_first_person_speak_as_rows": [
+    0,
+    132,
+    0.0
+   ],
+   "preaching_rows_refused(trained)": [
+    88,
+    88,
+    100.0
+   ],
+   "preach_markers_all_rows": [
+    0,
+    910,
+    0.0
+   ],
+   "nature_decode_all_rows": [
+    0,
+    910,
+    0.0
+   ],
+   "avg_words_answer_target": 9.0
+  },
+  "Gemma s4 iter 800": {
+   "exact_refusal_refusal_target": [
+    329,
+    331,
+    99.4
+   ],
+   "contains_refusal_refusal_target": [
+    329,
+    331,
+    99.4
+   ],
+   "over_refusal_answerable": [
+    11,
+    421,
+    2.6
+   ],
+   "over_refusal_answer_target_ans+speak_as": [
+    28,
+    491,
+    5.7
+   ],
+   "key_facts_answer_target_ans+speak_as": [
+    453,
+    491,
+    92.3
+   ],
+   "key_facts_among_answered": [
+    453,
+    463,
+    97.8
+   ],
+   "voice_first_person_speak_as_rows": [
+    0,
+    132,
+    0.0
+   ],
+   "preaching_rows_refused(trained)": [
+    88,
+    88,
+    100.0
+   ],
+   "preach_markers_all_rows": [
+    0,
+    910,
+    0.0
+   ],
+   "nature_decode_all_rows": [
+    0,
+    910,
+    0.0
+   ],
+   "avg_words_answer_target": 11.5
+  },
+  "Gemma s4 final (1000)": {
+   "exact_refusal_refusal_target": [
+    329,
+    331,
+    99.4
+   ],
+   "contains_refusal_refusal_target": [
+    329,
+    331,
+    99.4
+   ],
+   "over_refusal_answerable": [
+    6,
+    421,
+    1.4
+   ],
+   "over_refusal_answer_target_ans+speak_as": [
+    10,
+    491,
+    2.0
+   ],
+   "key_facts_answer_target_ans+speak_as": [
+    479,
+    491,
+    97.6
+   ],
+   "key_facts_among_answered": [
+    479,
+    481,
+    99.6
+   ],
+   "voice_first_person_speak_as_rows": [
+    0,
+    132,
+    0.0
+   ],
+   "preaching_rows_refused(trained)": [
+    88,
+    88,
+    100.0
+   ],
+   "preach_markers_all_rows": [
+    0,
+    910,
+    0.0
+   ],
+   "nature_decode_all_rows": [
+    0,
+    910,
+    0.0
+   ],
+   "avg_words_answer_target": 9.3
+  },
+  "Qwen2.5-1.5B base": {
+   "exact_refusal_refusal_target": [
+    0,
+    331,
+    0.0
+   ],
+   "contains_refusal_refusal_target": [
+    0,
+    331,
+    0.0
+   ],
+   "over_refusal_answerable": [
+    0,
+    421,
+    0.0
+   ],
+   "over_refusal_answer_target_ans+speak_as": [
+    0,
+    491,
+    0.0
+   ],
+   "key_facts_answer_target_ans+speak_as": [
+    464,
+    491,
+    94.5
+   ],
+   "key_facts_among_answered": [
+    464,
+    491,
+    94.5
+   ],
+   "voice_first_person_speak_as_rows": [
+    87,
+    132,
+    65.9
+   ],
+   "preaching_rows_refused(trained)": [
+    0,
+    88,
+    0.0
+   ],
+   "preach_markers_all_rows": [
+    98,
+    910,
+    10.8
+   ],
+   "nature_decode_all_rows": [
+    6,
+    910,
+    0.7
+   ],
+   "avg_words_answer_target": 25.7
+  },
+  "Qwen s4 iter 600": {
+   "exact_refusal_refusal_target": [
+    331,
+    331,
+    100.0
+   ],
+   "contains_refusal_refusal_target": [
+    331,
+    331,
+    100.0
+   ],
+   "over_refusal_answerable": [
+    3,
+    421,
+    0.7
+   ],
+   "over_refusal_answer_target_ans+speak_as": [
+    4,
+    491,
+    0.8
+   ],
+   "key_facts_answer_target_ans+speak_as": [
+    479,
+    491,
+    97.6
+   ],
+   "key_facts_among_answered": [
+    479,
+    487,
+    98.4
+   ],
+   "voice_first_person_speak_as_rows": [
+    0,
+    132,
+    0.0
+   ],
+   "preaching_rows_refused(trained)": [
+    82,
+    88,
+    93.2
+   ],
+   "preach_markers_all_rows": [
+    0,
+    910,
+    0.0
+   ],
+   "nature_decode_all_rows": [
+    0,
+    910,
+    0.0
+   ],
+   "avg_words_answer_target": 9.0
+  }
+ },
+ "eval-only": {
+  "Gemma 4 E2B base (thinking off)": {
+   "exact_refusal_refusal_target": [
+    0,
+    177,
+    0.0
+   ],
+   "contains_refusal_refusal_target": [
+    0,
+    177,
+    0.0
+   ],
+   "over_refusal_answerable": [
+    0,
+    230,
+    0.0
+   ],
+   "over_refusal_answer_target_ans+speak_as": [
+    0,
+    270,
+    0.0
+   ],
+   "key_facts_answer_target_ans+speak_as": [
+    268,
+    270,
+    99.3
+   ],
+   "key_facts_among_answered": [
+    268,
+    270,
+    99.3
+   ],
+   "voice_first_person_speak_as_rows": [
+    54,
+    72,
+    75.0
+   ],
+   "preaching_rows_refused(trained)": [
+    0,
+    48,
+    0.0
+   ],
+   "preach_markers_all_rows": [
+    30,
+    495,
+    6.1
+   ],
+   "nature_decode_all_rows": [
+    0,
+    495,
+    0.0
+   ],
+   "avg_words_answer_target": 17.5
+  },
+  "Gemma s4 iter 600": {
+   "exact_refusal_refusal_target": [
+    177,
+    177,
+    100.0
+   ],
+   "contains_refusal_refusal_target": [
+    177,
+    177,
+    100.0
+   ],
+   "over_refusal_answerable": [
+    18,
+    230,
+    7.8
+   ],
+   "over_refusal_answer_target_ans+speak_as": [
+    19,
+    270,
+    7.0
+   ],
+   "key_facts_answer_target_ans+speak_as": [
+    250,
+    270,
+    92.6
+   ],
+   "key_facts_among_answered": [
+    250,
+    251,
+    99.6
+   ],
+   "voice_first_person_speak_as_rows": [
+    0,
+    72,
+    0.0
+   ],
+   "preaching_rows_refused(trained)": [
+    48,
+    48,
+    100.0
+   ],
+   "preach_markers_all_rows": [
+    0,
+    495,
+    0.0
+   ],
+   "nature_decode_all_rows": [
+    0,
+    495,
+    0.0
+   ],
+   "avg_words_answer_target": 8.9
+  },
+  "Gemma s4 iter 800": {
+   "exact_refusal_refusal_target": [
+    176,
+    177,
+    99.4
+   ],
+   "contains_refusal_refusal_target": [
+    176,
+    177,
+    99.4
+   ],
+   "over_refusal_answerable": [
+    11,
+    230,
+    4.8
+   ],
+   "over_refusal_answer_target_ans+speak_as": [
+    12,
+    270,
+    4.4
+   ],
+   "key_facts_answer_target_ans+speak_as": [
+    250,
+    270,
+    92.6
+   ],
+   "key_facts_among_answered": [
+    250,
+    258,
+    96.9
+   ],
+   "voice_first_person_speak_as_rows": [
+    0,
+    72,
+    0.0
+   ],
+   "preaching_rows_refused(trained)": [
+    48,
+    48,
+    100.0
+   ],
+   "preach_markers_all_rows": [
+    0,
+    495,
+    0.0
+   ],
+   "nature_decode_all_rows": [
+    0,
+    495,
+    0.0
+   ],
+   "avg_words_answer_target": 11.2
+  },
+  "Gemma s4 final (1000)": {
+   "exact_refusal_refusal_target": [
+    176,
+    177,
+    99.4
+   ],
+   "contains_refusal_refusal_target": [
+    176,
+    177,
+    99.4
+   ],
+   "over_refusal_answerable": [
+    6,
+    230,
+    2.6
+   ],
+   "over_refusal_answer_target_ans+speak_as": [
+    6,
+    270,
+    2.2
+   ],
+   "key_facts_answer_target_ans+speak_as": [
+    262,
+    270,
+    97.0
+   ],
+   "key_facts_among_answered": [
+    262,
+    264,
+    99.2
+   ],
+   "voice_first_person_speak_as_rows": [
+    0,
+    72,
+    0.0
+   ],
+   "preaching_rows_refused(trained)": [
+    48,
+    48,
+    100.0
+   ],
+   "preach_markers_all_rows": [
+    0,
+    495,
+    0.0
+   ],
+   "nature_decode_all_rows": [
+    0,
+    495,
+    0.0
+   ],
+   "avg_words_answer_target": 9.3
+  },
+  "Qwen2.5-1.5B base": {
+   "exact_refusal_refusal_target": [
+    0,
+    177,
+    0.0
+   ],
+   "contains_refusal_refusal_target": [
+    0,
+    177,
+    0.0
+   ],
+   "over_refusal_answerable": [
+    0,
+    230,
+    0.0
+   ],
+   "over_refusal_answer_target_ans+speak_as": [
+    0,
+    270,
+    0.0
+   ],
+   "key_facts_answer_target_ans+speak_as": [
+    255,
+    270,
+    94.4
+   ],
+   "key_facts_among_answered": [
+    255,
+    270,
+    94.4
+   ],
+   "voice_first_person_speak_as_rows": [
+    28,
+    72,
+    38.9
+   ],
+   "preaching_rows_refused(trained)": [
+    0,
+    48,
+    0.0
+   ],
+   "preach_markers_all_rows": [
+    51,
+    495,
+    10.3
+   ],
+   "nature_decode_all_rows": [
+    2,
+    495,
+    0.4
+   ],
+   "avg_words_answer_target": 24.3
+  },
+  "Qwen s4 iter 600": {
+   "exact_refusal_refusal_target": [
+    177,
+    177,
+    100.0
+   ],
+   "contains_refusal_refusal_target": [
+    177,
+    177,
+    100.0
+   ],
+   "over_refusal_answerable": [
+    3,
+    230,
+    1.3
+   ],
+   "over_refusal_answer_target_ans+speak_as": [
+    4,
+    270,
+    1.5
+   ],
+   "key_facts_answer_target_ans+speak_as": [
+    260,
+    270,
+    96.3
+   ],
+   "key_facts_among_answered": [
+    260,
+    266,
+    97.7
+   ],
+   "voice_first_person_speak_as_rows": [
+    0,
+    72,
+    0.0
+   ],
+   "preaching_rows_refused(trained)": [
+    42,
+    48,
+    87.5
+   ],
+   "preach_markers_all_rows": [
+    0,
+    495,
+    0.0
+   ],
+   "nature_decode_all_rows": [
+    0,
+    495,
+    0.0
+   ],
+   "avg_words_answer_target": 8.9
+  }
+ },
+ "training-q": {
+  "Gemma 4 E2B base (thinking off)": {
+   "exact_refusal_refusal_target": [
+    0,
+    154,
+    0.0
+   ],
+   "contains_refusal_refusal_target": [
+    0,
+    154,
+    0.0
+   ],
+   "over_refusal_answerable": [
+    0,
+    191,
+    0.0
+   ],
+   "over_refusal_answer_target_ans+speak_as": [
+    0,
+    221,
+    0.0
+   ],
+   "key_facts_answer_target_ans+speak_as": [
+    214,
+    221,
+    96.8
+   ],
+   "key_facts_among_answered": [
+    214,
+    221,
+    96.8
+   ],
+   "voice_first_person_speak_as_rows": [
+    55,
+    60,
+    91.7
+   ],
+   "preaching_rows_refused(trained)": [
+    0,
+    40,
+    0.0
+   ],
+   "preach_markers_all_rows": [
+    16,
+    415,
+    3.9
+   ],
+   "nature_decode_all_rows": [
+    0,
+    415,
+    0.0
+   ],
+   "avg_words_answer_target": 18.3
+  },
+  "Gemma s4 iter 600": {
+   "exact_refusal_refusal_target": [
+    153,
+    154,
+    99.4
+   ],
+   "contains_refusal_refusal_target": [
+    153,
+    154,
+    99.4
+   ],
+   "over_refusal_answerable": [
+    1,
+    191,
+    0.5
+   ],
+   "over_refusal_answer_target_ans+speak_as": [
+    7,
+    221,
+    3.2
+   ],
+   "key_facts_answer_target_ans+speak_as": [
+    213,
+    221,
+    96.4
+   ],
+   "key_facts_among_answered": [
+    213,
+    214,
+    99.5
+   ],
+   "voice_first_person_speak_as_rows": [
+    0,
+    60,
+    0.0
+   ],
+   "preaching_rows_refused(trained)": [
+    40,
+    40,
+    100.0
+   ],
+   "preach_markers_all_rows": [
+    0,
+    415,
+    0.0
+   ],
+   "nature_decode_all_rows": [
+    0,
+    415,
+    0.0
+   ],
+   "avg_words_answer_target": 9.1
+  },
+  "Gemma s4 iter 800": {
+   "exact_refusal_refusal_target": [
+    153,
+    154,
+    99.4
+   ],
+   "contains_refusal_refusal_target": [
+    153,
+    154,
+    99.4
+   ],
+   "over_refusal_answerable": [
+    0,
+    191,
+    0.0
+   ],
+   "over_refusal_answer_target_ans+speak_as": [
+    16,
+    221,
+    7.2
+   ],
+   "key_facts_answer_target_ans+speak_as": [
+    203,
+    221,
+    91.9
+   ],
+   "key_facts_among_answered": [
+    203,
+    205,
+    99.0
+   ],
+   "voice_first_person_speak_as_rows": [
+    0,
+    60,
+    0.0
+   ],
+   "preaching_rows_refused(trained)": [
+    40,
+    40,
+    100.0
+   ],
+   "preach_markers_all_rows": [
+    0,
+    415,
+    0.0
+   ],
+   "nature_decode_all_rows": [
+    0,
+    415,
+    0.0
+   ],
+   "avg_words_answer_target": 11.7
+  },
+  "Gemma s4 final (1000)": {
+   "exact_refusal_refusal_target": [
+    153,
+    154,
+    99.4
+   ],
+   "contains_refusal_refusal_target": [
+    153,
+    154,
+    99.4
+   ],
+   "over_refusal_answerable": [
+    0,
+    191,
+    0.0
+   ],
+   "over_refusal_answer_target_ans+speak_as": [
+    4,
+    221,
+    1.8
+   ],
+   "key_facts_answer_target_ans+speak_as": [
+    217,
+    221,
+    98.2
+   ],
+   "key_facts_among_answered": [
+    217,
+    217,
+    100.0
+   ],
+   "voice_first_person_speak_as_rows": [
+    0,
+    60,
+    0.0
+   ],
+   "preaching_rows_refused(trained)": [
+    40,
+    40,
+    100.0
+   ],
+   "preach_markers_all_rows": [
+    0,
+    415,
+    0.0
+   ],
+   "nature_decode_all_rows": [
+    0,
+    415,
+    0.0
+   ],
+   "avg_words_answer_target": 9.3
+  },
+  "Qwen2.5-1.5B base": {
+   "exact_refusal_refusal_target": [
+    0,
+    154,
+    0.0
+   ],
+   "contains_refusal_refusal_target": [
+    0,
+    154,
+    0.0
+   ],
+   "over_refusal_answerable": [
+    0,
+    191,
+    0.0
+   ],
+   "over_refusal_answer_target_ans+speak_as": [
+    0,
+    221,
+    0.0
+   ],
+   "key_facts_answer_target_ans+speak_as": [
+    209,
+    221,
+    94.6
+   ],
+   "key_facts_among_answered": [
+    209,
+    221,
+    94.6
+   ],
+   "voice_first_person_speak_as_rows": [
+    59,
+    60,
+    98.3
+   ],
+   "preaching_rows_refused(trained)": [
+    0,
+    40,
+    0.0
+   ],
+   "preach_markers_all_rows": [
+    47,
+    415,
+    11.3
+   ],
+   "nature_decode_all_rows": [
+    4,
+    415,
+    1.0
+   ],
+   "avg_words_answer_target": 27.4
+  },
+  "Qwen s4 iter 600": {
+   "exact_refusal_refusal_target": [
+    154,
+    154,
+    100.0
+   ],
+   "contains_refusal_refusal_target": [
+    154,
+    154,
+    100.0
+   ],
+   "over_refusal_answerable": [
+    0,
+    191,
+    0.0
+   ],
+   "over_refusal_answer_target_ans+speak_as": [
+    0,
+    221,
+    0.0
+   ],
+   "key_facts_answer_target_ans+speak_as": [
+    219,
+    221,
+    99.1
+   ],
+   "key_facts_among_answered": [
+    219,
+    221,
+    99.1
+   ],
+   "voice_first_person_speak_as_rows": [
+    0,
+    60,
+    0.0
+   ],
+   "preaching_rows_refused(trained)": [
+    40,
+    40,
+    100.0
+   ],
+   "preach_markers_all_rows": [
+    0,
+    415,
+    0.0
+   ],
+   "nature_decode_all_rows": [
+    0,
+    415,
+    0.0
+   ],
+   "avg_words_answer_target": 9.2
+  }
+ }
+}

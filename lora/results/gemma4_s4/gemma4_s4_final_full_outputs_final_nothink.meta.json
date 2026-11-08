@@ -1,0 +1,17 @@
+{
+ "model": "google/gemma-4-E2B-it",
+ "adapter": "adapters_gemma4_s4_lr1e-4",
+ "enable_thinking": false,
+ "decoding": {
+  "temperature": 0.0,
+  "seed": 42,
+  "top_k": 40,
+  "top_p": 0.9,
+  "repeat_penalty": 1.1,
+  "max_tokens": 256,
+  "context_size": 2048,
+  "repeat_last_n": 64
+ },
+ "n": 910,
+ "seconds": 431.5
+}

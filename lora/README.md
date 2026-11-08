@@ -1,8 +1,8 @@
-# Constraint LoRA for Qwen2.5-1.5B-Instruct
+# Constraint LoRA
 
 Training workspace for one question: can a LoRA impose the visitor-guide constraints that the base model ignores unless they are written into the prompt?
 
-The Flutter app is unchanged. This folder only builds data, checks it, and describes the Mac training and conversion path. Nothing here loads a model. mlx-lm, the PEFT conversion, and llama.cpp were checked against current upstream sources and are untested on this machine.
+Two instruction models were trained on the same v2 set: Qwen2.5-1.5B-Instruct and Gemma 4 E2B-it. The Flutter app loads a matching adapter GGUF with the base model at scale `1.0`. Scored MLX and llama.cpp runs are under `results/`. Generated weights (`adapters/`, `*.safetensors`, `*.gguf`) stay gitignored.
 
 ## What the adapter is supposed to learn
 
@@ -20,7 +20,7 @@ The base Qwen2.5-1.5B answers "speak as the wisent" in the animal's voice, moral
 - **Most notes are synthetic.** Five invented packs (red deer on the Veluwezoom, Konik horses in the Oostvaardersplassen, beavers in the Biesbosch, Highland cattle on the Dwingelderveld, Exmoor ponies at Lauwersmeer) match the one-sentence tone of `assets/dataset.json`. They are marked `synthetic: true` and are not park fact sheets.
 - **Real Kraansvlak notes are used only for questions the ten protocol prompts do not ask** (other grazers, the park name, the Wisentenpad dates, whether people feed the wisents). The other six notes are left out of the training prompt. They are the answers to held-out prompts, and the wisent-herd sentence shares the 4-gram "the Kraansvlak herd is" with the on-path prompt. The protocol render still injects all ten notes, which is what condition B does at test time.
 - **Contrastive pairs** ask the same question with the grounded note present and with that note removed. The answer flips to the exact refusal. Both sides stay in the same split.
-- **Rank 16, mlx `scale` 20, all 28 layers, 500 steps, AdamW, learning rate 1e-4.** Rank 16 is inside the planned 8–16 band. mlx-lm stores `scale`, not PEFT `lora_alpha`. The forward pass is `y + scale * (x @ lora_a @ lora_b)`. PEFT and llama.cpp use `lora_alpha / rank`, so the converter sets `lora_alpha = scale * rank` (320 at these settings). `num_layers: -1` is the mlx-lm switch for every block. Embeddings and `lm_head` are not adapted: Qwen2.5 sets `tie_word_embeddings: true`, and `convert_lora_to_gguf.py` exits if either tensor is in the adapter.
+- **Rank 16, AdamW, every layer.** The original Qwen config (`configs/qwen25_1.5b_constraint.yaml`) is mlx `scale` 20, 500 steps, learning rate 1e-4, batch size 4. The adapters that were scored are the later configs in [Trained adapters](#trained-adapters). mlx-lm stores `scale`, not PEFT `lora_alpha`. The forward pass is `y + scale * (x @ lora_a @ lora_b)`. PEFT and llama.cpp use `lora_alpha / rank`, so the converter sets `lora_alpha = scale * rank` (320 at scale 20, 64 at scale 4). `num_layers: -1` is the mlx-lm switch for every block. Embeddings and `lm_head` are not adapted: Qwen2.5 sets `tie_word_embeddings: true`, and `convert_lora_to_gguf.py` exits if either tensor is in the adapter. Gemma 4 leaves out the same tensors plus its per-layer embeddings. Convert that adapter with `scripts/mlx_to_peft_gemma4.py`, because mlx names the weights `language_model.model.layers.N...`.
 - **Train the bf16 Hugging Face repo**, not an MLX 4-bit quant. mlx-lm uses QLoRA when the model is quantized.
 
 ## Layout
@@ -32,8 +32,11 @@ lora/
   requirements-mac.txt          # mlx-lm and the converter
   .gitignore
   configs/qwen25_1.5b_constraint.yaml
+  configs/qwen25_1.5b_constraint_v2.yaml
+  configs/qwen25_1.5b_constraint_v2_s4_lr1e-4.yaml
+  configs/gemma4_e2b_constraint_v2_s4_lr1e-4.yaml
   wisent_lora/                  # builder, checks, conversion helpers
-  scripts/                      # CLIs
+  scripts/                      # CLIs, including mlx_to_peft_gemma4.py
   tests/
   data/
     held_out_paraphrases.json   # leakage probes, not training text
@@ -242,7 +245,7 @@ python3 scripts/run_comparison.py \
   --output out/comparison.csv
 ```
 
-`mlx` is not installed here. The CSV row, the app-layout prompt, the sampler arguments, and the summary split are unit-tested; a real model run is not.
+The CSV row, the app-layout prompt, the sampler arguments, and the summary split are unit-tested. The scored MLX runs are in `results/`.
 
 ## Train on the Mac
 
@@ -256,20 +259,47 @@ pip install -r requirements-mac.txt
 mlx_lm.lora --config configs/qwen25_1.5b_constraint.yaml
 ```
 
-That command trains the original set. For the app-layout set, use `configs/qwen25_1.5b_constraint_v2.yaml` instead. The run is 500 steps, batch size 4, validation on the whole valid split every 50 steps, and a checkpoint `adapters/0000050_adapters.safetensors` through `adapters/0000500_adapters.safetensors`. Keep the checkpoint with the lowest validation loss, not automatically the last one. `adapters/adapters.safetensors` is the final step. If memory is tight, set `grad_checkpoint: true` or `batch_size: 1`. Drop `rank` to 8 if the valid loss rises while the model starts parroting training sentences. Confirm the log is bf16 LoRA and not QLoRA before trusting the run.
+That command trains the original set (`data/`, 500 steps, batch size 4, scale 20, learning rate 1e-4, a checkpoint every 50 steps). The app-layout set is `data/v2`. A batch-4 v2 run hit a Metal command-buffer failure, so the v2 configs that were trained use batch size 2, 1000 steps, gradient checkpointing, and a checkpoint every 100 steps. `configs/qwen25_1.5b_constraint_v2.yaml` is scale 20 and learning rate 5e-5 (`adapter_path: adapters`). The scored adapters use scale 4 and learning rate 1e-4. `adapters.safetensors` inside the config's `adapter_path` is the final step. Confirm the log is bf16 LoRA and not QLoRA before trusting the run. The checkpoint to keep was chosen on the 100-question comparison, not on validation loss alone.
+
+## Trained adapters
+
+mlx-lm 0.32.2, rank 16, `data/v2` (409 train / 46 valid), app layout, app sampler. Preaching rows in v2 are trained to the refusal string, so a refusal on those rows is the trained behaviour.
+
+| Config | Model | Scale | LR | Adapter path | Checkpoint used |
+|---|---|---:|---:|---|---|
+| `qwen25_1.5b_constraint_v2.yaml` | Qwen2.5-1.5B-Instruct | 20 | 5e-5 | `adapters` | Final. Over-refused. Not the scored adapter. |
+| `qwen25_1.5b_constraint_v2_s4_lr1e-4.yaml` | Qwen2.5-1.5B-Instruct | 4 | 1e-4 | `adapters_s4_lr1e-4` | Iter 600. Over-refusal on the 100-row subset returns at 800 and is worse at 1000. |
+| `gemma4_e2b_constraint_v2_s4_lr1e-4.yaml` | `google/gemma-4-E2B-it` | 4 | 1e-4 | `adapters_gemma4_s4_lr1e-4` | Iter 800 won the 100-row subset. On the 910-row set the final step (iter 1000) is stronger. Both were converted. |
+
+Gemma 4 E2B has 35 decoder layers. Layers 15–34 share K/V and have no `k_proj` or `v_proj`, so those two keys are adapted on layers 0–14 only. The other five keys cover all 35 layers (24.2M trainable parameters). `lora_alpha` on the converted Gemma adapter is 64. `results/gemma4_s4/gguf_validation_final.json` checks the f16 GGUF (410 tensors, architecture `gemma4`).
+
+Reports, rather than a second copy of the tables:
+
+- Qwen s4 checkpoint choice and the scale-20 comparison: `results/s4/s4_analysis.md`. The original training log was not saved; validation loss was recomputed later.
+- Gemma s4 against Qwen s4 iter 600: `results/gemma4_s4/gemma4_s4_analysis.md` and `results/gemma4_s4/checkpoint_tables.md`.
+- llama.cpp b10481 on the laptop (Qwen Q4_K_M, Gemma Q3_K_M, f16 adapters, `--lora-scaled` at 1): `results/llamacpp_compare/summary.md`. The ten protocol prompts, including the app's fixed sim-RAG rows: `results/protocol_llamacpp/summary.md`. Those files are llama-server runs, not Flutter exports.
+
+Gemma and the app do not use the same thinking default. mlx-lm 0.32.2 sets `enable_thinking` from `tokenizer.has_thinking`, which is true for Gemma 4, so the first MLX comparison inserted `<|think|>`. Those base outputs are thinking traces (about 139 words, key-fact scores inflated by the trace restating the notes). The app renders Gemma 4's `<|turn|>` format in Dart and does not insert `<|think|>`. The 4 Nov reruns force `enable_thinking=False` (`results/gemma4_s4/*nothink*`). On that full set (`headline_full_gemma4_s4_final_nothink.md`), Gemma base keeps 482/491 key facts at 17.9 words and still uses a first-person marker on 109/132 speak-as rows. The thinking-off final adapter refuses 328/331 refusal-target rows, over-refuses 6/421 answerable rows, keeps 478/491 key facts, and has no first-person, preach, or nature/decoding markers. Qwen s4 iter 600 on the same table refuses 331/331, over-refuses 3/421, and keeps 479/491 key facts.
+
+One sampler difference remains. In the app and in llama-server, temperature 0 runs before the repeat penalty, so the 1.1 penalty cannot change the argmax. The MLX runs apply that penalty as a logits processor before the greedy pick, so it can. Quantization also differs: MLX is bf16, llama.cpp is Q4_K_M (Qwen) or Q3_K_M (Gemma) plus an f16 adapter.
 
 ## Convert
 
-`scale` 20 and rank 16 become PEFT `lora_alpha` 320. Factors are transposed from mlx `(in, rank)` / `(rank, out)` to PEFT `(rank, in)` / `(out, rank)`. Names become `base_model.model.model.layers.N....lora_A.weight` and `lora_B.weight`. A `lm_head` or embedding key is an error.
+`scale` 20 and rank 16 become PEFT `lora_alpha` 320. The scored s4 adapters use scale 4, so `lora_alpha` is 64. Factors are transposed from mlx `(in, rank)` / `(rank, out)` to PEFT `(rank, in)` / `(out, rank)`. Qwen names become `base_model.model.model.layers.N....lora_A.weight` and `lora_B.weight`. Gemma 4 names go through `scripts/mlx_to_peft_gemma4.py` and keep the `language_model` segment. A `lm_head` or embedding key is an error. The s4 checkpoints are `0000100` through `0001000`. Qwen's scored step is 600. Gemma's converted files are step 800 and the final `adapters.safetensors`.
 
 ```bash
 python3 scripts/mlx_to_peft.py \
-  --mlx-adapter adapters \
-  --checkpoint adapters/0000500_adapters.safetensors \
+  --mlx-adapter adapters_s4_lr1e-4 \
+  --checkpoint adapters_s4_lr1e-4/0000600_adapters.safetensors \
   --output peft_adapter
+
+python3 scripts/mlx_to_peft_gemma4.py \
+  --mlx-adapter adapters_gemma4_s4_lr1e-4 \
+  --checkpoint adapters_gemma4_s4_lr1e-4/0000800_adapters.safetensors \
+  --output peft_adapter_gemma4
 ```
 
-Omit `--checkpoint` to convert `adapters/adapters.safetensors`.
+Omit `--checkpoint` to convert that directory's `adapters.safetensors` (the final step). The original scale-20 adapter still lives under `adapters/` and still converts with `scripts/mlx_to_peft.py`.
 
 llama.cpp's converter needs a directory with the base `config.json` and tokenizer, not the weights. `--base-model-id` also works and ignores a stale path inside the PEFT config; this wrapper always passes `--base`.
 
@@ -347,16 +377,10 @@ llama-completion \
 adb push wisent-constraint-lora-f16.gguf /sdcard/Download/
 ```
 
-`packages/llm_llamacpp` 0.7.0 loads an adapter when `LlamaCppChatRepository` is constructed with `loraPath` and `loraScale`, or after `setLora`. The inference isolate calls `llama_adapter_lora_init` while loading the model and applies the adapter to the new context before generation. `lib/main.dart` does not pass `loraPath`. Pointing the app at the file is a separate change.
+`packages/llm_llamacpp` 0.7.0 loads an adapter when `LlamaCppChatRepository` is constructed with `loraPath` and `loraScale`, or after `setLora`. The app loads the base model, then calls `attachLora` at scale `1.0` (`protocolLoraScale` in `lib/lora_match.dart`). The inference isolate calls `llama_adapter_lora_init` and applies the adapter to the context before generation. Setup's **Pick** chooses the adapter GGUF. Load reads `general.architecture` on both files and refuses the load when they differ or when either header cannot be read. A match is hashed. Every export row then has Adapter File, Adapter SHA-256, and Adapter Scale. A base run leaves the file and hash empty and the scale blank. The llama.cpp files under `results/` were produced by `llama-server`, not by a Flutter export.
 
-## Planned next steps
+The installed `llama-cli` 0.5.0 note above is about that binary. The scored laptop comparison used a separate llama.cpp b10481 build's `llama-server`.
 
-After the initial LoRA is implemented and tested with the full-notes prompt (condition B), add simulated-RAG support for the LoRA version. That needs a fixed note selection for each question in the comparison set: the relevant notes plus deliberate near misses, the same idea as `assets/simulated_rag.json` (`k` of 2). The selection can be assigned by hand or automatically. Build and score the normal full-notes version first. Simulated RAG comes later. Nothing in this folder selects a subset of notes per comparison question yet.
+## Still open
 
-## Untested here
-
-- `mlx_lm.lora` and `mlx_lm.fuse` (no Apple Silicon, no MLX).
-- `mlx_to_peft.py` against a real `adapters.safetensors`. The transpose, rename, alpha, and the refusal of `lm_head` / embeddings are unit-tested on plain lists.
-- `convert_lora_to_gguf.py`, `llama-quantize`, and `llama-completion` (the shell wrapper is syntax-checked only).
-- Loading the GGUF adapter in the Flutter isolate, and any on-device protocol run.
-- `scripts/run_comparison.py` against mlx-lm or llama-completion. The comparison CSV writer, the app-layout prompt, the sampler arguments, and the summary split are unit-tested only.
+The 910-row comparison set still has no per-question note subset. The ten protocol prompts already use the fixed `k=2` selections in `assets/simulated_rag.json`, and `results/protocol_llamacpp/summary.md` scores those rows as an extra. A Flutter protocol export with an adapter loaded, on the laptop or a phone, is not in `results/`. `mlx_lm.fuse` was not the path used for the GGUF adapters.

@@ -18,10 +18,12 @@
 #   - Embeddings, the per-layer embeddings (embed_tokens_per_layer,
 #     per_layer_model_projection, per_layer_input_gate, per_layer_projection) and
 #     the tied lm_head are left out. llama.cpp rejects embedding/lm_head adapters.
-#   - The data is rendered with Gemma 4's own chat template (system turn
-#     supported, thinking off). The app currently sends Gemma 4 ChatML text
-#     instead, because llama_chat_apply_template does not recognise the template;
-#     see the report before comparing on-device numbers.
+#   - The data is rendered with Gemma 4's own chat template. mlx-lm 0.32.2
+#     defaults enable_thinking to tokenizer.has_thinking, which is true for
+#     Gemma 4, so a default apply_chat_template call inserts <|think|>.
+#     The app does not. It renders the <|turn|> format in Dart with thinking
+#     left off. Comparison runs that should match the app pass
+#     enable_thinking=False. See lora/README.md.
 #   - Convert with scripts/mlx_to_peft_gemma4.py, not scripts/mlx_to_peft.py
 #     (mlx names Gemma 4 weights language_model.model.layers.N...).
 # Batch size 2 and grad_checkpoint stay on, as in the Qwen run.

@@ -1,8 +1,8 @@
 # Technical Exploration: Local LLM Protocol Benchmark
 
-Offline Flutter application for running the local on-device LLM evaluation protocol across 10 prompts, 10 local dataset notes, and 3 experimental conditions (plus an optional retrieval approximation pass).
+Offline Flutter application for running the local on-device LLM evaluation protocol across 10 prompts, 10 local dataset notes, and 3 experimental conditions (plus an optional retrieval approximation pass). An optional LoRA adapter GGUF loads with the model when `general.architecture` matches. The protocol scale is `1.0`.
 
-The constraint-LoRA training workspace (dataset, checks, and the Mac mlx-lm pipeline) is in [lora/](lora/README.md).
+The constraint-LoRA workspace (dataset, checks, Mac mlx-lm configs, and the scored runs) is in [lora/](lora/README.md).
 
 Outputs are scored by hand post-hoc; non-functional metrics (timings, token rates, memory, thermal throttling, and battery) export directly into the evaluation measurement sheet and benchmark reports.
 
@@ -96,13 +96,17 @@ Physical RAM consumption is sampled at multiple points using native OS interface
 
 ## 3. How Application Features Work
 
+The main screen is a column of report cards: Setup, the run bar, telemetry, model config, history, and diagnostics. Long-press a card title to write `card_<name>_<timestamp>.png` into the exports directory.
+
 ### 3.1 Single Condition Execution
-1. Select a prompt from the catalog dropdown dialog.
-2. Select an experimental condition (A, B, or C).
-3. Tap **Run (<Condition>)**.
-4. The app builds the condition messages, streams inference chunks into the live output card, samples memory, computes TTFT and TPS, and appends the result to history.
+1. On Setup, tap **Pick GGUF**, optionally **Pick** a LoRA adapter, then **Load**. **Clear** drops the adapter selection. Load reads `general.architecture` from both GGUF headers and refuses the load when they differ or when either header cannot be read. There is no fallback architecture. A match is hashed, reusing `model_sha256_cache.json` when the file is unchanged, and attached with `attachLora` at scale `1.0`. Changing the picked adapter after a successful load blocks runs until **Load** is tapped again. The diagnostics line is `Load <total> ms`, and `Load <total> ms (base <base> ms, adapter <adapter> ms)` when an adapter was attached. `Load Time (ms)` in the export is that total.
+2. Choose condition A, B, or C. Simulated RAG is a switch and is off by default.
+3. Choose the visitor question from the list.
+4. Tap **Run**.
+5. The app builds the condition messages, streams inference into the messages card, samples memory, computes TTFT and TPS, and appends the result to history. Each row records the loaded adapter file, its SHA-256, and the scale. A base run leaves the file and hash empty and the scale blank.
 
 ### 3.2 Compare All (A vs B vs C / All 5)
+- The run bar's overflow menu is **Compare all 3**, or **Compare all 5** when Simulated RAG is on. The same menu holds **10-run heat test**.
 - Executes all active conditions for the currently selected prompt sequentially.
 - Automatically clears prior comparison cards at the start so only the current prompt's outputs are shown.
 - Renders a multi-tab comparison card (`ComparisonView`) with side-by-side metrics (TTFT, TPS, Tokens, Peak RAM) and one-click copy buttons for prompt and response comparison.
@@ -123,6 +127,7 @@ Designed for hands-off, automated protocol data collection:
       G -- Yes --> B
       G -- No --> H["Batch Complete"]
   ```
+  Extended mode uses that loop and inserts B-sim after B and C-sim after C. The button is **Run batch**.
 - **Context Isolation**: Every individual run initializes a fresh `llama_context` in the persistent worker isolate, preventing KV-cache leakage or prompt contamination between runs.
 - **Inter-run Stabilisation**: A 300 ms pause is inserted between runs to allow memory reclamation and thermal stabilization.
 - **Clean Interruption**: Tapping **Stop** immediately cancels the active inference stream, safely stops the batch loop, and reports the exact number of completed runs.
@@ -145,12 +150,36 @@ Designed for hands-off, automated protocol data collection:
 
 ## 4. Telemetry Export & Spreadsheet Column Mapping
 
-Tapping the download icon in the AppBar provides instant export:
-- **Export Files (CSV & JSON)**: Saves timestamped files to the `/exports` directory.
-- **Copy CSV to Clipboard**: Formatted for direct pasting into the evaluation spreadsheet.
-- **Copy JSON to Clipboard**: Complete raw structured JSON.
+The Diagnostics card exports the session:
+- **Copy CSV** and **Copy JSON** put the sheet on the clipboard.
+- **Export files** writes timestamped CSV and JSON into the `/exports` directory.
+- **Share**, on Android, sends the public copies through the share sheet.
 
-### CSV Column Reference Dictionary
+The CSV has two sections, marked `# Tab: Load and idle` and `# Tab: Inference`.
+
+### Load and idle
+One row per distinct load (model file, adapter file, cold/warm, and load duration):
+
+| Column Name | Type | Description |
+|---|---|---|
+| `Device Model` | string | Hardware identifier |
+| `OS Version` | string | Operating system name and kernel/build version |
+| `Model File` | string | GGUF file name |
+| `Architecture` | string | Model architecture from GGUF metadata |
+| `Quantization` | string | Quantization type |
+| `Backend` | string | Compute backend (`GPU` or `CPU`) |
+| `GPU Layers` | int | `nGpuLayers` for that load |
+| `Load Type` | string | `Cold` or `Warm`, same rule as the inference rows |
+| `Load Time (ms)` | int | Base load plus adapter attach. `0` adapter time when no adapter was picked |
+| `RAM Before Load (MB)` | double | RSS immediately before the model load |
+| `RAM Idle Model (MB)` | double | RSS after load and the settling pause |
+| `RAM Overhead (MB)` | double | Idle minus baseline |
+| `Timestamp` | ISO8601 | Timestamp of the run that first recorded this load |
+| `Adapter File` | string | Adapter GGUF name, or empty for a base load |
+| `Adapter SHA-256` | string | Hash stored at load, or empty |
+| `Adapter Scale` | double | `1.0` when an adapter was loaded, otherwise blank |
+
+### Inference column reference
 | Column Name | Type | Description |
 |---|---|---|
 | `Run Index` | int | Monotonic run index across the entire session |
@@ -183,16 +212,19 @@ Tapping the download icon in the AppBar provides instant export:
 | `Gen Duration (ms)`| int | Duration of token generation phase excluding TTFT |
 | `TPS (tok/s)` | double | Generation rate in tokens per second |
 | `RAM Peak (MB)` | double | Peak resident memory during inference in megabytes |
-| `Battery Before (%)`| int | Device battery level before run (mobile) |
-| `Battery After (%)` | int | Device battery level after run (mobile) |
-| `Temp Before (°C)`| double | Battery temperature before the run, from `BatteryManager` on Android |
-| `Temp After (°C)` | double | Battery temperature after the run, from `BatteryManager` on Android |
+| `Battery Level Before (%)`| int | Device battery level before run (mobile) |
+| `Battery Level After (%)` | int | Device battery level after run (mobile) |
+| `Battery Temp Before (C)`| double | Battery temperature before the run, from `BatteryManager` on Android |
+| `Battery Temp After (C)` | double | Battery temperature after the run, from `BatteryManager` on Android |
 | `Throttle (%)` | double | Thermal throttle percentage (Heat Test only) |
 | `Is Heat Test` | string | `Yes` if part of 10-run heat test; `No` otherwise |
 | `Thinking Disabled`| string | `N/A` unless a thinking toggle was actually applied. This app does not apply one, so the column stays `N/A`. |
 | `Prompt Formatter` | string | Formatter that built the prompt: `native`, `gemma4`, or `chatml-fallback`. |
 | `Thought Emitted` | string | `Yes` when the stored output contains a thought block; `No` otherwise. |
 | `Output` | string | Model response text. Stop markers are removed. Thought text is removed except for Gemma 4, where it is kept. |
+| `Adapter File` | string | Adapter GGUF name for this run, or empty for the base model |
+| `Adapter SHA-256` | string | Adapter hash recorded at load, or empty |
+| `Adapter Scale` | double | `1.0` when an adapter was loaded, otherwise blank |
 
 `Thinking Disabled` stays `N/A` because this app never applies a thinking toggle; `Thought Emitted` is `Yes` only when the stored output actually contains a thought block.
 
@@ -204,7 +236,7 @@ Gemma 4 now uses its own turn format (`<|turn>` / `<turn|>`). `llama_chat_apply_
 
 After every load the app runs two fixed sanity prompts ("Name one European wild animal in three words." and "What is 2+2?"). The animal answer must contain a recognisable animal word, so Latin-script soup fails as well as mixed-script soup. The math answer must contain 4. A failure blocks the protocol batch. Those prompts exercise the loaded model, so when they ran every protocol row is `Warm` (`isColdLoad` false), including run 1. A Mac-only "Skip sanity check" toggle, off by default, skips them so the first protocol run after a cold load can still be `Cold`. The toggle is ignored on Android.
 
-Load does not hash the GGUF. Hashing reads the whole file and warms the page cache, which makes the following load time incomparable. "Verify model" hashes once and stores the result in `model_sha256_cache.json` in the exports directory, keyed by path, size, and mtime. A later load of that same file reuses the stored hash and still blocks a known-Qwen mismatch. An unverified file loads and is logged as `sha256=unverified`. Verifying and then immediately loading still warms the cache.
+Load does not hash the model GGUF. Hashing reads the whole file and warms the page cache, which makes the following load time incomparable. An adapter whose architecture matches is hashed before it is attached, and that hash is the export column. A refused adapter is not hashed. Both checks use `model_sha256_cache.json`. "Verify model" hashes once and stores the result in `model_sha256_cache.json` in the exports directory, keyed by path, size, and mtime. A later load of that same file reuses the stored hash and still blocks a known-Qwen mismatch. An unverified file loads and is logged as `sha256=unverified`. Verifying and then immediately loading still warms the cache.
 
 The CPU configuration for a batch (winning backend, KleidiAI SME, threads, KV type, flash attention, mmap, GPU layers) is printed to logcat and shown under the model line. It is not a new export column. `variant=` is the basename of each registered `libggml-cpu-*.so` (`dladdr` on the backend's `ggml_backend_set_n_threads`), not the `CPU` device name. Threads, KV type, and flash attention are the values this app's repository passes. It does not pass them unless a build define says so, so the line says `unset`. It does not read `llama_context_default_params`. `sme=` is the value this process set with `setenv` before backend init, or `unset`.
 

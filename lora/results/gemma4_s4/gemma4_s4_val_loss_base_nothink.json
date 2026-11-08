@@ -1,0 +1,6 @@
+{
+ "model": "google/gemma-4-E2B-it",
+ "enable_thinking": false,
+ "n_valid": 46,
+ "loss_base": 5.923892021179199
+}

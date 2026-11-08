@@ -1,0 +1,138 @@
+{
+ "llama.cpp vs MLX old thinking-on": {
+  "full": {
+   "n": 910,
+   "same_outcome": 904,
+   "same_refused_vs_answered": 906,
+   "identical_text": 882,
+   "disagreements": {
+    "answered_keyfacts (llama.cpp) vs refused (MLX old thinking-on)": 2,
+    "answered_no_keyfacts (llama.cpp) vs answered_keyfacts (MLX old thinking-on)": 2,
+    "refused (llama.cpp) vs answered_keyfacts (MLX old thinking-on)": 2
+   }
+  },
+  "full_minus_selection": {
+   "n": 810,
+   "same_outcome": 804,
+   "same_refused_vs_answered": 806,
+   "identical_text": 785,
+   "disagreements": {
+    "answered_keyfacts (llama.cpp) vs refused (MLX old thinking-on)": 2,
+    "answered_no_keyfacts (llama.cpp) vs answered_keyfacts (MLX old thinking-on)": 2,
+    "refused (llama.cpp) vs answered_keyfacts (MLX old thinking-on)": 2
+   }
+  },
+  "eval_only": {
+   "n": 495,
+   "same_outcome": 491,
+   "same_refused_vs_answered": 492,
+   "identical_text": 478,
+   "disagreements": {
+    "refused (llama.cpp) vs answered_keyfacts (MLX old thinking-on)": 2,
+    "answered_keyfacts (llama.cpp) vs refused (MLX old thinking-on)": 1,
+    "answered_no_keyfacts (llama.cpp) vs answered_keyfacts (MLX old thinking-on)": 1
+   }
+  },
+  "eval_minus_selection": {
+   "n": 395,
+   "same_outcome": 391,
+   "same_refused_vs_answered": 392,
+   "identical_text": 381,
+   "disagreements": {
+    "refused (llama.cpp) vs answered_keyfacts (MLX old thinking-on)": 2,
+    "answered_keyfacts (llama.cpp) vs refused (MLX old thinking-on)": 1,
+    "answered_no_keyfacts (llama.cpp) vs answered_keyfacts (MLX old thinking-on)": 1
+   }
+  }
+ },
+ "llama.cpp vs MLX new thinking-off": {
+  "full": {
+   "n": 910,
+   "same_outcome": 904,
+   "same_refused_vs_answered": 905,
+   "identical_text": 883,
+   "disagreements": {
+    "answered_keyfacts (llama.cpp) vs refused (MLX new thinking-off)": 2,
+    "refused (llama.cpp) vs answered_keyfacts (MLX new thinking-off)": 2,
+    "answered_no_keyfacts (llama.cpp) vs answered_keyfacts (MLX new thinking-off)": 1,
+    "exact_refusal (llama.cpp) vs no_refusal (MLX new thinking-off)": 1
+   }
+  },
+  "full_minus_selection": {
+   "n": 810,
+   "same_outcome": 804,
+   "same_refused_vs_answered": 805,
+   "identical_text": 787,
+   "disagreements": {
+    "answered_keyfacts (llama.cpp) vs refused (MLX new thinking-off)": 2,
+    "refused (llama.cpp) vs answered_keyfacts (MLX new thinking-off)": 2,
+    "answered_no_keyfacts (llama.cpp) vs answered_keyfacts (MLX new thinking-off)": 1,
+    "exact_refusal (llama.cpp) vs no_refusal (MLX new thinking-off)": 1
+   }
+  },
+  "eval_only": {
+   "n": 495,
+   "same_outcome": 490,
+   "same_refused_vs_answered": 491,
+   "identical_text": 478,
+   "disagreements": {
+    "refused (llama.cpp) vs answered_keyfacts (MLX new thinking-off)": 2,
+    "answered_keyfacts (llama.cpp) vs refused (MLX new thinking-off)": 1,
+    "answered_no_keyfacts (llama.cpp) vs answered_keyfacts (MLX new thinking-off)": 1,
+    "exact_refusal (llama.cpp) vs no_refusal (MLX new thinking-off)": 1
+   }
+  },
+  "eval_minus_selection": {
+   "n": 395,
+   "same_outcome": 390,
+   "same_refused_vs_answered": 391,
+   "identical_text": 382,
+   "disagreements": {
+    "refused (llama.cpp) vs answered_keyfacts (MLX new thinking-off)": 2,
+    "answered_keyfacts (llama.cpp) vs refused (MLX new thinking-off)": 1,
+    "answered_no_keyfacts (llama.cpp) vs answered_keyfacts (MLX new thinking-off)": 1,
+    "exact_refusal (llama.cpp) vs no_refusal (MLX new thinking-off)": 1
+   }
+  }
+ },
+ "MLX old thinking-on vs MLX new thinking-off": {
+  "full": {
+   "n": 910,
+   "same_outcome": 908,
+   "same_refused_vs_answered": 909,
+   "identical_text": 905,
+   "disagreements": {
+    "answered_keyfacts (MLX old thinking-on) vs answered_no_keyfacts (MLX new thinking-off)": 1,
+    "exact_refusal (MLX old thinking-on) vs no_refusal (MLX new thinking-off)": 1
+   }
+  },
+  "full_minus_selection": {
+   "n": 810,
+   "same_outcome": 808,
+   "same_refused_vs_answered": 809,
+   "identical_text": 806,
+   "disagreements": {
+    "answered_keyfacts (MLX old thinking-on) vs answered_no_keyfacts (MLX new thinking-off)": 1,
+    "exact_refusal (MLX old thinking-on) vs no_refusal (MLX new thinking-off)": 1
+   }
+  },
+  "eval_only": {
+   "n": 495,
+   "same_outcome": 494,
+   "same_refused_vs_answered": 494,
+   "identical_text": 491,
+   "disagreements": {
+    "exact_refusal (MLX old thinking-on) vs no_refusal (MLX new thinking-off)": 1
+   }
+  },
+  "eval_minus_selection": {
+   "n": 395,
+   "same_outcome": 394,
+   "same_refused_vs_answered": 394,
+   "identical_text": 392,
+   "disagreements": {
+    "exact_refusal (MLX old thinking-on) vs no_refusal (MLX new thinking-off)": 1
+   }
+  }
+ }
+}

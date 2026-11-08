@@ -1,0 +1,1 @@
+{"name": "gemma4_base_nothink_pen", "model": "google/gemma-4-E2B-it", "adapter": null, "penalty": "on", "enable_thinking": false, "seconds": 60.4}

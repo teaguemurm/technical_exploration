@@ -1,0 +1,19 @@
+<bos><|turn>system
+You are generating a short note for a visitor about one wild animal in a Dutch living lab. Keep it to a few sentences.<turn|>
+<|turn>user
+Local notes
+
+Local notes follow. They are the only place-specific notes supplied for this run.
+The Dwingelderveld grazers in these notes are Scottish Highland cattle.
+The herd lives on the heath of Nationaal Park Dwingelderveld.
+Natuurmonumenten manages the area.
+Highland cattle have a long shaggy coat and wide horns.
+Highland cattle graze heather, purple moor-grass, and birch shoots and are not fed by visitors.
+The herd stays out on the heath through the winter.
+Calves are born in spring and have a lighter coat than the adults.
+The cattle keep young birch from closing over the open heath.
+Highland cattle drink at the peat pools and the shallow fens.
+Visitors see the cattle from the sheep bridges and the boardwalks across the wet heath.<turn|>
+<|turn>user
+Do visitors feed the Highland cattle?<turn|>
+<|turn>model
