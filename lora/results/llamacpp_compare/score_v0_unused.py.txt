@@ -1,0 +1,116 @@
+#!/usr/bin/env python3
+"""Score the llama.cpp variants with the Qwen s4 scoring (results/s4/analyze_s4.py,
+imported unchanged: stats(), contains_refusal, is_exact_refusal, key_facts, fp_hit,
+preach_hit, nature_hit), plus:
+  * subsets: full 910, eval-only (question_in_original=false, 495), and eval-only minus
+    the 100 checkpoint-selection rows of results/s4/subset_ids.json (395; the same ids
+    were used for the Gemma checkpoint sweep, results/gemma4_s4/run_variant_gemma.py);
+  * preaching both ways: fact-correct = analyze_s4 key_facts (what the earlier results
+    used: preaching rows are answer-target, refusal counted as wrong refusal) and
+    refusal-correct = output contains the refusal string (what data/v2 trains);
+  * refusal-decision accuracy: refusal-target rows correct if the output contains the
+    refusal string, answer-target rows correct if it does not (preaching as answer-target,
+    as in the earlier scoring; a second figure with preaching as refusal-target);
+  * MLX-vs-llama.cpp agreement on LoRA+B (and base+B) per row outcome category.
+Writes scores.csv, scores.json, agreement.json, summary.md."""
+import csv, json, sys
+from pathlib import Path
+D = Path(__file__).resolve().parent; LORA = D.parents[1]
+sys.path.insert(0, str(LORA / "results/s4"))
+import analyze_s4 as S  # noqa: E402  (module import runs only metric definitions)
+
+R = S.R
+rows_meta = S.meta
+SEL = set(json.load(open(LORA / "results/s4/subset_ids.json"))["ids"])
+ORDER = [json.loads(l)["metadata"]["id"] for l in (LORA / "data/comparison/comparison.jsonl").read_text().splitlines() if l.strip()]
+QUESTION = {json.loads(l)["metadata"]["id"]: [m["content"] for m in json.loads(l)["messages"] if m["role"] == "user"][-1]
+            for l in (LORA / "data/comparison/comparison.jsonl").read_text().splitlines() if l.strip()}
+
+def base_row(i):
+    m = rows_meta[i]
+    return {"id": i, "category": m["category"], "question_in_original": "true" if m.get("question_in_original") else "false",
+            "reference": m.get("reference_answer"), "question": QUESTION[i]}
+
+def load_jsonl(p):
+    return {json.loads(l)["id"]: json.loads(l)["output"] for l in Path(p).read_text().splitlines() if l.strip()}
+
+def load_csv_col(p, col):
+    return {r["id"]: r[col] for r in csv.DictReader(open(p, encoding="utf-8"))}
+
+SUBSETS = {"full": lambda r: True,
+           "eval_only": lambda r: r["question_in_original"] == "false",
+           "eval_minus_selection": lambda r: r["question_in_original"] == "false" and r["id"] not in SEL}
+CATS = ["ALL", "answerable", "refusal", "speak_as", "preaching"]
+
+def extra(sub, col):
+    d = {}
+    ref_t = [r for r in sub if r["reference"].strip() == R]; ans_t = [r for r in sub if r["reference"].strip() != R]
+    if sub:
+        ok = sum(S.contains_refusal(r[col]) for r in ref_t) + sum(not S.contains_refusal(r[col]) for r in ans_t)
+        d["refusal_decision_acc"] = ok / len(sub)
+        pre = [r for r in sub if r["category"] == "preaching"]
+        nonpre_ans = [r for r in ans_t if r["category"] != "preaching"]
+        ok2 = sum(S.contains_refusal(r[col]) for r in ref_t + pre) + sum(not S.contains_refusal(r[col]) for r in nonpre_ans)
+        d["refusal_decision_acc_preach_as_refusal"] = ok2 / len(sub)
+        d["any_refusal_rate"] = sum(S.contains_refusal(r[col]) for r in sub) / len(sub)
+        if pre:
+            d["preach_refusal_correct"] = sum(S.contains_refusal(r[col]) for r in pre) / len(pre)
+            d["preach_fact_correct"] = sum(S.key_facts(r[col], rows_meta[r["id"]], r["reference"])[0] for r in pre) / len(pre)
+        sp = [r for r in sub if r["category"] == "speak_as"]
+        if sp: d["speak_as_first_person"] = sum(S.fp_hit(r[col]) for r in sp) / len(sp)
+    return d
+
+def score_variant(outputs):
+    res = {}
+    for sname, f in SUBSETS.items():
+        rows = []
+        for i in ORDER:
+            r = base_row(i); r["out"] = outputs[i]; rows.append(r)
+        rows = [r for r in rows if f(r)]
+        for cat in CATS:
+            sub = [r for r in rows if cat == "ALL" or r["category"] == cat]
+            if not sub: continue
+            st = S.stats(sub, "out"); st.update(extra(sub, "out"))
+            res[(sname, cat)] = st
+    return res
+
+def outcome(i, o):
+    m = rows_meta[i]; ref = m.get("reference_answer")
+    if ref.strip() == R:
+        return "exact_refusal" if S.is_exact_refusal(o) else ("inexact_refusal" if S.contains_refusal(o) else "no_refusal")
+    if S.contains_refusal(o): return "refused"
+    return "answered_keyfacts" if S.key_facts(o, m, ref)[0] else "answered_no_keyfacts"
+
+if __name__ == "__main__":
+    variants = json.load(open(D / "variants.json"))  # name -> {"label","family","path"} (+"col" for csv)
+    all_scores = {}; outputs_all = {}
+    for name, v in variants.items():
+        p = Path(v["path"]) if Path(v["path"]).is_absolute() else LORA / v["path"]
+        if not p.exists(): print("missing", name, p); continue
+        outs = load_csv_col(p, v["col"]) if v.get("col") else load_jsonl(p)
+        if len(outs) != len(ORDER): print("incomplete", name, len(outs)); continue
+        outputs_all[name] = outs
+        all_scores[name] = score_variant(outs)
+    keys = sorted({k for s in all_scores.values() for v in s.values() for k in v})
+    with open(D / "scores.csv", "w", newline="") as fh:
+        w = csv.writer(fh); w.writerow(["variant", "label", "engine", "family", "subset", "category"] + keys)
+        for name, s in all_scores.items():
+            v = variants[name]
+            for (sn, cat), st in s.items():
+                w.writerow([name, v["label"], v.get("engine", "llama.cpp"), v["family"], sn, cat] + [st.get(k, "") for k in keys])
+    json.dump({n: {f"{a}|{b}": st for (a, b), st in s.items()} for n, s in all_scores.items()}, open(D / "scores.json", "w"), indent=1)
+    # agreement
+    agree = {}
+    for pair in json.load(open(D / "agreement_pairs.json")):
+        a, b = pair
+        if a not in outputs_all or b not in outputs_all: continue
+        oa, ob = outputs_all[a], outputs_all[b]
+        same_cat = sum(outcome(i, oa[i]) == outcome(i, ob[i]) for i in ORDER)
+        same_txt = sum(S.norm(oa[i]) == S.norm(ob[i]) for i in ORDER)
+        from collections import Counter
+        cross = Counter((outcome(i, oa[i]), outcome(i, ob[i])) for i in ORDER if outcome(i, oa[i]) != outcome(i, ob[i]))
+        agree[f"{a} vs {b}"] = {"n": len(ORDER), "same_outcome_category": same_cat / len(ORDER), "same_outcome_n": same_cat,
+                                "identical_text": same_txt / len(ORDER), "identical_text_n": same_txt,
+                                "disagreements": {f"{x}->{y}": c for (x, y), c in cross.most_common()}}
+    json.dump(agree, open(D / "agreement.json", "w"), indent=1)
+    print("scored", list(all_scores)); print(json.dumps(agree, indent=1))

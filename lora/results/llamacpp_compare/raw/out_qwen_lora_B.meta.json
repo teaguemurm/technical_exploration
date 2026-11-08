@@ -1,0 +1,90 @@
+{
+ "name": "qwen_lora_B",
+ "family": "qwen",
+ "gguf": "/Users/teaguemm/models/app_gguf/qwen2.5-1.5b-instruct-q4_k_m.gguf",
+ "lora": "/Users/teaguemm/Documents/Programming/IdeaProjects/technical-exploration/lora/out/qwen25-1.5b-constraint-s4-lora-ckpt600-f16.gguf",
+ "lora_scale": 1.0,
+ "cond": "B",
+ "rows": 910,
+ "seconds": 189.1,
+ "rows_this_session": 910,
+ "resumed_after_rows": 0,
+ "server_load_seconds": 0.5,
+ "generated_tokens": 11883,
+ "max_prompt_tokens": 252,
+ "stopped_at_n_predict": 0,
+ "lora_adapters_endpoint": [
+  {
+   "id": 0,
+   "path": "/Users/teaguemm/Documents/Programming/IdeaProjects/technical-exploration/lora/out/qwen25-1.5b-constraint-s4-lora-ckpt600-f16.gguf",
+   "scale": 1.0,
+   "task_name": "",
+   "prompt_prefix": ""
+  }
+ ],
+ "bos_check": {
+  "identical": true,
+  "n": 228,
+  "first": [
+   151644,
+   8948,
+   198
+  ]
+ },
+ "server_cmd": [
+  "/Users/teaguemm/llama.cpp-b10481/build/bin/llama-server",
+  "-m",
+  "/Users/teaguemm/models/app_gguf/qwen2.5-1.5b-instruct-q4_k_m.gguf",
+  "-c",
+  "2048",
+  "-b",
+  "2048",
+  "-np",
+  "1",
+  "-ngl",
+  "99",
+  "--seed",
+  "42",
+  "--port",
+  "8791",
+  "--host",
+  "127.0.0.1",
+  "--no-webui",
+  "--lora-scaled",
+  "/Users/teaguemm/Documents/Programming/IdeaProjects/technical-exploration/lora/out/qwen25-1.5b-constraint-s4-lora-ckpt600-f16.gguf:1"
+ ],
+ "sampling": {
+  "n_predict": 256,
+  "temperature": 0.0,
+  "top_k": 40,
+  "top_p": 0.9,
+  "min_p": 0.0,
+  "min_keep": 1,
+  "repeat_penalty": 1.1,
+  "repeat_last_n": 64,
+  "frequency_penalty": 0.0,
+  "presence_penalty": 0.0,
+  "samplers": [
+   "temperature",
+   "top_k",
+   "top_p",
+   "penalties"
+  ],
+  "seed": 42,
+  "dry_multiplier": 0.0,
+  "xtc_probability": 0.0,
+  "typical_p": 1.0,
+  "top_n_sigma": -1.0,
+  "stop": [
+   "<|im_end|>",
+   "<end_of_turn>",
+   "<|eot_id|>",
+   "<turn|>",
+   "<|end|>",
+   "<|im_start|>",
+   "<start_of_turn>"
+  ],
+  "cache_prompt": false,
+  "stream": false
+ }
+}

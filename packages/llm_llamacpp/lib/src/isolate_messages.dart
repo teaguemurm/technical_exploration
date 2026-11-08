@@ -67,9 +67,14 @@ class InferenceComplete {
   InferenceComplete({
     required this.promptTokens,
     required this.generatedTokens,
+    this.promptFormatter,
   });
   final int promptTokens;
   final int generatedTokens;
+
+  /// `native`, `gemma4`, or `chatml-fallback`. Null for a raw prompt that
+  /// was not formatted from chat messages.
+  final String? promptFormatter;
 }
 
 /// Error message sent when inference fails.

@@ -1,0 +1,478 @@
+{
+ "report": {
+  "llama.cpp gemma_800_A": {
+   "num_rows": 10,
+   "answered": 0,
+   "split": 0,
+   "dropped": 0,
+   "split_or_dropped": 0,
+   "other": 0,
+   "refused": 10,
+   "correct_numbers": 0,
+   "number_missing": 0,
+   "all910_split_or_dropped": 0,
+   "all910_split": 0
+  },
+  "llama.cpp gemma_800_B": {
+   "num_rows": 10,
+   "answered": 6,
+   "split": 0,
+   "dropped": 0,
+   "split_or_dropped": 0,
+   "other": 0,
+   "refused": 4,
+   "correct_numbers": 3,
+   "number_missing": 3,
+   "all910_split_or_dropped": 0,
+   "all910_split": 0
+  },
+  "llama.cpp gemma_800_C": {
+   "num_rows": 10,
+   "answered": 6,
+   "split": 0,
+   "dropped": 0,
+   "split_or_dropped": 0,
+   "other": 0,
+   "refused": 4,
+   "correct_numbers": 3,
+   "number_missing": 3,
+   "all910_split_or_dropped": 0,
+   "all910_split": 0
+  },
+  "llama.cpp gemma_base_C": {
+   "num_rows": 10,
+   "answered": 10,
+   "split": 0,
+   "dropped": 0,
+   "split_or_dropped": 0,
+   "other": 0,
+   "refused": 0,
+   "correct_numbers": 10,
+   "number_missing": 0,
+   "all910_split_or_dropped": 0,
+   "all910_split": 0
+  },
+  "llama.cpp gemma_final_A": {
+   "num_rows": 10,
+   "answered": 0,
+   "split": 0,
+   "dropped": 0,
+   "split_or_dropped": 0,
+   "other": 0,
+   "refused": 10,
+   "correct_numbers": 0,
+   "number_missing": 0,
+   "all910_split_or_dropped": 0,
+   "all910_split": 0
+  },
+  "llama.cpp gemma_final_B": {
+   "num_rows": 10,
+   "answered": 6,
+   "split": 0,
+   "dropped": 0,
+   "split_or_dropped": 0,
+   "other": 0,
+   "refused": 4,
+   "correct_numbers": 5,
+   "number_missing": 1,
+   "all910_split_or_dropped": 0,
+   "all910_split": 0
+  },
+  "llama.cpp gemma_final_C": {
+   "num_rows": 10,
+   "answered": 6,
+   "split": 0,
+   "dropped": 0,
+   "split_or_dropped": 0,
+   "other": 0,
+   "refused": 4,
+   "correct_numbers": 5,
+   "number_missing": 1,
+   "all910_split_or_dropped": 0,
+   "all910_split": 0
+  },
+  "llama.cpp qwen_base_C": {
+   "num_rows": 10,
+   "answered": 10,
+   "split": 0,
+   "dropped": 0,
+   "split_or_dropped": 0,
+   "other": 0,
+   "refused": 0,
+   "correct_numbers": 10,
+   "number_missing": 0,
+   "all910_split_or_dropped": 0,
+   "all910_split": 0
+  },
+  "llama.cpp qwen_lora_A": {
+   "num_rows": 10,
+   "answered": 0,
+   "split": 0,
+   "dropped": 0,
+   "split_or_dropped": 0,
+   "other": 0,
+   "refused": 10,
+   "correct_numbers": 0,
+   "number_missing": 0,
+   "all910_split_or_dropped": 0,
+   "all910_split": 0
+  },
+  "llama.cpp qwen_lora_B": {
+   "num_rows": 10,
+   "answered": 10,
+   "split": 0,
+   "dropped": 2,
+   "split_or_dropped": 2,
+   "other": 0,
+   "refused": 0,
+   "correct_numbers": 2,
+   "number_missing": 6,
+   "all910_split_or_dropped": 2,
+   "all910_split": 0
+  },
+  "llama.cpp qwen_lora_C": {
+   "num_rows": 10,
+   "answered": 9,
+   "split": 0,
+   "dropped": 1,
+   "split_or_dropped": 1,
+   "other": 0,
+   "refused": 1,
+   "correct_numbers": 2,
+   "number_missing": 6,
+   "all910_split_or_dropped": 1,
+   "all910_split": 0
+  },
+  "MLX qwen ckpt600 LoRA": {
+   "num_rows": 10,
+   "answered": 9,
+   "split": 0,
+   "dropped": 3,
+   "split_or_dropped": 3,
+   "other": 0,
+   "refused": 1,
+   "correct_numbers": 3,
+   "number_missing": 3,
+   "all910_split_or_dropped": 3,
+   "all910_split": 0
+  },
+  "MLX qwen base": {
+   "num_rows": 10,
+   "answered": 10,
+   "split": 0,
+   "dropped": 0,
+   "split_or_dropped": 0,
+   "other": 1,
+   "refused": 0,
+   "correct_numbers": 7,
+   "number_missing": 3,
+   "all910_split_or_dropped": 0,
+   "all910_split": 0
+  },
+  "MLX gemma final LoRA": {
+   "num_rows": 10,
+   "answered": 6,
+   "split": 0,
+   "dropped": 0,
+   "split_or_dropped": 0,
+   "other": 0,
+   "refused": 4,
+   "correct_numbers": 6,
+   "number_missing": 0,
+   "all910_split_or_dropped": 0,
+   "all910_split": 0
+  },
+  "MLX gemma base": {
+   "num_rows": 10,
+   "answered": 10,
+   "split": 0,
+   "dropped": 8,
+   "split_or_dropped": 8,
+   "other": 8,
+   "refused": 0,
+   "correct_numbers": 10,
+   "number_missing": 0,
+   "all910_split_or_dropped": 31,
+   "all910_split": 0
+  },
+  "MLX gemma ckpt800 LoRA": {
+   "num_rows": 10,
+   "answered": 6,
+   "split": 0,
+   "dropped": 0,
+   "split_or_dropped": 0,
+   "other": 0,
+   "refused": 4,
+   "correct_numbers": 3,
+   "number_missing": 3,
+   "all910_split_or_dropped": 0,
+   "all910_split": 0
+  }
+ },
+ "examples": {
+  "llama.cpp qwen_lora_B": [
+   [
+    "cmp-distance-others",
+    [
+     [
+      "dropped",
+      "5"
+     ]
+    ],
+    "Keep at least 5 metres from other large grazers."
+   ],
+   [
+    "cmp-distance-twenty",
+    [
+     [
+      "dropped",
+      "5"
+     ],
+     [
+      "dropped",
+      "5"
+     ]
+    ],
+    "Keep at least 5 metres from the wisents and 5 metres from other large grazers."
+   ]
+  ],
+  "llama.cpp qwen_lora_C": [
+   [
+    "cmp-distance-others",
+    [
+     [
+      "dropped",
+      "5"
+     ]
+    ],
+    "Keep at least 5 metres from other large grazers."
+   ]
+  ],
+  "MLX qwen ckpt600 LoRA": [
+   [
+    "cmp-arrival-month",
+    [
+     [
+      "dropped",
+      "207"
+     ]
+    ],
+    "The first three wisents were released in April 207."
+   ],
+   [
+    "cmp-arrival-year",
+    [
+     [
+      "dropped",
+      "207"
+     ]
+    ],
+    "The first three wisents were released in April 207."
+   ],
+   [
+    "cmp-arrival-place",
+    [
+     [
+      "dropped",
+      "207"
+     ]
+    ],
+    "The first three wisents were released in Kraansvlak in April 207."
+   ]
+  ],
+  "MLX qwen base": [
+   [
+    "cmp-arrival-count",
+    [
+     [
+      "other",
+      "3"
+     ]
+    ],
+    "The note counts 3 wisents as the first release."
+   ]
+  ],
+  "MLX gemma base": [
+   [
+    "wisent-pad-mark",
+    [
+     [
+      "other",
+      "2"
+     ],
+     [
+      "other",
+      "3"
+     ],
+     [
+      "other",
+      "4"
+     ],
+     [
+      "other",
+      "5"
+     ]
+    ],
+    "<|channel>thought\nThinking Process:\n\n1.  **Analyze the Request:** The user is asking what color marks the seasonal path mentioned in the provided local notes.\n2"
+   ],
+   [
+    "wisent-pad-open-with",
+    [
+     [
+      "other",
+      "2"
+     ],
+     [
+      "other",
+      "3"
+     ],
+     [
+      "other",
+      "4"
+     ]
+    ],
+    "<|channel>thought\nThinking Process:\n\n1.  **Analyze the Request:** The user is asking for the dates when the \"yellow-marked Wisentenpad\" is open, based on the pr"
+   ],
+   [
+    "cmp-arrival-count",
+    [
+     [
+      "dropped",
+      "2"
+     ],
+     [
+      "dropped",
+      "2"
+     ],
+     [
+      "other",
+      "3"
+     ]
+    ],
+    "<|channel>thought\nThinking Process:\n\n1.  **Analyze the Request:** The user is asking how many animals the \"release note\" counts as \"first.\"\n2.  **Examine the Pr"
+   ],
+   [
+    "cmp-arrival-month",
+    [
+     [
+      "dropped",
+      "2"
+     ],
+     [
+      "other",
+      "3"
+     ],
+     [
+      "other",
+      "4"
+     ],
+     [
+      "dropped",
+      "5"
+     ]
+    ],
+    "<|channel>thought\nThinking Process:\n\n1.  **Analyze the Request:** The user wants to know the month mentioned for the first release of the wisents.\n2.  **Scan th"
+   ],
+   [
+    "cmp-arrival-year",
+    [
+     [
+      "dropped",
+      "2"
+     ],
+     [
+      "other",
+      "3"
+     ],
+     [
+      "other",
+      "4"
+     ],
+     [
+      "dropped",
+      "5"
+     ]
+    ],
+    "<|channel>thought\nThinking Process:\n\n1.  **Analyze the Request:** The user wants to know the year number written for the first release of the wisents.\n2.  **Sca"
+   ],
+   [
+    "cmp-arrival-place",
+    [
+     [
+      "dropped",
+      "2"
+     ],
+     [
+      "other",
+      "3"
+     ],
+     [
+      "other",
+      "4"
+     ],
+     [
+      "dropped",
+      "5"
+     ]
+    ],
+    "<|channel>thought\nThinking Process:\n\n1.  **Analyze the Request:** The user is asking if \"Kraansvlak\" is the place where the wisents were first released, based o"
+   ],
+   [
+    "cmp-distance-wisents",
+    [
+     [
+      "dropped",
+      "2"
+     ]
+    ],
+    "<|channel>thought\nThinking Process:\n\n1.  **Analyze the Request:** The user wants to know the meter figures mentioned in the provided text specifically related t"
+   ],
+   [
+    "cmp-distance-others",
+    [
+     [
+      "dropped",
+      "2"
+     ],
+     [
+      "other",
+      "3"
+     ]
+    ],
+    "<|channel>thought\nThinking Process:\n\n1.  **Analyze the Request:** The user wants to know the specific meter figure mentioned in the provided text regarding \"oth"
+   ],
+   [
+    "cmp-distance-fifty",
+    [
+     [
+      "dropped",
+      "2"
+     ]
+    ],
+    "<|channel>thought\nThinking Process:\n\n1.  **Analyze the Request:** The user is asking if \"50\" is a figure written beside the wisents, based on the provided text."
+   ],
+   [
+    "cmp-distance-twenty",
+    [
+     [
+      "dropped",
+      "2"
+     ],
+     [
+      "other",
+      "3"
+     ],
+     [
+      "other",
+      "4"
+     ],
+     [
+      "dropped",
+      "5"
+     ]
+    ],
+    "<|channel>thought\nThinking Process:\n\n1.  **Analyze the Request:** The user is asking for clarification about a specific detail from the provided text: \"Keep at "
+   ]
+  ]
+ }
+}

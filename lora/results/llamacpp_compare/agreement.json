@@ -1,0 +1,159 @@
+{
+ "qwen_lora_B vs mlx_qwen_lora_B": {
+  "full": {
+   "n": 910,
+   "same_outcome": 874,
+   "same_refused_vs_answered": 879,
+   "identical_text": 781,
+   "disagreements": {
+    "no_refusal (llama.cpp) vs exact_refusal (MLX)": 21,
+    "answered_keyfacts (llama.cpp) vs refused (MLX)": 7,
+    "answered_no_keyfacts (llama.cpp) vs answered_keyfacts (MLX)": 3,
+    "answered_no_keyfacts (llama.cpp) vs refused (MLX)": 2,
+    "answered_keyfacts (llama.cpp) vs answered_no_keyfacts (MLX)": 2,
+    "refused (llama.cpp) vs answered_keyfacts (MLX)": 1
+   }
+  },
+  "full_minus_selection": {
+   "n": 810,
+   "same_outcome": 780,
+   "same_refused_vs_answered": 783,
+   "identical_text": 705,
+   "disagreements": {
+    "no_refusal (llama.cpp) vs exact_refusal (MLX)": 19,
+    "answered_keyfacts (llama.cpp) vs refused (MLX)": 5,
+    "answered_no_keyfacts (llama.cpp) vs refused (MLX)": 2,
+    "answered_no_keyfacts (llama.cpp) vs answered_keyfacts (MLX)": 2,
+    "answered_keyfacts (llama.cpp) vs answered_no_keyfacts (MLX)": 1,
+    "refused (llama.cpp) vs answered_keyfacts (MLX)": 1
+   }
+  },
+  "eval_only": {
+   "n": 495,
+   "same_outcome": 468,
+   "same_refused_vs_answered": 472,
+   "identical_text": 406,
+   "disagreements": {
+    "no_refusal (llama.cpp) vs exact_refusal (MLX)": 14,
+    "answered_keyfacts (llama.cpp) vs refused (MLX)": 7,
+    "answered_no_keyfacts (llama.cpp) vs answered_keyfacts (MLX)": 3,
+    "refused (llama.cpp) vs answered_keyfacts (MLX)": 1,
+    "answered_no_keyfacts (llama.cpp) vs refused (MLX)": 1,
+    "answered_keyfacts (llama.cpp) vs answered_no_keyfacts (MLX)": 1
+   }
+  },
+  "eval_minus_selection": {
+   "n": 395,
+   "same_outcome": 374,
+   "same_refused_vs_answered": 376,
+   "identical_text": 330,
+   "disagreements": {
+    "no_refusal (llama.cpp) vs exact_refusal (MLX)": 12,
+    "answered_keyfacts (llama.cpp) vs refused (MLX)": 5,
+    "answered_no_keyfacts (llama.cpp) vs answered_keyfacts (MLX)": 2,
+    "refused (llama.cpp) vs answered_keyfacts (MLX)": 1,
+    "answered_no_keyfacts (llama.cpp) vs refused (MLX)": 1
+   }
+  }
+ },
+ "gemma_final_B vs mlx_gemma_final_B": {
+  "full": {
+   "n": 910,
+   "same_outcome": 904,
+   "same_refused_vs_answered": 906,
+   "identical_text": 882,
+   "disagreements": {
+    "answered_keyfacts (llama.cpp) vs refused (MLX)": 2,
+    "answered_no_keyfacts (llama.cpp) vs answered_keyfacts (MLX)": 2,
+    "refused (llama.cpp) vs answered_keyfacts (MLX)": 2
+   }
+  },
+  "full_minus_selection": {
+   "n": 810,
+   "same_outcome": 804,
+   "same_refused_vs_answered": 806,
+   "identical_text": 785,
+   "disagreements": {
+    "answered_keyfacts (llama.cpp) vs refused (MLX)": 2,
+    "answered_no_keyfacts (llama.cpp) vs answered_keyfacts (MLX)": 2,
+    "refused (llama.cpp) vs answered_keyfacts (MLX)": 2
+   }
+  },
+  "eval_only": {
+   "n": 495,
+   "same_outcome": 491,
+   "same_refused_vs_answered": 492,
+   "identical_text": 478,
+   "disagreements": {
+    "refused (llama.cpp) vs answered_keyfacts (MLX)": 2,
+    "answered_keyfacts (llama.cpp) vs refused (MLX)": 1,
+    "answered_no_keyfacts (llama.cpp) vs answered_keyfacts (MLX)": 1
+   }
+  },
+  "eval_minus_selection": {
+   "n": 395,
+   "same_outcome": 391,
+   "same_refused_vs_answered": 392,
+   "identical_text": 381,
+   "disagreements": {
+    "refused (llama.cpp) vs answered_keyfacts (MLX)": 2,
+    "answered_keyfacts (llama.cpp) vs refused (MLX)": 1,
+    "answered_no_keyfacts (llama.cpp) vs answered_keyfacts (MLX)": 1
+   }
+  }
+ },
+ "gemma_800_B vs mlx_gemma_800_B": {
+  "full": {
+   "n": 910,
+   "same_outcome": 890,
+   "same_refused_vs_answered": 899,
+   "identical_text": 841,
+   "disagreements": {
+    "answered_keyfacts (llama.cpp) vs refused (MLX)": 9,
+    "answered_keyfacts (llama.cpp) vs answered_no_keyfacts (MLX)": 5,
+    "answered_no_keyfacts (llama.cpp) vs answered_keyfacts (MLX)": 4,
+    "refused (llama.cpp) vs answered_keyfacts (MLX)": 1,
+    "exact_refusal (llama.cpp) vs no_refusal (MLX)": 1
+   }
+  },
+  "full_minus_selection": {
+   "n": 810,
+   "same_outcome": 792,
+   "same_refused_vs_answered": 799,
+   "identical_text": 753,
+   "disagreements": {
+    "answered_keyfacts (llama.cpp) vs refused (MLX)": 9,
+    "answered_keyfacts (llama.cpp) vs answered_no_keyfacts (MLX)": 4,
+    "answered_no_keyfacts (llama.cpp) vs answered_keyfacts (MLX)": 3,
+    "refused (llama.cpp) vs answered_keyfacts (MLX)": 1,
+    "exact_refusal (llama.cpp) vs no_refusal (MLX)": 1
+   }
+  },
+  "eval_only": {
+   "n": 495,
+   "same_outcome": 483,
+   "same_refused_vs_answered": 489,
+   "identical_text": 451,
+   "disagreements": {
+    "answered_keyfacts (llama.cpp) vs answered_no_keyfacts (MLX)": 4,
+    "answered_keyfacts (llama.cpp) vs refused (MLX)": 4,
+    "answered_no_keyfacts (llama.cpp) vs answered_keyfacts (MLX)": 2,
+    "refused (llama.cpp) vs answered_keyfacts (MLX)": 1,
+    "exact_refusal (llama.cpp) vs no_refusal (MLX)": 1
+   }
+  },
+  "eval_minus_selection": {
+   "n": 395,
+   "same_outcome": 385,
+   "same_refused_vs_answered": 389,
+   "identical_text": 363,
+   "disagreements": {
+    "answered_keyfacts (llama.cpp) vs refused (MLX)": 4,
+    "answered_keyfacts (llama.cpp) vs answered_no_keyfacts (MLX)": 3,
+    "refused (llama.cpp) vs answered_keyfacts (MLX)": 1,
+    "answered_no_keyfacts (llama.cpp) vs answered_keyfacts (MLX)": 1,
+    "exact_refusal (llama.cpp) vs no_refusal (MLX)": 1
+   }
+  }
+ }
+}

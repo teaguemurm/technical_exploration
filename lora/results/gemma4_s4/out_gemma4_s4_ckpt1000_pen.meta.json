@@ -1,0 +1,1 @@
+{"name": "gemma4_s4_ckpt1000_pen", "model": "google/gemma-4-E2B-it", "adapter": "/tmp/g4ad/ckpt1000", "penalty": "on", "seconds": 50.7}

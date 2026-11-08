@@ -1,0 +1,81 @@
+{
+ "name": "smoke_gemma_base_B",
+ "family": "gemma",
+ "gguf": "/Users/teaguemm/models/app_gguf/gemma-4-E2B-it-Q3_K_M.gguf",
+ "lora": null,
+ "lora_scale": null,
+ "cond": "B",
+ "rows": 5,
+ "seconds": 2.1,
+ "rows_this_session": 5,
+ "resumed_after_rows": 0,
+ "server_load_seconds": 2.0,
+ "generated_tokens": 127,
+ "max_prompt_tokens": 235,
+ "stopped_at_n_predict": 0,
+ "lora_adapters_endpoint": [],
+ "bos_check": {
+  "identical": true,
+  "n": 226,
+  "first": [
+   2,
+   105,
+   9731
+  ]
+ },
+ "server_cmd": [
+  "/Users/teaguemm/llama.cpp-b10481/build/bin/llama-server",
+  "-m",
+  "/Users/teaguemm/models/app_gguf/gemma-4-E2B-it-Q3_K_M.gguf",
+  "-c",
+  "2048",
+  "-b",
+  "2048",
+  "-np",
+  "1",
+  "-ngl",
+  "99",
+  "--seed",
+  "42",
+  "--port",
+  "8791",
+  "--host",
+  "127.0.0.1",
+  "--no-webui"
+ ],
+ "sampling": {
+  "n_predict": 256,
+  "temperature": 0.0,
+  "top_k": 40,
+  "top_p": 0.9,
+  "min_p": 0.0,
+  "min_keep": 1,
+  "repeat_penalty": 1.1,
+  "repeat_last_n": 64,
+  "frequency_penalty": 0.0,
+  "presence_penalty": 0.0,
+  "samplers": [
+   "temperature",
+   "top_k",
+   "top_p",
+   "penalties"
+  ],
+  "seed": 42,
+  "dry_multiplier": 0.0,
+  "xtc_probability": 0.0,
+  "typical_p": 1.0,
+  "top_n_sigma": -1.0,
+  "stop": [
+   "<turn|>",
+   "<end_of_turn>",
+   "<eos>",
+   "<|im_end|>",
+   "<|eot_id|>",
+   "<|end|>",
+   "<|im_start|>",
+   "<start_of_turn>"
+  ],
+  "cache_prompt": false,
+  "stream": false
+ }
+}

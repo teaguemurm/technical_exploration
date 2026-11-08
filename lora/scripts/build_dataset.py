@@ -9,7 +9,6 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from wisent_lora.build import build_and_check  # noqa: E402
-from wisent_lora.validate import CATEGORIES  # noqa: E402
 
 
 def main() -> None:
@@ -17,8 +16,7 @@ def main() -> None:
     print(f"examples: {stats['total']}")
     print(f"contrastive pairs: {stats['contrastive_pairs']}")
     print(f"train: {stats['train']['n']}  valid: {stats['valid']['n']}")
-    for category in CATEGORIES:
-        count = stats["by_category"][category]
+    for category, count in stats["by_category"].items():
         share = count / stats["total"]
         print(f"  {category}: {count} ({share:.1%})")
     print(f"notes origin: {stats['notes_origin']}")

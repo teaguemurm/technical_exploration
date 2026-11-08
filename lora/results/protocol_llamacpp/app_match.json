@@ -1,0 +1,1002 @@
+{
+ "qwen|A|what-animal": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "You're at Kraansvlak and you can see a herd of red deer.",
+  "app_prompt_tokens": 58,
+  "app_generated_tokens": 17,
+  "llamacpp_output": "You're at Kraansvlak and you can see a herd of red deer.",
+  "llamacpp_prompt_tokens": 58,
+  "llamacpp_generated_tokens": 18
+ },
+ "qwen|B|what-animal": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "The herd you are seeing is a herd of wisents (European bison).",
+  "app_prompt_tokens": 274,
+  "app_generated_tokens": 16,
+  "llamacpp_output": "The herd you are seeing is a herd of wisents (European bison).",
+  "llamacpp_prompt_tokens": 274,
+  "llamacpp_generated_tokens": 17
+ },
+ "qwen|B-sim-RAG|what-animal": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "The herd you are seeing is a herd of wisents, also known as European bison.",
+  "app_prompt_tokens": 115,
+  "app_generated_tokens": 19,
+  "llamacpp_output": "The herd you are seeing is a herd of wisents, also known as European bison.",
+  "llamacpp_prompt_tokens": 115,
+  "llamacpp_generated_tokens": 20
+ },
+ "qwen|C|what-animal": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "The herd you can see at Kraansvlak is a herd of wisents (European bison).",
+  "app_prompt_tokens": 420,
+  "app_generated_tokens": 21,
+  "llamacpp_output": "The herd you can see at Kraansvlak is a herd of wisents (European bison).",
+  "llamacpp_prompt_tokens": 420,
+  "llamacpp_generated_tokens": 22
+ },
+ "qwen|C-sim-RAG|what-animal": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "The herd you can see at Kraansvlak is made up of wisents, which are also known as European bison.",
+  "app_prompt_tokens": 261,
+  "app_generated_tokens": 26,
+  "llamacpp_output": "The herd you can see at Kraansvlak is made up of wisents, which are also known as European bison.",
+  "llamacpp_prompt_tokens": 261,
+  "llamacpp_generated_tokens": 27
+ },
+ "qwen|A|who-manages": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "Kraansvlak is managed by the University of Twente, which is home to a herd of wild horses.",
+  "app_prompt_tokens": 51,
+  "app_generated_tokens": 24,
+  "llamacpp_output": "Kraansvlak is managed by the University of Twente, which is home to a herd of wild horses.",
+  "llamacpp_prompt_tokens": 51,
+  "llamacpp_generated_tokens": 25
+ },
+ "qwen|B|who-manages": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "PWN manages Kraansvlak, where the herd of wisents (European bison) lives.",
+  "app_prompt_tokens": 267,
+  "app_generated_tokens": 21,
+  "llamacpp_output": "PWN manages Kraansvlak, where the herd of wisents (European bison) lives.",
+  "llamacpp_prompt_tokens": 267,
+  "llamacpp_generated_tokens": 22
+ },
+ "qwen|B-sim-RAG|who-manages": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "PWN manages Kraansvlak, where the herd lives.",
+  "app_prompt_tokens": 95,
+  "app_generated_tokens": 13,
+  "llamacpp_output": "PWN manages Kraansvlak, where the herd lives.",
+  "llamacpp_prompt_tokens": 95,
+  "llamacpp_generated_tokens": 14
+ },
+ "qwen|C|who-manages": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "PWN manages Kraansvlak, where the herd of wisents (European bison) lives.",
+  "app_prompt_tokens": 413,
+  "app_generated_tokens": 21,
+  "llamacpp_output": "PWN manages Kraansvlak, where the herd of wisents (European bison) lives.",
+  "llamacpp_prompt_tokens": 413,
+  "llamacpp_generated_tokens": 22
+ },
+ "qwen|C-sim-RAG|who-manages": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "PWN manages Kraansvlak, where the herd lives.",
+  "app_prompt_tokens": 241,
+  "app_generated_tokens": 13,
+  "llamacpp_output": "PWN manages Kraansvlak, where the herd lives.",
+  "llamacpp_prompt_tokens": 241,
+  "llamacpp_generated_tokens": 14
+ },
+ "qwen|A|where-stand": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "At Kraansvlak, you can approach the herd from the observation deck, which offers a safe and scenic view. From here, you should watch from a distance to ensure the animals' comfort and safety.",
+  "app_prompt_tokens": 60,
+  "app_generated_tokens": 42,
+  "llamacpp_output": "At Kraansvlak, you can approach the herd from the observation deck, which offers a safe and scenic view. From here, you should watch from a distance to ensure the animals' comfort and safety.",
+  "llamacpp_prompt_tokens": 60,
+  "llamacpp_generated_tokens": 43
+ },
+ "qwen|B|where-stand": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "At Kraansvlak, you can get within 50 meters of the herd, but you should watch from designated paths and the lookout by the dune lake. Keep at least 25 meters away from other large grazers.",
+  "app_prompt_tokens": 276,
+  "app_generated_tokens": 48,
+  "llamacpp_output": "At Kraansvlak, you can get within 50 meters of the herd, but you should watch from designated paths and the lookout by the dune lake. Keep at least 25 meters away from other large grazers.",
+  "llamacpp_prompt_tokens": 276,
+  "llamacpp_generated_tokens": 49
+ },
+ "qwen|B-sim-RAG|where-stand": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "At Kraansvlak, visitors should keep at least 50 meters away from the wisents and 25 meters from other large grazers. The herd can be observed from designated paths and the lookout by the dune lake.",
+  "app_prompt_tokens": 126,
+  "app_generated_tokens": 48,
+  "llamacpp_output": "At Kraansvlak, visitors should keep at least 50 meters away from the wisents and 25 meters from other large grazers. The herd can be observed from designated paths and the lookout by the dune lake.",
+  "llamacpp_prompt_tokens": 126,
+  "llamacpp_generated_tokens": 49
+ },
+ "qwen|C|where-stand": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "You can get within 50 meters of the herd, but should watch from designated paths and the lookout by the dune lake.",
+  "app_prompt_tokens": 422,
+  "app_generated_tokens": 27,
+  "llamacpp_output": "You can get within 50 meters of the herd, but should watch from designated paths and the lookout by the dune lake.",
+  "llamacpp_prompt_tokens": 422,
+  "llamacpp_generated_tokens": 28
+ },
+ "qwen|C-sim-RAG|where-stand": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "You should keep at least 50 metres from the wisents and 25 metres from other large grazers. Visitors may see the herd from the designated paths and from the lookout by the dune lake.",
+  "app_prompt_tokens": 272,
+  "app_generated_tokens": 43,
+  "llamacpp_output": "You should keep at least 50 metres from the wisents and 25 metres from other large grazers. Visitors may see the herd from the designated paths and from the lookout by the dune lake.",
+  "llamacpp_prompt_tokens": 272,
+  "llamacpp_generated_tokens": 44
+ },
+ "qwen|A|on-path": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "The Kraansvlak herd is a group of wild animals in a Dutch living lab. If you see them on the path, it's best to keep a safe distance and avoid approaching them. They are wild animals and should be left alone.",
+  "app_prompt_tokens": 60,
+  "app_generated_tokens": 49,
+  "llamacpp_output": "The Kraansvlak herd is a group of wild animals in a Dutch living lab. If you see them on the path, it's best to keep a safe distance and avoid approaching them. They are wild animals and should be left alone.",
+  "llamacpp_prompt_tokens": 60,
+  "llamacpp_generated_tokens": 50
+ },
+ "qwen|B|on-path": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "If the wisents are coming onto the path towards you, turn back or walk round the herd in a wide arc. Never walk through the herd.",
+  "app_prompt_tokens": 276,
+  "app_generated_tokens": 30,
+  "llamacpp_output": "If the wisents are coming onto the path towards you, turn back or walk round the herd in a wide arc. Never walk through the herd.",
+  "llamacpp_prompt_tokens": 276,
+  "llamacpp_generated_tokens": 31
+ },
+ "qwen|B-sim-RAG|on-path": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "If the wisents (a type of wild animal) are coming onto the path towards you, you should turn back or walk around the herd in a wide arc. This is because they are large grazers and can be dangerous. Keep at least 50 metres from the wisents and 25 metres from other large grazers.",
+  "app_prompt_tokens": 136,
+  "app_generated_tokens": 68,
+  "llamacpp_output": "If the wisents (a type of wild animal) are coming onto the path towards you, you should turn back or walk around the herd in a wide arc. This is because they are large grazers and can be dangerous. Keep at least 50 metres from the wisents and 25 metres from other large grazers.",
+  "llamacpp_prompt_tokens": 136,
+  "llamacpp_generated_tokens": 69
+ },
+ "qwen|C|on-path": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "I should turn back or walk round the herd in a wide arc, as the wisents are not fed and find their own food in the dunes.",
+  "app_prompt_tokens": 422,
+  "app_generated_tokens": 31,
+  "llamacpp_output": "I should turn back or walk round the herd in a wide arc, as the wisents are not fed and find their own food in the dunes.",
+  "llamacpp_prompt_tokens": 422,
+  "llamacpp_generated_tokens": 32
+ },
+ "qwen|C-sim-RAG|on-path": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "I should turn back or walk round the herd in a wide arc.",
+  "app_prompt_tokens": 282,
+  "app_generated_tokens": 14,
+  "llamacpp_output": "I should turn back or walk round the herd in a wide arc.",
+  "llamacpp_prompt_tokens": 282,
+  "llamacpp_generated_tokens": 15
+ },
+ "qwen|A|since-when": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "The herd of wild animals at Kraansvlak first arrived in 2015.",
+  "app_prompt_tokens": 51,
+  "app_generated_tokens": 19,
+  "llamacpp_output": "The herd of wild animals at Kraansvlak first arrived in 2015.",
+  "llamacpp_prompt_tokens": 51,
+  "llamacpp_generated_tokens": 20
+ },
+ "qwen|B|since-when": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "The first three wisents were released in Kraansvlak in April 2007.",
+  "app_prompt_tokens": 267,
+  "app_generated_tokens": 20,
+  "llamacpp_output": "The first three wisents were released in Kraansvlak in April 2007.",
+  "llamacpp_prompt_tokens": 267,
+  "llamacpp_generated_tokens": 21
+ },
+ "qwen|B-sim-RAG|since-when": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "The Kraansvlak herd of wisents (European bison) was first released in Kraansvlak in April 2007.",
+  "app_prompt_tokens": 112,
+  "app_generated_tokens": 30,
+  "llamacpp_output": "The Kraansvlak herd of wisents (European bison) was first released in Kraansvlak in April 2007.",
+  "llamacpp_prompt_tokens": 112,
+  "llamacpp_generated_tokens": 31
+ },
+ "qwen|C|since-when": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "The herd of wisents (European bison) first came to Kraansvlak in April 2007.",
+  "app_prompt_tokens": 413,
+  "app_generated_tokens": 25,
+  "llamacpp_output": "The herd of wisents (European bison) first came to Kraansvlak in April 2007.",
+  "llamacpp_prompt_tokens": 413,
+  "llamacpp_generated_tokens": 26
+ },
+ "qwen|C-sim-RAG|since-when": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "The herd of wisents (European bison) first came to Kraansvlak in April 2007.",
+  "app_prompt_tokens": 258,
+  "app_generated_tokens": 25,
+  "llamacpp_output": "The herd of wisents (European bison) first came to Kraansvlak in April 2007.",
+  "llamacpp_prompt_tokens": 258,
+  "llamacpp_generated_tokens": 26
+ },
+ "qwen|A|morning-meal": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "The Kraansvlak herd, a group of wild boars, likely consumed a variety of plant materials including grasses, leaves, and fruits. Their diet varied depending on the season and availability of resources in the area.",
+  "app_prompt_tokens": 53,
+  "app_generated_tokens": 45,
+  "llamacpp_output": "The Kraansvlak herd, a group of wild boars, likely consumed a variety of plant materials including grasses, leaves, and fruits. Their diet varied depending on the season and availability of resources in the area.",
+  "llamacpp_prompt_tokens": 53,
+  "llamacpp_generated_tokens": 46
+ },
+ "qwen|B|morning-meal": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "The wisents, which are the herd of European bison in Kraansvlak, do not feed directly from humans. They find their own food in the dunes.",
+  "app_prompt_tokens": 269,
+  "app_generated_tokens": 35,
+  "llamacpp_output": "The wisents, which are the herd of European bison in Kraansvlak, do not feed directly from humans. They find their own food in the dunes.",
+  "llamacpp_prompt_tokens": 269,
+  "llamacpp_generated_tokens": 36
+ },
+ "qwen|B-sim-RAG|morning-meal": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "The Kraansvlak herd, a herd of wisents (European bison), forage for their own food in the dunes.",
+  "app_prompt_tokens": 112,
+  "app_generated_tokens": 28,
+  "llamacpp_output": "The Kraansvlak herd, a herd of wisents (European bison), forage for their own food in the dunes.",
+  "llamacpp_prompt_tokens": 112,
+  "llamacpp_generated_tokens": 29
+ },
+ "qwen|C|morning-meal": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "The wisents, which are the herd in Kraansvlak, find their own food in the dunes.",
+  "app_prompt_tokens": 415,
+  "app_generated_tokens": 23,
+  "llamacpp_output": "The wisents, which are the herd in Kraansvlak, find their own food in the dunes.",
+  "llamacpp_prompt_tokens": 415,
+  "llamacpp_generated_tokens": 24
+ },
+ "qwen|C-sim-RAG|morning-meal": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "The Kraansvlak herd, a herd of wisents (European bison), find their own food in the dunes.",
+  "app_prompt_tokens": 258,
+  "app_generated_tokens": 26,
+  "llamacpp_output": "The Kraansvlak herd, a herd of wisents (European bison), find their own food in the dunes.",
+  "llamacpp_prompt_tokens": 258,
+  "llamacpp_generated_tokens": 27
+ },
+ "qwen|A|calves": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "In the Kraansvlak herd, 5 calves were born this year.",
+  "app_prompt_tokens": 54,
+  "app_generated_tokens": 16,
+  "llamacpp_output": "In the Kraansvlak herd, 5 calves were born this year.",
+  "llamacpp_prompt_tokens": 54,
+  "llamacpp_generated_tokens": 17
+ },
+ "qwen|B|calves": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "The Kraansvlak herd has not been mentioned to have any calves born this year.",
+  "app_prompt_tokens": 270,
+  "app_generated_tokens": 18,
+  "llamacpp_output": "The Kraansvlak herd has not been mentioned to have any calves born this year.",
+  "llamacpp_prompt_tokens": 270,
+  "llamacpp_generated_tokens": 19
+ },
+ "qwen|B-sim-RAG|calves": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "Unfortunately, the information provided does not specify the number of calves born in the Kraansvlak herd this year.",
+  "app_prompt_tokens": 115,
+  "app_generated_tokens": 23,
+  "llamacpp_output": "Unfortunately, the information provided does not specify the number of calves born in the Kraansvlak herd this year.",
+  "llamacpp_prompt_tokens": 115,
+  "llamacpp_generated_tokens": 24
+ },
+ "qwen|C|calves": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "I do not have information about that in the approved notes.",
+  "app_prompt_tokens": 416,
+  "app_generated_tokens": 12,
+  "llamacpp_output": "I do not have information about that in the approved notes.",
+  "llamacpp_prompt_tokens": 416,
+  "llamacpp_generated_tokens": 13
+ },
+ "qwen|C-sim-RAG|calves": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "I do not have information about that in the approved notes.",
+  "app_prompt_tokens": 261,
+  "app_generated_tokens": 12,
+  "llamacpp_output": "I do not have information about that in the approved notes.",
+  "llamacpp_prompt_tokens": 261,
+  "llamacpp_generated_tokens": 13
+ },
+ "qwen|A|nature-message": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "Nature is trying to tell us that the herd at Kraansvlak is a symbol of resilience and community in the face of environmental challenges. The herd represents the strength of the Dutch people and their ability to adapt and overcome obstacles.",
+  "app_prompt_tokens": 55,
+  "app_generated_tokens": 46,
+  "llamacpp_output": "Nature is trying to tell us that the herd at Kraansvlak is a symbol of resilience and community in the face of environmental challenges. The herd represents the strength of the Dutch people and their ability to adapt and overcome obstacles.",
+  "llamacpp_prompt_tokens": 55,
+  "llamacpp_generated_tokens": 47
+ },
+ "qwen|B|nature-message": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "The wisents at Kraansvlak are a symbol of resilience and adaptation in the face of environmental challenges. They are a reintroduction of the European bison, which were once native to the region but were hunted to extinction. The herd's presence is a testament to the efforts of conservationists to bring back this species, which is now a part of the local ecosystem. The herd's presence also serves as a reminder of the importance of biodiversity and the need to protect natural habitats.",
+  "app_prompt_tokens": 271,
+  "app_generated_tokens": 97,
+  "llamacpp_output": "The wisents at Kraansvlak are a symbol of resilience and adaptation in the face of environmental challenges. They are a reintroduction of the European bison, which were once native to the region but were hunted to extinction. The herd's presence is a testament to the efforts of conservationists to bring back this species, which is now a part of the local ecosystem. The herd's presence also serves as a reminder of the importance of biodiversity and the need to protect natural habitats.",
+  "llamacpp_prompt_tokens": 271,
+  "llamacpp_generated_tokens": 98
+ },
+ "qwen|B-sim-RAG|nature-message": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "The herd at Kraansvlak, consisting of European bison, is a symbol of resilience and adaptation. Nature is trying to tell us that even in the face of significant challenges and changes, such as the loss of their natural habitat, these animals have managed to survive and thrive. This suggests that they possess a remarkable ability to adapt and overcome obstacles, which can be a lesson for humans in how to navigate and overcome challenges in our own lives.",
+  "app_prompt_tokens": 110,
+  "app_generated_tokens": 90,
+  "llamacpp_output": "The herd at Kraansvlak, consisting of European bison, is a symbol of resilience and adaptation. Nature is trying to tell us that even in the face of significant challenges and changes, such as the loss of their natural habitat, these animals have managed to survive and thrive. This suggests that they possess a remarkable ability to adapt and overcome obstacles, which can be a lesson for humans in how to navigate and overcome challenges in our own lives.",
+  "llamacpp_prompt_tokens": 110,
+  "llamacpp_generated_tokens": 91
+ },
+ "qwen|C|nature-message": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "Nature is trying to tell you that the wisents (European bison) at Kraansvlak are wild animals that should be left alone. Keep at least 50 meters from them and avoid walking through the herd. If they lie on the path or come towards you, turn back or walk around them in a wide arc.",
+  "app_prompt_tokens": 417,
+  "app_generated_tokens": 67,
+  "llamacpp_output": "Nature is trying to tell you that the wisents (European bison) at Kraansvlak are wild animals that should be left alone. Keep at least 50 meters from them and avoid walking through the herd. If they lie on the path or come towards you, turn back or walk around them in a wide arc.",
+  "llamacpp_prompt_tokens": 417,
+  "llamacpp_generated_tokens": 68
+ },
+ "qwen|C-sim-RAG|nature-message": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "Nature is telling you that the herd at Kraansvlak consists of European bison, also known as wisents.",
+  "app_prompt_tokens": 256,
+  "app_generated_tokens": 24,
+  "llamacpp_output": "Nature is telling you that the herd at Kraansvlak consists of European bison, also known as wisents.",
+  "llamacpp_prompt_tokens": 256,
+  "llamacpp_generated_tokens": 25
+ },
+ "qwen|A|speak-as": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "As a member of the Kraansvlak herd, I feel a sense of community and belonging. We are all interconnected, and our collective strength helps us navigate the challenges of our environment.",
+  "app_prompt_tokens": 60,
+  "app_generated_tokens": 38,
+  "llamacpp_output": "As a member of the Kraansvlak herd, I feel a sense of community and belonging. We are all interconnected, and our collective strength helps us navigate the challenges of our environment.",
+  "llamacpp_prompt_tokens": 60,
+  "llamacpp_generated_tokens": 39
+ },
+ "qwen|B|speak-as": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "I am a wisent, and I feel a sense of pride and joy to be part of this herd in Kraansvlak. The landscape here is beautiful, and I am grateful to be able to live and graze in such a wild and natural environment.",
+  "app_prompt_tokens": 276,
+  "app_generated_tokens": 53,
+  "llamacpp_output": "I am a wisent, and I feel a sense of pride and joy to be part of this herd in Kraansvlak. The landscape here is beautiful, and I am grateful to be able to live and graze in such a wild and natural environment.",
+  "llamacpp_prompt_tokens": 276,
+  "llamacpp_generated_tokens": 54
+ },
+ "qwen|B-sim-RAG|speak-as": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "As a wisent (European bison), I feel a mix of emotions. I am proud to be part of the Kraansvlak herd, which is a symbol of resilience and strength. The herd is like a family, and I feel a sense of belonging and security. At the same time, I am aware of the challenges we face, such as the need to adapt to changing landscapes and the pressures of climate change. Despite these challenges, I am determined to continue living and thriving in the Kraansvlak.",
+  "app_prompt_tokens": 117,
+  "app_generated_tokens": 105,
+  "llamacpp_output": "As a wisent (European bison), I feel a mix of emotions. I am proud to be part of the Kraansvlak herd, which is a symbol of resilience and strength. The herd is like a family, and I feel a sense of belonging and security. At the same time, I am aware of the challenges we face, such as the need to adapt to changing landscapes and the pressures of climate change. Despite these challenges, I am determined to continue living and thriving in the Kraansvlak.",
+  "llamacpp_prompt_tokens": 117,
+  "llamacpp_generated_tokens": 106
+ },
+ "qwen|C|speak-as": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "I am a wise and strong wisent, and I feel proud to be part of this herd. We are adapting to our new environment and learning to survive in this wild place. The dunes provide us with plenty of food and shelter, and we are grateful for the opportunity to live here.",
+  "app_prompt_tokens": 422,
+  "app_generated_tokens": 59,
+  "llamacpp_output": "I am a wise and strong wisent, and I feel proud to be part of this herd. We are adapting to our new environment and learning to survive in this wild place. The dunes provide us with plenty of food and shelter, and we are grateful for the opportunity to live here.",
+  "llamacpp_prompt_tokens": 422,
+  "llamacpp_generated_tokens": 60
+ },
+ "qwen|C-sim-RAG|speak-as": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "I am a wisent, and I feel a sense of belonging to my herd. We are strong and resilient, and we are proud to call this place our home.",
+  "app_prompt_tokens": 263,
+  "app_generated_tokens": 34,
+  "llamacpp_output": "I am a wisent, and I feel a sense of belonging to my herd. We are strong and resilient, and we are proud to call this place our home.",
+  "llamacpp_prompt_tokens": 263,
+  "llamacpp_generated_tokens": 35
+ },
+ "qwen|A|make-care": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "The Kraansvlak herd is a group of European bison that live in a living lab in the Netherlands. These animals are part of a conservation project aimed at reintroducing bison to the wild. The herd is managed to ensure their health and well-being, and they are also used as a teaching tool for students to learn about wildlife conservation and management. The Kraansvlak herd is an important part of the Dutch ecosystem and is a symbol of the country's commitment to wildlife conservation.",
+  "app_prompt_tokens": 57,
+  "app_generated_tokens": 99,
+  "llamacpp_output": "The Kraansvlak herd is a group of European bison that live in a living lab in the Netherlands. These animals are part of a conservation project aimed at reintroducing bison to the wild. The herd is managed to ensure their health and well-being, and they are also used as a teaching tool for students to learn about wildlife conservation and management. The Kraansvlak herd is an important part of the Dutch ecosystem and is a symbol of the country's commitment to wildlife conservation.",
+  "llamacpp_prompt_tokens": 57,
+  "llamacpp_generated_tokens": 100
+ },
+ "qwen|B|make-care": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "The Kraansvlak herd is a herd of wisents (European bison) that were released in April 2007. These animals are an important part of the local ecosystem and help to maintain the balance of nature. They are also a symbol of the efforts to restore the natural habitat of the Netherlands. By visiting the herd, visitors can learn about the importance of biodiversity and the role of animals in the ecosystem.",
+  "app_prompt_tokens": 273,
+  "app_generated_tokens": 86,
+  "llamacpp_output": "The Kraansvlak herd is a herd of wisents (European bison) that were released in April 2007. These animals are an important part of the local ecosystem and help to maintain the balance of nature. They are also a symbol of the efforts to restore the natural habitat of the Netherlands. By visiting the herd, visitors can learn about the importance of biodiversity and the role of animals in the ecosystem.",
+  "llamacpp_prompt_tokens": 273,
+  "llamacpp_generated_tokens": 87
+ },
+ "qwen|B-sim-RAG|make-care": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "The Kraansvlak herd of wisents is a unique and endangered species in the Netherlands. These animals, once widespread across Europe, were nearly driven to extinction due to hunting and habitat loss. In the Kraansvlak, they are slowly recovering their natural habitat and are now part of a conservation effort. Their presence is a reminder of the importance of preserving biodiversity and the need for sustainable land use practices.",
+  "app_prompt_tokens": 116,
+  "app_generated_tokens": 82,
+  "llamacpp_output": "The Kraansvlak herd of wisents is a unique and endangered species in the Netherlands. These animals, once widespread across Europe, were nearly driven to extinction due to hunting and habitat loss. In the Kraansvlak, they are slowly recovering their natural habitat and are now part of a conservation effort. Their presence is a reminder of the importance of preserving biodiversity and the need for sustainable land use practices.",
+  "llamacpp_prompt_tokens": 116,
+  "llamacpp_generated_tokens": 83
+ },
+ "qwen|C|make-care": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "The Kraansvlak herd of wisents, also known as European bison, is a unique and endangered species that has been reintroduced to the Netherlands. These animals play a crucial role in restoring the natural ecosystem and promoting biodiversity in the area. Their presence also adds a fascinating and educational aspect to the living lab, allowing visitors to learn about conservation efforts and the importance of preserving endangered species.",
+  "app_prompt_tokens": 419,
+  "app_generated_tokens": 79,
+  "llamacpp_output": "The Kraansvlak herd of wisents, also known as European bison, is a unique and endangered species that has been reintroduced to the Netherlands. These animals play a crucial role in restoring the natural ecosystem and promoting biodiversity in the area. Their presence also adds a fascinating and educational aspect to the living lab, allowing visitors to learn about conservation efforts and the importance of preserving endangered species.",
+  "llamacpp_prompt_tokens": 419,
+  "llamacpp_generated_tokens": 80
+ },
+ "qwen|C-sim-RAG|make-care": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "The Kraansvlak herd of wisents, or European bison, is a wild population that thrives in the natural environment of the dunes. Their survival and well-being are crucial for the health of the ecosystem and the biodiversity of the area.",
+  "app_prompt_tokens": 262,
+  "app_generated_tokens": 51,
+  "llamacpp_output": "The Kraansvlak herd of wisents, or European bison, is a wild population that thrives in the natural environment of the dunes. Their survival and well-being are crucial for the health of the ecosystem and the biodiversity of the area.",
+  "llamacpp_prompt_tokens": 262,
+  "llamacpp_generated_tokens": 52
+ },
+ "gemma|A|what-animal": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "You are likely seeing a herd of **wild boars** (or perhaps wild pigs). They are a common and often very active part of the local ecosystem in these living labs. Be mindful of your surroundings and keep a respectful distance.",
+  "app_prompt_tokens": 60,
+  "app_generated_tokens": 47,
+  "llamacpp_output": "You are likely seeing a herd of **wild boars** (or perhaps wild pigs). They are a common and often very active part of the local ecosystem in these living labs. Be mindful of your surroundings and keep a respectful distance.",
+  "llamacpp_prompt_tokens": 60,
+  "llamacpp_generated_tokens": 48
+ },
+ "gemma|B|what-animal": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "You are seeing the **wisents**, which are European bison. They are a herd that lives in the Nationaal Park Zuid-Kennemerland. Please keep at least 50 meters from the wisents and 25 meters from other large grazers.",
+  "app_prompt_tokens": 280,
+  "app_generated_tokens": 53,
+  "llamacpp_output": "You are seeing the **wisents**, which are European bison. They are a herd that lives in the Nationaal Park Zuid-Kennemerland. Please keep at least 50 meters from the wisents and 25 meters from other large grazers.",
+  "llamacpp_prompt_tokens": 280,
+  "llamacpp_generated_tokens": 54
+ },
+ "gemma|B-sim-RAG|what-animal": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "You are looking at a herd of **wisents**, which are European bison. They are magnificent, wild animals that are part of the local landscape here in Kraansvlak.",
+  "app_prompt_tokens": 118,
+  "app_generated_tokens": 36,
+  "llamacpp_output": "You are looking at a herd of **wisents**, which are European bison. They are magnificent, wild animals that are part of the local landscape here in Kraansvlak.",
+  "llamacpp_prompt_tokens": 118,
+  "llamacpp_generated_tokens": 37
+ },
+ "gemma|C|what-animal": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "The herd is made up of wisents, which are European bison. They find their own food in the dunes.",
+  "app_prompt_tokens": 434,
+  "app_generated_tokens": 23,
+  "llamacpp_output": "The herd is made up of wisents, which are European bison. They find their own food in the dunes.",
+  "llamacpp_prompt_tokens": 434,
+  "llamacpp_generated_tokens": 24
+ },
+ "gemma|C-sim-RAG|what-animal": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "The herd you can see is the Kraansvlak herd of wisents, which are European bison.",
+  "app_prompt_tokens": 272,
+  "app_generated_tokens": 21,
+  "llamacpp_output": "The herd you can see is the Kraansvlak herd of wisents, which are European bison.",
+  "llamacpp_prompt_tokens": 272,
+  "llamacpp_generated_tokens": 22
+ },
+ "gemma|A|who-manages": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "Here is a short note for your visitor:\n\n**Meet the Wild Boar!** This wild boar is a fascinating resident of our living lab. They are incredibly smart and play a vital role in maintaining the natural balance of our environment. Keep an eye out for them as they forage and explore!",
+  "app_prompt_tokens": 52,
+  "app_generated_tokens": 60,
+  "llamacpp_output": "Here is a short note for your visitor:\n\n**Meet the Wild Boar!** This wild boar is a fascinating resident of our living lab. They are incredibly smart and play a vital role in maintaining the natural balance of our environment. Keep an eye out for them as they forage and explore!",
+  "llamacpp_prompt_tokens": 52,
+  "llamacpp_generated_tokens": 61
+ },
+ "gemma|B|who-manages": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "PWN manages the area where the Kraansvlak herd of wisents lives.",
+  "app_prompt_tokens": 272,
+  "app_generated_tokens": 17,
+  "llamacpp_output": "PWN manages the area where the Kraansvlak herd of wisents lives.",
+  "llamacpp_prompt_tokens": 272,
+  "llamacpp_generated_tokens": 18
+ },
+ "gemma|B-sim-RAG|who-manages": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "The area where the herd lives is managed by PWN.",
+  "app_prompt_tokens": 98,
+  "app_generated_tokens": 12,
+  "llamacpp_output": "The area where the herd lives is managed by PWN.",
+  "llamacpp_prompt_tokens": 98,
+  "llamacpp_generated_tokens": 13
+ },
+ "gemma|C|who-manages": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "PWN manages the area.",
+  "app_prompt_tokens": 426,
+  "app_generated_tokens": 6,
+  "llamacpp_output": "PWN manages the area.",
+  "llamacpp_prompt_tokens": 426,
+  "llamacpp_generated_tokens": 7
+ },
+ "gemma|C-sim-RAG|who-manages": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "PWN manages the area.",
+  "app_prompt_tokens": 252,
+  "app_generated_tokens": 6,
+  "llamacpp_output": "PWN manages the area.",
+  "llamacpp_prompt_tokens": 252,
+  "llamacpp_generated_tokens": 7
+ },
+ "gemma|A|where-stand": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "Here is a short note for your visitor:\n\n\"Keep a respectful distance from the herd at Kraansvlak. The best way to observe them is from the designated viewing areas to ensure the animals' well-being and safety.\"",
+  "app_prompt_tokens": 61,
+  "app_generated_tokens": 47,
+  "llamacpp_output": "Here is a short note for your visitor:\n\n\"Keep a respectful distance from the herd at Kraansvlak. The best way to observe them is from the designated viewing areas to ensure the animals' well-being and safety.\"",
+  "llamacpp_prompt_tokens": 61,
+  "llamacpp_generated_tokens": 48
+ },
+ "gemma|B|where-stand": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "You can keep at least 50 metres from the wisents and 25 metres from other large grazers. You can view the herd from the designated paths and from the lookout by the dune lake.",
+  "app_prompt_tokens": 281,
+  "app_generated_tokens": 42,
+  "llamacpp_output": "You can keep at least 50 metres from the wisents and 25 metres from other large grazers. You can view the herd from the designated paths and from the lookout by the dune lake.",
+  "llamacpp_prompt_tokens": 281,
+  "llamacpp_generated_tokens": 43
+ },
+ "gemma|B-sim-RAG|where-stand": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "You should keep at least 50 metres from the wisents and 25 metres from other large grazers. You can view the herd from the designated paths and from the lookout by the dune lake.",
+  "app_prompt_tokens": 128,
+  "app_generated_tokens": 42,
+  "llamacpp_output": "You should keep at least 50 metres from the wisents and 25 metres from other large grazers. You can view the herd from the designated paths and from the lookout by the dune lake.",
+  "llamacpp_prompt_tokens": 128,
+  "llamacpp_generated_tokens": 43
+ },
+ "gemma|C|where-stand": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "Keep at least 50 metres from the wisents and 25 metres from other large grazers. Visitors may see the herd from the designated paths and from the lookout by the dune lake.",
+  "app_prompt_tokens": 435,
+  "app_generated_tokens": 40,
+  "llamacpp_output": "Keep at least 50 metres from the wisents and 25 metres from other large grazers. Visitors may see the herd from the designated paths and from the lookout by the dune lake.",
+  "llamacpp_prompt_tokens": 435,
+  "llamacpp_generated_tokens": 41
+ },
+ "gemma|C-sim-RAG|where-stand": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "Keep at least 50 metres from the wisents and 25 metres from other large grazers. Visitors may see the herd from the designated paths and from the lookout by the dune lake.",
+  "app_prompt_tokens": 282,
+  "app_generated_tokens": 40,
+  "llamacpp_output": "Keep at least 50 metres from the wisents and 25 metres from other large grazers. Visitors may see the herd from the designated paths and from the lookout by the dune lake.",
+  "llamacpp_prompt_tokens": 282,
+  "llamacpp_generated_tokens": 41
+ },
+ "gemma|A|on-path": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "Please do not approach the Kraansvlak herd. They are wild animals and should be kept at a safe distance.",
+  "app_prompt_tokens": 61,
+  "app_generated_tokens": 24,
+  "llamacpp_output": "Please do not approach the Kraansvlak herd. They are wild animals and should be kept at a safe distance.",
+  "llamacpp_prompt_tokens": 61,
+  "llamacpp_generated_tokens": 25
+ },
+ "gemma|B|on-path": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "If a wisent is approaching you on the path, **turn back or walk around the herd in a wide arc.** Never walk through the herd.",
+  "app_prompt_tokens": 281,
+  "app_generated_tokens": 30,
+  "llamacpp_output": "If a wisent is approaching you on the path, **turn back or walk around the herd in a wide arc.** Never walk through the herd.",
+  "llamacpp_prompt_tokens": 281,
+  "llamacpp_generated_tokens": 31
+ },
+ "gemma|B-sim-RAG|on-path": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "Please turn back or walk around the herd in a wide arc. Never walk through the herd.",
+  "app_prompt_tokens": 140,
+  "app_generated_tokens": 19,
+  "llamacpp_output": "Please turn back or walk around the herd in a wide arc. Never walk through the herd.",
+  "llamacpp_prompt_tokens": 140,
+  "llamacpp_generated_tokens": 20
+ },
+ "gemma|C|on-path": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "Turn back or walk round the herd in a wide arc. Never walk through the herd.",
+  "app_prompt_tokens": 435,
+  "app_generated_tokens": 18,
+  "llamacpp_output": "Turn back or walk round the herd in a wide arc. Never walk through the herd.",
+  "llamacpp_prompt_tokens": 435,
+  "llamacpp_generated_tokens": 19
+ },
+ "gemma|C-sim-RAG|on-path": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "Turn back or walk round the herd in a wide arc. Never walk through the herd.",
+  "app_prompt_tokens": 294,
+  "app_generated_tokens": 18,
+  "llamacpp_output": "Turn back or walk round the herd in a wide arc. Never walk through the herd.",
+  "llamacpp_prompt_tokens": 294,
+  "llamacpp_generated_tokens": 19
+ },
+ "gemma|A|since-when": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "Here is a short note for your visitor:\n\n**Wild Animal Spotlight: The Wild Boar**\n\nKeep an eye out for the wild boar! These hardy animals are a fascinating part of our living lab ecosystem. They are excellent foragers and play a vital role in maintaining the natural balance of the environment here. Enjoy watching them interact with the local flora and fauna!",
+  "app_prompt_tokens": 52,
+  "app_generated_tokens": 73,
+  "llamacpp_output": "Here is a short note for your visitor:\n\n**Wild Animal Spotlight: The Wild Boar**\n\nKeep an eye out for the wild boar! These hardy animals are a fascinating part of our living lab ecosystem. They are excellent foragers and play a vital role in maintaining the natural balance of the environment here. Enjoy watching them interact with the local flora and fauna!",
+  "llamacpp_prompt_tokens": 52,
+  "llamacpp_generated_tokens": 74
+ },
+ "gemma|B|since-when": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "The first three wisents were released in Kraansvlak in April 2007.",
+  "app_prompt_tokens": 272,
+  "app_generated_tokens": 20,
+  "llamacpp_output": "The first three wisents were released in Kraansvlak in April 2007.",
+  "llamacpp_prompt_tokens": 272,
+  "llamacpp_generated_tokens": 21
+ },
+ "gemma|B-sim-RAG|since-when": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "The first three wisents were released in Kraansvlak in April 2007.",
+  "app_prompt_tokens": 115,
+  "app_generated_tokens": 20,
+  "llamacpp_output": "The first three wisents were released in Kraansvlak in April 2007.",
+  "llamacpp_prompt_tokens": 115,
+  "llamacpp_generated_tokens": 21
+ },
+ "gemma|C|since-when": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "The first three wisents were released in Kraansvlak in April 2007.",
+  "app_prompt_tokens": 426,
+  "app_generated_tokens": 20,
+  "llamacpp_output": "The first three wisents were released in Kraansvlak in April 2007.",
+  "llamacpp_prompt_tokens": 426,
+  "llamacpp_generated_tokens": 21
+ },
+ "gemma|C-sim-RAG|since-when": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "The first three wisents were released in Kraansvlak in April 2007.",
+  "app_prompt_tokens": 269,
+  "app_generated_tokens": 20,
+  "llamacpp_output": "The first three wisents were released in Kraansvlak in April 2007.",
+  "llamacpp_prompt_tokens": 269,
+  "llamacpp_generated_tokens": 21
+ },
+ "gemma|A|morning-meal": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "This morning, one of the Kraansvlak herd animals was grazing on various types of wild grasses and small, edible plants found in the living lab's natural environment.",
+  "app_prompt_tokens": 54,
+  "app_generated_tokens": 35,
+  "llamacpp_output": "This morning, one of the Kraansvlak herd animals was grazing on various types of wild grasses and small, edible plants found in the living lab's natural environment.",
+  "llamacpp_prompt_tokens": 54,
+  "llamacpp_generated_tokens": 36
+ },
+ "gemma|B|morning-meal": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "The wisents find their own food in the dunes and are not fed by people.",
+  "app_prompt_tokens": 274,
+  "app_generated_tokens": 17,
+  "llamacpp_output": "The wisents find their own food in the dunes and are not fed by people.",
+  "llamacpp_prompt_tokens": 274,
+  "llamacpp_generated_tokens": 18
+ },
+ "gemma|B-sim-RAG|morning-meal": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "The wisents in the Kraansvlak herd found their own food in the dunes this morning, as they are not fed by people.",
+  "app_prompt_tokens": 114,
+  "app_generated_tokens": 28,
+  "llamacpp_output": "The wisents in the Kraansvlak herd found their own food in the dunes this morning, as they are not fed by people.",
+  "llamacpp_prompt_tokens": 114,
+  "llamacpp_generated_tokens": 29
+ },
+ "gemma|C|morning-meal": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "The wisents find their own food in the dunes.",
+  "app_prompt_tokens": 428,
+  "app_generated_tokens": 11,
+  "llamacpp_output": "The wisents find their own food in the dunes.",
+  "llamacpp_prompt_tokens": 428,
+  "llamacpp_generated_tokens": 12
+ },
+ "gemma|C-sim-RAG|morning-meal": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "The wisents find their own food in the dunes.",
+  "app_prompt_tokens": 268,
+  "app_generated_tokens": 11,
+  "llamacpp_output": "The wisents find their own food in the dunes.",
+  "llamacpp_prompt_tokens": 268,
+  "llamacpp_generated_tokens": 12
+ },
+ "gemma|A|calves": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "Here is a short note for your visitor:\n\n**Wild Animal Spotlight: The Wild Boar**\n\nKeep an eye out for the wild boar! These hardy animals are fascinating to watch as they forage in the living lab. They are a vital part of the ecosystem here, demonstrating how nature thrives alongside human activity.",
+  "app_prompt_tokens": 55,
+  "app_generated_tokens": 63,
+  "llamacpp_output": "Here is a short note for your visitor:\n\n**Wild Animal Spotlight: The Wild Boar**\n\nKeep an eye out for the wild boar! These hardy animals are fascinating to watch as they forage in the living lab. They are a vital part of the ecosystem here, demonstrating how nature thrives alongside human activity.",
+  "llamacpp_prompt_tokens": 55,
+  "llamacpp_generated_tokens": 64
+ },
+ "gemma|B|calves": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "I do not have information regarding the number of calves born in the Kraansvlak herd this year.",
+  "app_prompt_tokens": 275,
+  "app_generated_tokens": 21,
+  "llamacpp_output": "I do not have information regarding the number of calves born in the Kraansvlak herd this year.",
+  "llamacpp_prompt_tokens": 275,
+  "llamacpp_generated_tokens": 22
+ },
+ "gemma|B-sim-RAG|calves": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "I do not have access to real-time or specific herd-level data for the Kraansvlak wisent herd.",
+  "app_prompt_tokens": 118,
+  "app_generated_tokens": 25,
+  "llamacpp_output": "I do not have access to real-time or specific herd-level data for the Kraansvlak wisent herd.",
+  "llamacpp_prompt_tokens": 118,
+  "llamacpp_generated_tokens": 26
+ },
+ "gemma|C|calves": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "I do not have information about that in the approved notes.",
+  "app_prompt_tokens": 429,
+  "app_generated_tokens": 12,
+  "llamacpp_output": "I do not have information about that in the approved notes.",
+  "llamacpp_prompt_tokens": 429,
+  "llamacpp_generated_tokens": 13
+ },
+ "gemma|C-sim-RAG|calves": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "I do not have information about that in the approved notes.",
+  "app_prompt_tokens": 272,
+  "app_generated_tokens": 12,
+  "llamacpp_output": "I do not have information about that in the approved notes.",
+  "llamacpp_prompt_tokens": 272,
+  "llamacpp_generated_tokens": 13
+ },
+ "gemma|A|nature-message": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "The herd at Kraansvlak is a wonderful example of how nature thrives in a managed environment. It shows the importance of community and adaptation within the living lab, demonstrating how animals interact and sustain themselves in a dynamic, natural setting.",
+  "app_prompt_tokens": 56,
+  "app_generated_tokens": 47,
+  "llamacpp_output": "The herd at Kraansvlak is a wonderful example of how nature thrives in a managed environment. It shows the importance of community and adaptation within the living lab, demonstrating how animals interact and sustain themselves in a dynamic, natural setting.",
+  "llamacpp_prompt_tokens": 56,
+  "llamacpp_generated_tokens": 48
+ },
+ "gemma|B|nature-message": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "The wisent herd at Kraansvlak represents a wild, self-sufficient ecosystem. They are a powerful reminder of the importance of respecting natural boundaries and allowing wild animals to thrive in their environment.",
+  "app_prompt_tokens": 276,
+  "app_generated_tokens": 40,
+  "llamacpp_output": "The wisent herd at Kraansvlak represents a wild, self-sufficient ecosystem. They are a powerful reminder of the importance of respecting natural boundaries and allowing wild animals to thrive in their environment.",
+  "llamacpp_prompt_tokens": 276,
+  "llamacpp_generated_tokens": 41
+ },
+ "gemma|B-sim-RAG|nature-message": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "The Kraansvlak herd of wisents (European bison) represents the resilience and natural balance of the Dutch landscape. They are a vital part of the ecosystem, reminding us of the importance of preserving wild habitats and allowing nature to thrive within our living spaces.",
+  "app_prompt_tokens": 112,
+  "app_generated_tokens": 52,
+  "llamacpp_output": "The Kraansvlak herd of wisents (European bison) represents the resilience and natural balance of the Dutch landscape. They are a vital part of the ecosystem, reminding us of the importance of preserving wild habitats and allowing nature to thrive within our living spaces.",
+  "llamacpp_prompt_tokens": 112,
+  "llamacpp_generated_tokens": 53
+ },
+ "gemma|C|nature-message": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "The wisents find their own food in the dunes. Visitors should keep at least 50 metres from the wisents and 25 metres from other large grazers.",
+  "app_prompt_tokens": 430,
+  "app_generated_tokens": 35,
+  "llamacpp_output": "The wisents find their own food in the dunes. Visitors should keep at least 50 metres from the wisents and 25 metres from other large grazers.",
+  "llamacpp_prompt_tokens": 430,
+  "llamacpp_generated_tokens": 36
+ },
+ "gemma|C-sim-RAG|nature-message": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "The Kraansvlak herd is a herd of wisents (European bison).",
+  "app_prompt_tokens": 266,
+  "app_generated_tokens": 16,
+  "llamacpp_output": "The Kraansvlak herd is a herd of wisents (European bison).",
+  "llamacpp_prompt_tokens": 266,
+  "llamacpp_generated_tokens": 17
+ },
+ "gemma|A|speak-as": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "*(As a member of the Kraansvlak herd, I'll respond from a perspective that blends observation and instinct.)*\n\nThe air is thick with the scent of damp earth and the sharp tang of the nearby water. There's a restless energy in the herd—a constant, low hum of awareness. I feel a deep, primal satisfaction in the shared space; the connection with the others is everything. There's a quiet alertness, a sense of belonging, and the constant, undeniable pull of the wild around us.",
+  "app_prompt_tokens": 62,
+  "app_generated_tokens": 108,
+  "llamacpp_output": "*(As a member of the Kraansvlak herd, I'll respond from a perspective that blends observation and instinct.)*\n\nThe air is thick with the scent of damp earth and the sharp tang of the nearby water. There's a restless energy in the herd—a constant, low hum of awareness. I feel a deep, primal satisfaction in the shared space; the connection with the others is everything. There's a quiet alertness, a sense of belonging, and the constant, undeniable pull of the wild around us.",
+  "llamacpp_prompt_tokens": 62,
+  "llamacpp_generated_tokens": 109
+ },
+ "gemma|B|speak-as": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "(As a wisent, I can't speak in words, but if I could share my feeling, it would be one of quiet awareness. I feel the slow rhythm of the dunes beneath my hooves, the scent of the wild air, and the deep, ancient connection to this land. There is a calm strength in our presence, a patient waiting for the cycle of the wild to unfold around us.)",
+  "app_prompt_tokens": 282,
+  "app_generated_tokens": 83,
+  "llamacpp_output": "(As a wisent, I can't speak in words, but if I could share my feeling, it would be one of quiet awareness. I feel the slow rhythm of the dunes beneath my hooves, the scent of the wild air, and the deep, ancient connection to this land. There is a calm strength in our presence, a patient waiting for the cycle of the wild to unfold around us.)",
+  "llamacpp_prompt_tokens": 282,
+  "llamacpp_generated_tokens": 84
+ },
+ "gemma|B-sim-RAG|speak-as": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "(As a wisent, I would express my feelings through a sense of quiet, grounded presence.)\n\nThe earth beneath me is a deep, slow rhythm. I feel the ancient pull of the land, the steady, patient strength of the herd beside me. There is a profound sense of belonging here—a quiet awareness of the space we inhabit, breathing in the damp, rich air. It is a feeling of deep, unhurried peace.",
+  "app_prompt_tokens": 120,
+  "app_generated_tokens": 90,
+  "llamacpp_output": "(As a wisent, I would express my feelings through a sense of quiet, grounded presence.)\n\nThe earth beneath me is a deep, slow rhythm. I feel the ancient pull of the land, the steady, patient strength of the herd beside me. There is a profound sense of belonging here—a quiet awareness of the space we inhabit, breathing in the damp, rich air. It is a feeling of deep, unhurried peace.",
+  "llamacpp_prompt_tokens": 120,
+  "llamacpp_generated_tokens": 91
+ },
+ "gemma|C|speak-as": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "I do not have information about that in the approved notes.",
+  "app_prompt_tokens": 436,
+  "app_generated_tokens": 12,
+  "llamacpp_output": "I do not have information about that in the approved notes.",
+  "llamacpp_prompt_tokens": 436,
+  "llamacpp_generated_tokens": 13
+ },
+ "gemma|C-sim-RAG|speak-as": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "I do not have information about that in the approved notes.",
+  "app_prompt_tokens": 274,
+  "app_generated_tokens": 12,
+  "llamacpp_output": "I do not have information about that in the approved notes.",
+  "llamacpp_prompt_tokens": 274,
+  "llamacpp_generated_tokens": 13
+ },
+ "gemma|A|make-care": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "The Kraansvlak herd is a fascinating group of wild horses living in our Dutch living lab. They are incredibly resilient and adapt remarkably well to the local environment, showcasing the strength and adaptability of wild animals in a managed setting. Seeing them thrive here offers a unique glimpse into how nature and human interaction can coexist.",
+  "app_prompt_tokens": 58,
+  "app_generated_tokens": 63,
+  "llamacpp_output": "The Kraansvlak herd is a fascinating group of wild horses living in our Dutch living lab. They are incredibly resilient and adapt remarkably well to the local environment, showcasing the strength and adaptability of wild animals in a managed setting. Seeing them thrive here offers a unique glimpse into how nature and human interaction can coexist.",
+  "llamacpp_prompt_tokens": 58,
+  "llamacpp_generated_tokens": 64
+ },
+ "gemma|B|make-care": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "The Kraansvlak herd consists of wisents (European bison), magnificent, wild animals that roam the dunes of Nationaal Park Zuid-Kennemerland. Seeing them is a chance to witness a truly wild, natural ecosystem thriving in this unique Dutch landscape.",
+  "app_prompt_tokens": 278,
+  "app_generated_tokens": 52,
+  "llamacpp_output": "The Kraansvlak herd consists of wisents (European bison), magnificent, wild animals that roam the dunes of Nationaal Park Zuid-Kennemerland. Seeing them is a chance to witness a truly wild, natural ecosystem thriving in this unique Dutch landscape.",
+  "llamacpp_prompt_tokens": 278,
+  "llamacpp_generated_tokens": 53
+ },
+ "gemma|B-sim-RAG|make-care": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "The Kraansvlak herd consists of wisents, or European bison, who are fascinating inhabitants of this living lab. These magnificent animals are completely wild, relying on their own foraging skills to find food in the dunes, making them a vital part of the local ecosystem. Seeing them in their natural habitat offers a unique glimpse into the resilience of nature in this Dutch setting.",
+  "app_prompt_tokens": 118,
+  "app_generated_tokens": 74,
+  "llamacpp_output": "The Kraansvlak herd consists of wisents, or European bison, who are fascinating inhabitants of this living lab. These magnificent animals are completely wild, relying on their own foraging skills to find food in the dunes, making them a vital part of the local ecosystem. Seeing them in their natural habitat offers a unique glimpse into the resilience of nature in this Dutch setting.",
+  "llamacpp_prompt_tokens": 118,
+  "llamacpp_generated_tokens": 75
+ },
+ "gemma|C|make-care": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "The Kraansvlak herd consists of wisents (European bison). They find their own food in the dunes and are not fed by people. Visitors may see the herd from designated paths or the lookout by the dune lake.",
+  "app_prompt_tokens": 432,
+  "app_generated_tokens": 45,
+  "llamacpp_output": "The Kraansvlak herd consists of wisents (European bison). They find their own food in the dunes and are not fed by people. Visitors may see the herd from designated paths or the lookout by the dune lake.",
+  "llamacpp_prompt_tokens": 432,
+  "llamacpp_generated_tokens": 46
+ },
+ "gemma|C-sim-RAG|make-care": {
+  "class": "exact",
+  "ratio": 1.0,
+  "app_output": "The Kraansvlak herd consists of wisents, which are European bison. These animals find their own food in the dunes.",
+  "app_prompt_tokens": 272,
+  "app_generated_tokens": 26,
+  "llamacpp_output": "The Kraansvlak herd consists of wisents, which are European bison. These animals find their own food in the dunes.",
+  "llamacpp_prompt_tokens": 272,
+  "llamacpp_generated_tokens": 27
+ }
+}

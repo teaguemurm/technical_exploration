@@ -672,5 +672,131 @@ void main() {
     final csvWithToggle = BenchmarkExporter.exportCsv([recordWithToggle]);
     expect(csvWithToggle, contains('Yes'));
   });
+
+  test('gemma output keeps a thought block and still cuts end markers', () {
+    const raw =
+        '<|channel>thought\nsecret\n<channel|>The herd is wisents.<turn|>';
+    expect(outputContainsThought(raw), isTrue);
+    expect(
+      sanitizeModelOutput(raw, keepThoughts: true),
+      '<|channel>thought\nsecret\n<channel|>The herd is wisents.',
+    );
+    expect(
+      sanitizeModelOutput('Answer<eos>more', keepThoughts: true),
+      'Answer',
+    );
+    expect(sanitizeModelOutput('Answer<eos>more'), 'Answer<eos>more');
+    expect(
+      sanitizeModelOutput(
+        '<think>Thinking about wisents...</think>The herd is wisents.<end_of_turn>',
+      ),
+      'The herd is wisents.',
+    );
+  });
+
+  test('export records the formatter and whether a thought was emitted', () {
+    final record = RunRecord(
+      runIndex: 1,
+      runIndexSinceLoad: 1,
+      isColdLoad: false,
+      timestamp: DateTime.utc(2026, 10, 20),
+      deviceModel: 'Test Device',
+      osVersion: 'Test OS',
+      modelFileName: 'gemma-4.gguf',
+      architecture: 'gemma4',
+      quantization: 'Q3_K_M',
+      backend: 'GPU',
+      nGpuLayers: 99,
+      condition: 'A',
+      notesMode: 'none',
+      k: 0,
+      injectedNoteIds: const [],
+      promptId: 'what-animal',
+      promptText: 'What animal is this?',
+      decodingSettings: const DecodingSettings(),
+      systemPrompt: 'System',
+      messagesSent: 'Msg',
+      output: '<|channel>thought\nsecret\n<channel|>Wisents.',
+      hitMaxTokens: false,
+      promptFormatter: 'gemma4',
+      thoughtEmitted: true,
+    );
+
+    final json = record.toJson();
+    expect(json['promptFormatter'], 'gemma4');
+    expect(json['thoughtEmitted'], isTrue);
+    final roundTripped = RunRecord.fromJson(json);
+    expect(roundTripped.promptFormatter, 'gemma4');
+    expect(roundTripped.thoughtEmitted, isTrue);
+
+    final legacy = Map<String, dynamic>.from(json)
+      ..remove('promptFormatter')
+      ..remove('thoughtEmitted');
+    final legacyRecord = RunRecord.fromJson(legacy);
+    expect(legacyRecord.promptFormatter, isNull);
+    expect(legacyRecord.thoughtEmitted, isFalse);
+
+    final csv = BenchmarkExporter.exportCsv([record]);
+    expect(
+      csv,
+      contains(
+        'Thinking Disabled,Prompt Formatter,Thought Emitted,Output,Adapter File,Adapter SHA-256,Adapter Scale',
+      ),
+    );
+    expect(
+      csv,
+      contains(
+        'Timestamp,Adapter File,Adapter SHA-256,Adapter Scale',
+      ),
+    );
+    expect(csv, contains('gemma4'));
+
+    final legacyAdapter = Map<String, dynamic>.from(json)
+      ..remove('adapterFileName')
+      ..remove('adapterSha256')
+      ..remove('adapterScale');
+    final withoutAdapter = RunRecord.fromJson(legacyAdapter);
+    expect(withoutAdapter.adapterFileName, isEmpty);
+    expect(withoutAdapter.adapterSha256, isEmpty);
+    expect(withoutAdapter.adapterScale, isNull);
+
+    final withAdapter = RunRecord.fromJson(json);
+    expect(withAdapter.adapterFileName, isEmpty);
+    expect(withAdapter.adapterScale, isNull);
+
+    final lora = RunRecord(
+      runIndex: 2,
+      runIndexSinceLoad: 1,
+      isColdLoad: true,
+      loadDurationMs: 10,
+      timestamp: DateTime.utc(2026, 10, 20),
+      deviceModel: 'Test Device',
+      osVersion: 'Test OS',
+      modelFileName: 'gemma-4.gguf',
+      architecture: 'gemma4',
+      quantization: 'Q3_K_M',
+      backend: 'CPU',
+      nGpuLayers: 0,
+      condition: 'C',
+      notesMode: 'all',
+      k: 0,
+      injectedNoteIds: const [],
+      promptId: 'what-animal',
+      promptText: 'What animal is this?',
+      decodingSettings: const DecodingSettings(),
+      systemPrompt: 'System',
+      messagesSent: 'Msg',
+      output: 'A wisent.',
+      hitMaxTokens: false,
+      adapterFileName: 'gemma4-e2b-constraint-s4-lora-f16.gguf',
+      adapterSha256: 'abc123',
+      adapterScale: 1,
+    );
+    final loraCsv = BenchmarkExporter.exportCsv([lora]);
+    expect(loraCsv, contains('gemma4-e2b-constraint-s4-lora-f16.gguf,abc123,1.0'));
+    final loraJson = lora.toJson();
+    expect(loraJson.keys.last, 'adapterScale');
+    expect(loraJson['adapterScale'], 1);
+  });
 }
 

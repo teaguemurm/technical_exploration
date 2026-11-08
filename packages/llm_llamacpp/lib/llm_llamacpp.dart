@@ -106,7 +106,18 @@ export 'src/gguf_metadata.dart';
 // Model conversion
 export 'src/model_converter.dart';
 
-// Note: Prompt templates are now handled internally via llama_chat_apply_template()\n// which uses the template embedded in the GGUF model file.
+// Chat templates. Gemma 4 is rendered in Dart; other families use the GGUF
+// template through llama_chat_apply_template. A template that cannot be
+// applied throws [ChatTemplateException] instead of substituting ChatML.
+export 'src/chat_template_format.dart'
+    show
+        ChatTemplateException,
+        gemma4GenerationStopMarkers,
+        gemma4GenerationSuffix,
+        promptFormatterChatMlFallback,
+        promptFormatterGemma4,
+        promptFormatterMismatchMessage,
+        promptFormatterNative;
 
 // Generation options
 export 'src/generation_options.dart';

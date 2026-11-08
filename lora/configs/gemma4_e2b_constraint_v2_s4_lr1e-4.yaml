@@ -1,0 +1,69 @@
+# Gemma 4 E2B (instruction-tuned) version of qwen25_1.5b_constraint_v2_s4_lr1e-4.yaml.
+# Run from lora/:  mlx_lm.lora --config configs/gemma4_e2b_constraint_v2_s4_lr1e-4.yaml
+#
+# 20 Oct 2026. The hyperparameters mirror the Qwen s4 run on purpose, so the
+# two adapters can be compared. Checked with mlx-lm 0.32.2 (mlx_lm/models/gemma4.py
+# and gemma4_text.py).
+# Changes vs qwen25_1.5b_constraint_v2_s4_lr1e-4.yaml:
+#   model         Qwen/Qwen2.5-1.5B-Instruct -> google/gemma-4-E2B-it (bf16, ~10.2 GB
+#                 download; mlx-lm drops the vision and audio towers when it loads)
+#   adapter_path  adapters_s4_lr1e-4 -> adapters_gemma4_s4_lr1e-4
+# Nothing else changed. Gemma-specific notes:
+#   - 35 decoder layers. num_layers -1 still means every block.
+#   - The last 20 layers (15-34) share K/V with earlier layers and have no
+#     k_proj or v_proj. mlx-lm skips keys a layer lacks, so k_proj and v_proj get
+#     LoRA on layers 0-14 only (15 each); the other five keys get all 35 layers.
+#     That is 24.2M trainable parameters.
+#   - Layers 15-34 use a double-width MLP (12288 instead of 6144).
+#   - Embeddings, the per-layer embeddings (embed_tokens_per_layer,
+#     per_layer_model_projection, per_layer_input_gate, per_layer_projection) and
+#     the tied lm_head are left out. llama.cpp rejects embedding/lm_head adapters.
+#   - The data is rendered with Gemma 4's own chat template. mlx-lm 0.32.2
+#     defaults enable_thinking to tokenizer.has_thinking, which is true for
+#     Gemma 4, so a default apply_chat_template call inserts <|think|>.
+#     The app does not. It renders the <|turn|> format in Dart with thinking
+#     left off. Comparison runs that should match the app pass
+#     enable_thinking=False. See lora/README.md.
+#   - Convert with scripts/mlx_to_peft_gemma4.py, not scripts/mlx_to_peft.py
+#     (mlx names Gemma 4 weights language_model.model.layers.N...).
+# Batch size 2 and grad_checkpoint stay on, as in the Qwen run.
+# Pick the checkpoint with the 100-question comparison, not val loss alone.
+#
+model: "google/gemma-4-E2B-it"
+train: true
+fine_tune_type: lora
+optimizer: adamw
+
+data: "data/v2"
+seed: 42
+
+# Gemma 4 E2B has 35 layers. -1 selects every block
+# (mlx-lm uses layers[-max(num_layers, 0):], and -0 is 0).
+num_layers: -1
+
+batch_size: 2
+iters: 1000
+val_batches: -1
+learning_rate: 1.0e-4
+steps_per_report: 10
+steps_per_eval: 100
+save_every: 100
+adapter_path: "adapters_gemma4_s4_lr1e-4"
+max_seq_length: 2048
+grad_checkpoint: true
+mask_prompt: true
+
+# Rank 16, scale 4 as in the Qwen s4 run. scale is mlx-lm's multiplier,
+# not PEFT's lora_alpha. The converter sets lora_alpha = scale * rank (64).
+lora_parameters:
+  keys:
+    - "self_attn.q_proj"
+    - "self_attn.k_proj"
+    - "self_attn.v_proj"
+    - "self_attn.o_proj"
+    - "mlp.gate_proj"
+    - "mlp.up_proj"
+    - "mlp.down_proj"
+  rank: 16
+  scale: 4.0
+  dropout: 0.0

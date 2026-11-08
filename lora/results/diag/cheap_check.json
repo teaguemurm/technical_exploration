@@ -1,0 +1,279 @@
+{
+ "n_copied": 415,
+ "matched_by_id": 415,
+ "matched_by_question": 0,
+ "unmatched": [],
+ "identical": 355,
+ "differ": [
+  "konik_oostvaardersplassen-speak-11",
+  "konik_oostvaardersplassen-speak-09",
+  "highland_dwingelderveld-speak-02",
+  "highland_dwingelderveld-speak-09",
+  "exmoor_lauwersmeer-speak-08",
+  "red_deer_veluwe-speak-09",
+  "highland_dwingelderveld-speak-03",
+  "exmoor_lauwersmeer-speak-04",
+  "exmoor_lauwersmeer-speak-05",
+  "beaver_biesbosch-speak-03",
+  "exmoor_lauwersmeer-speak-10",
+  "highland_dwingelderveld-speak-04",
+  "red_deer_veluwe-speak-07",
+  "exmoor_lauwersmeer-speak-03",
+  "konik_oostvaardersplassen-speak-03",
+  "highland_dwingelderveld-speak-11",
+  "red_deer_veluwe-speak-05",
+  "beaver_biesbosch-speak-12",
+  "konik_oostvaardersplassen-speak-10",
+  "red_deer_veluwe-speak-10",
+  "highland_dwingelderveld-speak-12",
+  "highland_dwingelderveld-speak-05",
+  "red_deer_veluwe-speak-08",
+  "exmoor_lauwersmeer-speak-06",
+  "highland_dwingelderveld-speak-10",
+  "konik_oostvaardersplassen-speak-06",
+  "exmoor_lauwersmeer-speak-09",
+  "red_deer_veluwe-speak-01",
+  "beaver_biesbosch-speak-08",
+  "red_deer_veluwe-speak-04",
+  "beaver_biesbosch-speak-09",
+  "konik_oostvaardersplassen-speak-12",
+  "highland_dwingelderveld-speak-07",
+  "red_deer_veluwe-speak-06",
+  "beaver_biesbosch-speak-11",
+  "highland_dwingelderveld-speak-01",
+  "red_deer_veluwe-speak-02",
+  "highland_dwingelderveld-speak-08",
+  "exmoor_lauwersmeer-speak-12",
+  "beaver_biesbosch-speak-04",
+  "beaver_biesbosch-speak-06",
+  "red_deer_veluwe-speak-03",
+  "exmoor_lauwersmeer-speak-11",
+  "konik_oostvaardersplassen-speak-01",
+  "exmoor_lauwersmeer-speak-01",
+  "konik_oostvaardersplassen-speak-04",
+  "red_deer_veluwe-speak-11",
+  "beaver_biesbosch-speak-02",
+  "beaver_biesbosch-speak-10",
+  "exmoor_lauwersmeer-speak-02",
+  "beaver_biesbosch-speak-07",
+  "konik_oostvaardersplassen-speak-08",
+  "beaver_biesbosch-speak-01",
+  "konik_oostvaardersplassen-speak-02",
+  "beaver_biesbosch-speak-05",
+  "red_deer_veluwe-speak-12",
+  "konik_oostvaardersplassen-speak-07",
+  "exmoor_lauwersmeer-speak-07",
+  "konik_oostvaardersplassen-speak-05",
+  "highland_dwingelderveld-speak-06"
+ ],
+ "assistant_differs": [
+  [
+   "red_deer_veluwe-preach-03",
+   "I do not have information about that in the approved notes.",
+   "The stags roar during the rut, in September and October."
+  ],
+  [
+   "beaver_biesbosch-preach-06",
+   "I do not have information about that in the approved notes.",
+   "In the narrow creeks they sometimes dam the flow with branches."
+  ],
+  [
+   "beaver_biesbosch-preach-05",
+   "I do not have information about that in the approved notes.",
+   "Kits are born inside the lodge in late spring and swim within a few weeks."
+  ],
+  [
+   "red_deer_veluwe-preach-07",
+   "I do not have information about that in the approved notes.",
+   "Visitors may see the deer from the marked paths and from the lookout at the Posbank."
+  ],
+  [
+   "highland_dwingelderveld-preach-07",
+   "I do not have information about that in the approved notes.",
+   "Visitors see the cattle from the sheep bridges and the boardwalks across the wet heath."
+  ],
+  [
+   "beaver_biesbosch-preach-03",
+   "I do not have information about that in the approved notes.",
+   "The beavers are mostly active at dusk and during the night."
+  ],
+  [
+   "red_deer_veluwe-preach-01",
+   "I do not have information about that in the approved notes.",
+   "The red deer browse heather, grasses, and young shoots and are not given supplementary feed."
+  ],
+  [
+   "red_deer_veluwe-preach-02",
+   "I do not have information about that in the approved notes.",
+   "The deer drink at the pools and streams on the heath."
+  ],
+  [
+   "beaver_biesbosch-preach-07",
+   "I do not have information about that in the approved notes.",
+   "Beavers build lodges of branches and mud."
+  ],
+  [
+   "beaver_biesbosch-preach-08",
+   "I do not have information about that in the approved notes.",
+   "A beaver tail is used as a rudder in the water."
+  ],
+  [
+   "konik_oostvaardersplassen-preach-01",
+   "I do not have information about that in the approved notes.",
+   "The Koniks graze reeds, grasses, and willow shoots and are not given hay by visitors."
+  ],
+  [
+   "highland_dwingelderveld-preach-01",
+   "I do not have information about that in the approved notes.",
+   "Highland cattle graze heather, purple moor-grass, and birch shoots and are not fed by visitors."
+  ],
+  [
+   "konik_oostvaardersplassen-preach-06",
+   "I do not have information about that in the approved notes.",
+   "Foals are usually born in spring and stay with the mare."
+  ],
+  [
+   "exmoor_lauwersmeer-preach-07",
+   "I do not have information about that in the approved notes.",
+   "Visitors see the ponies from the dyke path and the bird hides on the southern shore."
+  ],
+  [
+   "exmoor_lauwersmeer-preach-08",
+   "I do not have information about that in the approved notes.",
+   "Exmoor ponies have a dark eel stripe along the back."
+  ],
+  [
+   "red_deer_veluwe-preach-06",
+   "I do not have information about that in the approved notes.",
+   "Stags shed their antlers in late winter and grow a new set through the spring."
+  ],
+  [
+   "red_deer_veluwe-preach-04",
+   "I do not have information about that in the approved notes.",
+   "Hinds and calves stay in groups, while mature stags are often apart outside the rut."
+  ],
+  [
+   "beaver_biesbosch-preach-04",
+   "I do not have information about that in the approved notes.",
+   "A beaver tail is flat and scaly and is used as a rudder in the water."
+  ],
+  [
+   "highland_dwingelderveld-preach-06",
+   "I do not have information about that in the approved notes.",
+   "Highland cattle drink at the peat pools and the shallow fens."
+  ],
+  [
+   "konik_oostvaardersplassen-preach-02",
+   "I do not have information about that in the approved notes.",
+   "The horses drink from the shallow pools and ditches in the marsh."
+  ],
+  [
+   "beaver_biesbosch-preach-01",
+   "I do not have information about that in the approved notes.",
+   "Beavers eat bark, twigs, and aquatic plants, and they fell willow and poplar."
+  ],
+  [
+   "exmoor_lauwersmeer-preach-05",
+   "I do not have information about that in the approved notes.",
+   "The bands drink from the freshwater pools behind the old sea dyke."
+  ],
+  [
+   "highland_dwingelderveld-preach-04",
+   "I do not have information about that in the approved notes.",
+   "The cattle keep young birch from closing over the open heath."
+  ],
+  [
+   "red_deer_veluwe-preach-05",
+   "I do not have information about that in the approved notes.",
+   "In hard weather the deer use the Scots pine stands for shelter."
+  ],
+  [
+   "exmoor_lauwersmeer-preach-04",
+   "I do not have information about that in the approved notes.",
+   "The ponies move in small bands of mares, foals, and a stallion."
+  ],
+  [
+   "konik_oostvaardersplassen-preach-05",
+   "I do not have information about that in the approved notes.",
+   "In hard weather the bands use the willow scrub and reed beds for shelter."
+  ],
+  [
+   "exmoor_lauwersmeer-preach-06",
+   "I do not have information about that in the approved notes.",
+   "Foals are born in late spring and the band keeps them in the middle of the group."
+  ],
+  [
+   "konik_oostvaardersplassen-preach-03",
+   "I do not have information about that in the approved notes.",
+   "Konik horses have a grey-dun coat and a dark dorsal stripe."
+  ],
+  [
+   "konik_oostvaardersplassen-preach-08",
+   "I do not have information about that in the approved notes.",
+   "The horses live in family bands led by a mare."
+  ],
+  [
+   "beaver_biesbosch-preach-02",
+   "I do not have information about that in the approved notes.",
+   "Beavers build lodges of branches and mud on the water edge."
+  ],
+  [
+   "exmoor_lauwersmeer-preach-03",
+   "I do not have information about that in the approved notes.",
+   "Exmoor ponies have a brown coat, a mealy muzzle, and a dark eel stripe along the back."
+  ],
+  [
+   "highland_dwingelderveld-preach-05",
+   "I do not have information about that in the approved notes.",
+   "Calves are born in spring and have a lighter coat than the adults."
+  ],
+  [
+   "highland_dwingelderveld-preach-02",
+   "I do not have information about that in the approved notes.",
+   "The herd stays out on the heath through the winter."
+  ],
+  [
+   "highland_dwingelderveld-preach-08",
+   "I do not have information about that in the approved notes.",
+   "Highland cattle have a long shaggy coat."
+  ],
+  [
+   "exmoor_lauwersmeer-preach-02",
+   "I do not have information about that in the approved notes.",
+   "Exmoor ponies keep a winter coat and stay outside through the year."
+  ],
+  [
+   "konik_oostvaardersplassen-preach-04",
+   "I do not have information about that in the approved notes.",
+   "The horses live in family bands led by a mare, with a stallion alongside."
+  ],
+  [
+   "red_deer_veluwe-preach-08",
+   "I do not have information about that in the approved notes.",
+   "The stags roar at dusk."
+  ],
+  [
+   "konik_oostvaardersplassen-preach-07",
+   "I do not have information about that in the approved notes.",
+   "Visitors view the horses from the perimeter tracks and the hides."
+  ],
+  [
+   "highland_dwingelderveld-preach-03",
+   "I do not have information about that in the approved notes.",
+   "Highland cattle have a long shaggy coat and wide horns."
+  ],
+  [
+   "exmoor_lauwersmeer-preach-01",
+   "I do not have information about that in the approved notes.",
+   "The ponies graze salt marsh grasses and reeds and find their own food."
+  ]
+ ],
+ "train_valid_by_category_refusal_target": {
+  "answerable": "0/191",
+  "refusal": "124/124",
+  "speak_as": "30/60",
+  "preaching": "40/40",
+  "nature_decode": "40/40"
+ },
+ "train_valid_refusal_share": 0.5142857142857142
+}

@@ -1,0 +1,19 @@
+<bos><|turn>system
+You are generating a short note for a visitor about one wild animal in a Dutch living lab. Keep it to a few sentences.<turn|>
+<|turn>user
+Local notes
+
+Local notes follow. They are the only place-specific notes supplied for this run.
+The Oostvaardersplassen herd is a herd of Konik horses.
+The herd lives in the Oostvaardersplassen nature reserve in Flevoland.
+Staatsbosbeheer manages the area.
+Konik horses have a grey-dun coat and a dark dorsal stripe.
+The Koniks graze reeds, grasses, and willow shoots and are not given hay by visitors.
+The horses drink from the shallow pools and ditches in the marsh.
+Foals are usually born in spring and stay with the mare.
+The horses live in family bands led by a mare, with a stallion alongside.
+In hard weather the bands use the willow scrub and reed beds for shelter.
+Visitors view the horses from the perimeter tracks and the hides.<turn|>
+<|turn>user
+Can visitors use hides to view the horses?<turn|>
+<|turn>model

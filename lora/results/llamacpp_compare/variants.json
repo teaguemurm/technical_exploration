@@ -1,0 +1,18 @@
+{
+ "qwen_base_C":   {"label": "Qwen base + C",            "family": "qwen",  "engine": "llama.cpp", "path": "results/llamacpp_compare/raw/out_qwen_base_C.jsonl"},
+ "qwen_lora_B":   {"label": "Qwen LoRA ckpt600 + B",    "family": "qwen",  "engine": "llama.cpp", "path": "results/llamacpp_compare/raw/out_qwen_lora_B.jsonl"},
+ "qwen_lora_C":   {"label": "Qwen LoRA ckpt600 + C",    "family": "qwen",  "engine": "llama.cpp", "path": "results/llamacpp_compare/raw/out_qwen_lora_C.jsonl"},
+ "qwen_lora_A":   {"label": "Qwen LoRA ckpt600 + A",    "family": "qwen",  "engine": "llama.cpp", "path": "results/llamacpp_compare/raw/out_qwen_lora_A.jsonl"},
+ "gemma_base_C":  {"label": "Gemma base + C",           "family": "gemma", "engine": "llama.cpp", "path": "results/llamacpp_compare/raw/out_gemma_base_C.jsonl"},
+ "gemma_final_B": {"label": "Gemma LoRA final + B",     "family": "gemma", "engine": "llama.cpp", "path": "results/llamacpp_compare/raw/out_gemma_final_B.jsonl"},
+ "gemma_final_C": {"label": "Gemma LoRA final + C",     "family": "gemma", "engine": "llama.cpp", "path": "results/llamacpp_compare/raw/out_gemma_final_C.jsonl"},
+ "gemma_final_A": {"label": "Gemma LoRA final + A",     "family": "gemma", "engine": "llama.cpp", "path": "results/llamacpp_compare/raw/out_gemma_final_A.jsonl"},
+ "gemma_800_B":   {"label": "Gemma LoRA ckpt800 + B",   "family": "gemma", "engine": "llama.cpp", "path": "results/llamacpp_compare/raw/out_gemma_800_B.jsonl"},
+ "gemma_800_C":   {"label": "Gemma LoRA ckpt800 + C",   "family": "gemma", "engine": "llama.cpp", "path": "results/llamacpp_compare/raw/out_gemma_800_C.jsonl"},
+ "gemma_800_A":   {"label": "Gemma LoRA ckpt800 + A",   "family": "gemma", "engine": "llama.cpp", "path": "results/llamacpp_compare/raw/out_gemma_800_A.jsonl"},
+ "mlx_qwen_lora_B":   {"label": "MLX bf16 Qwen LoRA ckpt600 + B", "family": "qwen",  "engine": "mlx", "path": "results/s4_ckpt600_mlx_app_comparison.csv", "col": "output_with_adapter"},
+ "mlx_qwen_base_B":   {"label": "MLX bf16 Qwen base + B",         "family": "qwen",  "engine": "mlx", "path": "results/s4_ckpt600_mlx_app_comparison.csv", "col": "output_without_adapter"},
+ "mlx_gemma_final_B": {"label": "MLX bf16 Gemma LoRA final + B",  "family": "gemma", "engine": "mlx", "path": "results/gemma4_s4/gemma4_s4_mlx_app_comparison.csv", "col": "output_with_adapter"},
+ "mlx_gemma_800_B":   {"label": "MLX bf16 Gemma LoRA ckpt800 + B","family": "gemma", "engine": "mlx", "path": "results/gemma4_s4/gemma4_s4_ckpt800_mlx_app_comparison.csv", "col": "output_with_adapter"},
+ "mlx_gemma_base_B":  {"label": "MLX bf16 Gemma base + B",        "family": "gemma", "engine": "mlx", "path": "results/gemma4_s4/gemma4_s4_ckpt800_mlx_app_comparison.csv", "col": "output_without_adapter"}
+}

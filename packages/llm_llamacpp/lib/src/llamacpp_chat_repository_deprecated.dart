@@ -40,6 +40,9 @@ Future<void> _loadModelImpl(
 }
 
 void _unloadModelImpl(LlamaCppChatRepository repo) {
+  repo._releaseAttachedLora();
+  repo._loraPath = null;
+  repo._loraScale = 1.0;
   if (repo._model != null && repo._ownsModel) {
     repo._model!.dispose();
     repo._model = null;

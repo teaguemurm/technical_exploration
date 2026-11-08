@@ -1,0 +1,61 @@
+{
+ "file": "out/gemma4-e2b-constraint-s4-lora-ckpt800-f16.gguf",
+ "n_tensors": 410,
+ "metadata": {
+  "general.architecture": "gemma4",
+  "general.type": "adapter",
+  "adapter.type": "lora",
+  "general.name": "Gemma4_S4_Peft_Ckpt800",
+  "adapter.lora.alpha": 64.0,
+  "general.quantization_version": 2
+ },
+ "modules_layers": {
+  "attn_k": [
+   0,
+   14,
+   15
+  ],
+  "attn_output": [
+   0,
+   34,
+   35
+  ],
+  "attn_q": [
+   0,
+   34,
+   35
+  ],
+  "attn_v": [
+   0,
+   14,
+   15
+  ],
+  "ffn_down": [
+   0,
+   34,
+   35
+  ],
+  "ffn_gate": [
+   0,
+   34,
+   35
+  ],
+  "ffn_up": [
+   0,
+   34,
+   35
+  ]
+ },
+ "unexpected_names": [],
+ "layer_check": true,
+ "expected_n_tensors": 410,
+ "rank_ok": true,
+ "dtypes": [
+  "F16"
+ ],
+ "arch_ok": true,
+ "mlx_delta_compare": {
+  "n_modules": 205,
+  "max_rel_err_BA": 0.00028520140576317334
+ }
+}

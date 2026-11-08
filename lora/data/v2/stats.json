@@ -1,0 +1,365 @@
+{
+  "layout": "app_condition_b",
+  "preaching_answer": "refusal",
+  "refusal_string": "I do not have information about that in the approved notes.",
+  "nature_decode_targets": [
+    "Condition C rule 4, Nature clause: Do NOT speak as Nature.",
+    "Condition C rule 5: Do NOT claim to decode or translate the animal's behaviour."
+  ],
+  "copied_from_original": {
+    "total": 415,
+    "by_category": {
+      "answerable": 191,
+      "refusal": 124,
+      "speak_as": 60,
+      "preaching": 40
+    }
+  },
+  "train": {
+    "n": 409,
+    "by_category": {
+      "answerable": 172,
+      "refusal": 111,
+      "speak_as": 54,
+      "preaching": 36,
+      "nature_decode": 36
+    }
+  },
+  "valid": {
+    "n": 46,
+    "by_category": {
+      "answerable": 19,
+      "refusal": 13,
+      "speak_as": 6,
+      "preaching": 4,
+      "nature_decode": 4
+    }
+  },
+  "total": 455,
+  "by_category": {
+    "answerable": 191,
+    "refusal": 124,
+    "speak_as": 60,
+    "preaching": 40,
+    "nature_decode": 40
+  },
+  "nature_decode": {
+    "n": 40,
+    "by_subtype": {
+      "speak_as_nature": 20,
+      "decode_behaviour": 20
+    },
+    "with_notes": 20,
+    "no_notes": 20,
+    "train": 36,
+    "valid": 4
+  },
+  "speak_as_reworded": [
+    {
+      "id": "red_deer_veluwe-speak-01",
+      "from": "Answer in the first person as a red deer and say how you feel today.",
+      "to": "You're a red deer for a minute. How are you feeling today?"
+    },
+    {
+      "id": "red_deer_veluwe-speak-02",
+      "from": "Take the role of a stag on the Veluwezoom and describe your mood.",
+      "to": "You're a stag on the Veluwezoom now. What's your mood like?"
+    },
+    {
+      "id": "red_deer_veluwe-speak-03",
+      "from": "What frightens you, if you answer as a red deer?",
+      "to": "Pretend you're a red deer: what scares you?"
+    },
+    {
+      "id": "red_deer_veluwe-speak-04",
+      "from": "Tell me your personal name, speaking as a stag.",
+      "to": "You're a stag. What should I call you?"
+    },
+    {
+      "id": "red_deer_veluwe-speak-05",
+      "from": "Describe your hunger in the voice of a red deer.",
+      "to": "You're a red deer. How hungry are you?"
+    },
+    {
+      "id": "red_deer_veluwe-speak-06",
+      "from": "Welcome the reader to the Veluwezoom in character as a stag.",
+      "to": "You're a stag. Welcome me to the Veluwezoom."
+    },
+    {
+      "id": "red_deer_veluwe-speak-07",
+      "from": "Using the word I, as a red deer, say which plants you eat.",
+      "to": "Pretend you're a red deer: which plants do you eat?"
+    },
+    {
+      "id": "red_deer_veluwe-speak-08",
+      "from": "In the voice of a stag, say what happens to your antlers in late winter.",
+      "to": "You're a stag. What happens to your antlers in late winter?"
+    },
+    {
+      "id": "red_deer_veluwe-speak-09",
+      "from": "As a deer, in the first person, say where you drink.",
+      "to": "Pretend you're one of the deer: where do you go for water?"
+    },
+    {
+      "id": "red_deer_veluwe-speak-10",
+      "from": "Role-play a deer and say where you shelter in hard weather.",
+      "to": "You're a deer now. Where do you shelter when the weather turns rough?"
+    },
+    {
+      "id": "red_deer_veluwe-speak-11",
+      "from": "Pretend to be a stag and say at what time of day you roar.",
+      "to": "You're a stag. What time of day do you roar?"
+    },
+    {
+      "id": "red_deer_veluwe-speak-12",
+      "from": "Answer as a hind, in the first person, and say who stays together.",
+      "to": "You're a hind. Who do you stay with?"
+    },
+    {
+      "id": "konik_oostvaardersplassen-speak-01",
+      "from": "Answer in the first person as a Konik horse and say how you feel today.",
+      "to": "You're a Konik for a minute. How are you feeling today?"
+    },
+    {
+      "id": "konik_oostvaardersplassen-speak-02",
+      "from": "Take the role of a mare in the Oostvaardersplassen and describe your mood.",
+      "to": "You're a mare in the Oostvaardersplassen now. How are you feeling?"
+    },
+    {
+      "id": "konik_oostvaardersplassen-speak-03",
+      "from": "What frightens you, if you answer as a Konik?",
+      "to": "Pretend you're a Konik: what scares you?"
+    },
+    {
+      "id": "konik_oostvaardersplassen-speak-04",
+      "from": "Tell me your personal name, speaking as a Konik horse.",
+      "to": "You're a Konik horse. What's your name?"
+    },
+    {
+      "id": "konik_oostvaardersplassen-speak-05",
+      "from": "Describe your hunger in the voice of a Konik.",
+      "to": "You're a Konik. How hungry are you right now?"
+    },
+    {
+      "id": "konik_oostvaardersplassen-speak-06",
+      "from": "Welcome the reader to the marsh in character as a stallion.",
+      "to": "You're a stallion. Welcome me out onto the marsh."
+    },
+    {
+      "id": "konik_oostvaardersplassen-speak-07",
+      "from": "Using the word I, as a Konik, describe your coat.",
+      "to": "Pretend you're a Konik: what does your coat look like?"
+    },
+    {
+      "id": "konik_oostvaardersplassen-speak-08",
+      "from": "In the voice of a Konik, say what you graze.",
+      "to": "You're a Konik. What do you graze on?"
+    },
+    {
+      "id": "konik_oostvaardersplassen-speak-09",
+      "from": "As a horse, in the first person, say where you drink.",
+      "to": "Pretend you're one of the horses: where do you go for water?"
+    },
+    {
+      "id": "konik_oostvaardersplassen-speak-10",
+      "from": "Role-play a mare and say when foals are born.",
+      "to": "You're a mare. When are the foals born?"
+    },
+    {
+      "id": "konik_oostvaardersplassen-speak-11",
+      "from": "Pretend to be a stallion and say how the bands are led.",
+      "to": "You're a stallion. How are the bands led?"
+    },
+    {
+      "id": "konik_oostvaardersplassen-speak-12",
+      "from": "Answer as a Konik, in the first person, and say where the band shelters.",
+      "to": "You're a Konik. Where does the band shelter?"
+    },
+    {
+      "id": "beaver_biesbosch-speak-01",
+      "from": "Answer in the first person as a beaver and say how you feel tonight.",
+      "to": "You're a beaver for a minute. How are you feeling tonight?"
+    },
+    {
+      "id": "beaver_biesbosch-speak-02",
+      "from": "Take the role of a beaver in the Biesbosch and describe your mood.",
+      "to": "You're a beaver in the Biesbosch now. What's your mood?"
+    },
+    {
+      "id": "beaver_biesbosch-speak-03",
+      "from": "What frightens you, if you answer as a beaver?",
+      "to": "Pretend you're a beaver: what scares you?"
+    },
+    {
+      "id": "beaver_biesbosch-speak-04",
+      "from": "Tell me your personal name, speaking as a beaver.",
+      "to": "You're a beaver. What's your name?"
+    },
+    {
+      "id": "beaver_biesbosch-speak-05",
+      "from": "Describe your hunger in the voice of a beaver.",
+      "to": "You're a beaver. How hungry are you?"
+    },
+    {
+      "id": "beaver_biesbosch-speak-06",
+      "from": "Welcome the reader to the creeks in character as a beaver.",
+      "to": "You're a beaver. Welcome me onto the creeks."
+    },
+    {
+      "id": "beaver_biesbosch-speak-07",
+      "from": "Using the word I, as a beaver, say what the lodge is built from.",
+      "to": "Pretend you're a beaver: what is the lodge built from?"
+    },
+    {
+      "id": "beaver_biesbosch-speak-08",
+      "from": "In the voice of a beaver, say what you eat.",
+      "to": "You're a beaver. What do you eat?"
+    },
+    {
+      "id": "beaver_biesbosch-speak-09",
+      "from": "As a beaver, in the first person, describe your tail.",
+      "to": "Pretend you're a beaver: what's your tail like?"
+    },
+    {
+      "id": "beaver_biesbosch-speak-10",
+      "from": "Role-play a beaver and say when you are mostly active.",
+      "to": "You're a beaver. When are you mostly active?"
+    },
+    {
+      "id": "beaver_biesbosch-speak-11",
+      "from": "Pretend to be a beaver and say where kits are born.",
+      "to": "You're a beaver. Where are the kits born?"
+    },
+    {
+      "id": "beaver_biesbosch-speak-12",
+      "from": "Answer as a beaver, in the first person, and say whether you dam every creek.",
+      "to": "You're a beaver. Do you dam every creek?"
+    },
+    {
+      "id": "highland_dwingelderveld-speak-01",
+      "from": "Answer in the first person as a Highland cow and say how you feel today.",
+      "to": "You're a Highland cow for a minute. How do you feel today?"
+    },
+    {
+      "id": "highland_dwingelderveld-speak-02",
+      "from": "Take the role of a Highland animal on the Dwingelderveld and describe your mood.",
+      "to": "You're a Highland cow now. How are you feeling today?"
+    },
+    {
+      "id": "highland_dwingelderveld-speak-03",
+      "from": "What frightens you, if you answer as a Highland cow?",
+      "to": "Pretend you're a Highland cow: what scares you?"
+    },
+    {
+      "id": "highland_dwingelderveld-speak-04",
+      "from": "Tell me your personal name, speaking as a Highland cow.",
+      "to": "You're a Highland cow. What name do you go by?"
+    },
+    {
+      "id": "highland_dwingelderveld-speak-05",
+      "from": "Describe your hunger in the voice of a Highland cow.",
+      "to": "You're a Highland cow. How hungry are you?"
+    },
+    {
+      "id": "highland_dwingelderveld-speak-06",
+      "from": "Welcome the reader to the heath in character as a Highland cow.",
+      "to": "You're a Highland cow. Welcome me onto the heath."
+    },
+    {
+      "id": "highland_dwingelderveld-speak-07",
+      "from": "Using the word I, as a Highland cow, describe your coat and horns.",
+      "to": "Pretend you're a Highland cow: what are your coat and horns like?"
+    },
+    {
+      "id": "highland_dwingelderveld-speak-08",
+      "from": "In the voice of a Highland cow, say what you graze.",
+      "to": "You're a Highland cow. What do you graze?"
+    },
+    {
+      "id": "highland_dwingelderveld-speak-09",
+      "from": "As a Highland cow, in the first person, say where you drink.",
+      "to": "Pretend you're one of the cattle: where do you go for water?"
+    },
+    {
+      "id": "highland_dwingelderveld-speak-10",
+      "from": "Role-play a Highland cow and say whether the herd stays out in winter.",
+      "to": "You're a Highland cow. Does the herd stay out through winter?"
+    },
+    {
+      "id": "highland_dwingelderveld-speak-11",
+      "from": "Pretend to be a calf and say how your coat compares with the adults.",
+      "to": "You're a calf. How does your coat compare with the adults?"
+    },
+    {
+      "id": "highland_dwingelderveld-speak-12",
+      "from": "Answer as a Highland cow, in the first person, about the birch on the heath.",
+      "to": "You're a Highland cow. What do you do about the birch on the heath?"
+    },
+    {
+      "id": "exmoor_lauwersmeer-speak-01",
+      "from": "Answer in the first person as an Exmoor pony and say how you feel today.",
+      "to": "You're an Exmoor pony for a minute. How are you feeling today?"
+    },
+    {
+      "id": "exmoor_lauwersmeer-speak-02",
+      "from": "Take the role of a pony at Lauwersmeer and describe your mood.",
+      "to": "You're a pony at Lauwersmeer now. What's your mood like?"
+    },
+    {
+      "id": "exmoor_lauwersmeer-speak-03",
+      "from": "What frightens you, if you answer as an Exmoor pony?",
+      "to": "Pretend you're an Exmoor pony: what scares you?"
+    },
+    {
+      "id": "exmoor_lauwersmeer-speak-04",
+      "from": "Tell me your personal name, speaking as an Exmoor pony.",
+      "to": "You're an Exmoor pony. What should I call you?"
+    },
+    {
+      "id": "exmoor_lauwersmeer-speak-05",
+      "from": "Describe your hunger in the voice of an Exmoor pony.",
+      "to": "You're an Exmoor pony. How hungry are you?"
+    },
+    {
+      "id": "exmoor_lauwersmeer-speak-06",
+      "from": "Welcome the reader to the shore in character as a pony.",
+      "to": "You're a pony. Welcome me to the shore."
+    },
+    {
+      "id": "exmoor_lauwersmeer-speak-07",
+      "from": "Using the word I, as an Exmoor pony, describe your coat and muzzle.",
+      "to": "Pretend you're an Exmoor pony: what are your coat and muzzle like?"
+    },
+    {
+      "id": "exmoor_lauwersmeer-speak-08",
+      "from": "In the voice of a pony, say what you graze.",
+      "to": "You're a pony. What do you graze?"
+    },
+    {
+      "id": "exmoor_lauwersmeer-speak-09",
+      "from": "As a pony, in the first person, say whether you stay outside through the year.",
+      "to": "Pretend you're one of the ponies: do you stay outside all year?"
+    },
+    {
+      "id": "exmoor_lauwersmeer-speak-10",
+      "from": "Role-play a mare and say where the foals are kept in the group.",
+      "to": "You're a mare. Where do the foals stay in the group?"
+    },
+    {
+      "id": "exmoor_lauwersmeer-speak-11",
+      "from": "Pretend to be a stallion and say who is in the band.",
+      "to": "You're a stallion. Who's in the band with you?"
+    },
+    {
+      "id": "exmoor_lauwersmeer-speak-12",
+      "from": "Answer as a pony, in the first person, and say where the band drinks.",
+      "to": "You're a pony. Where does the band drink?"
+    }
+  ],
+  "notes_origin": {
+    "synthetic": 390,
+    "real": 30,
+    "none": 35
+  },
+  "contrastive_pairs": 78
+}

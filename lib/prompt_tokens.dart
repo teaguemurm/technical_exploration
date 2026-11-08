@@ -3,10 +3,20 @@
 import 'dart:ffi' as ffi;
 import 'dart:io';
 
-import 'package:ffi/ffi.dart';
 import 'package:llm_llamacpp/llm_llamacpp.dart';
 import 'package:llm_llamacpp/src/backend_initializer.dart';
 import 'package:llm_llamacpp/src/bindings/llama_bindings.dart';
+import 'package:llm_llamacpp/src/chat_template_apply.dart';
+
+/// Prompt text that was actually formatted, plus the formatter name.
+class CountedPrompt {
+  const CountedPrompt({required this.tokenCount, required this.formatter});
+
+  final int tokenCount;
+
+  /// `native`, `gemma4`, or `chatml-fallback`.
+  final String formatter;
+}
 
 LlamaBindings? _cachedBindings;
 
@@ -32,7 +42,11 @@ LlamaBindings? resolveLlamaBindings([LlamaBindings? existing]) {
 
 /// Computes the exact prompt token count for the given [messages] by applying
 /// the model's chat template and tokenizing the full formatted prompt with the model's vocabulary.
-int? countPromptTokens({
+///
+/// Uses the same formatter and BOS rule as the inference isolate. A template
+/// that cannot be applied throws [ChatTemplateException] instead of returning
+/// null, so the caller does not fall through to a length estimate.
+CountedPrompt? countPromptTokens({
   required ffi.Pointer<dynamic>? model,
   required ffi.Pointer<dynamic>? vocab,
   required List<LLMMessage> messages,
@@ -49,114 +63,26 @@ int? countPromptTokens({
   if (resolvedBindings == null) return null;
 
   try {
-    final modelPtr = model.cast<llama_model>();
-    final vocabPtr = vocab.cast<llama_vocab>();
-
-    final chatMessages = calloc<llama_chat_message>(messages.length);
-    final allocated = <ffi.Pointer<Utf8>>[];
-    try {
-      for (var i = 0; i < messages.length; i++) {
-        final rolePtr = messages[i].role.name.toNativeUtf8();
-        final contentPtr = (messages[i].content ?? '').toNativeUtf8();
-        allocated.add(rolePtr);
-        allocated.add(contentPtr);
-        chatMessages[i].role = rolePtr.cast();
-        chatMessages[i].content = contentPtr.cast();
-      }
-
-      final tmplPtr = resolvedBindings.llama_model_chat_template(modelPtr, ffi.nullptr);
-      final hasTemplate = tmplPtr.address != 0;
-      final tmplArg = hasTemplate ? tmplPtr : ffi.nullptr;
-
-      String? modelTemplateStr;
-      if (hasTemplate) {
-        try {
-          modelTemplateStr = tmplPtr.cast<Utf8>().toDartString();
-        } catch (_) {
-          modelTemplateStr = null;
-        }
-      }
-
-      final reqSize = resolvedBindings.llama_chat_apply_template(
-        tmplArg,
-        chatMessages,
-        messages.length,
-        true,
-        ffi.nullptr,
-        0,
-      );
-
-      String formatted;
-      if (reqSize <= 0) {
-        final buffer = StringBuffer();
-        for (final msg in messages) {
-          buffer.writeln('<|im_start|>${msg.role.name}');
-          buffer.writeln(msg.content ?? '');
-          buffer.writeln('<|im_end|>');
-        }
-        buffer.write('<|im_start|>assistant\n');
-        formatted = buffer.toString();
-      } else {
-        final buf = calloc<ffi.Char>(reqSize + 1);
-        try {
-          final actualSize = resolvedBindings.llama_chat_apply_template(
-            tmplArg,
-            chatMessages,
-            messages.length,
-            true,
-            buf,
-            reqSize + 1,
-          );
-          if (actualSize <= 0) {
-            final buffer = StringBuffer();
-            for (final msg in messages) {
-              buffer.writeln('<|im_start|>${msg.role.name}');
-              buffer.writeln(msg.content ?? '');
-              buffer.writeln('<|im_end|>');
-            }
-            buffer.write('<|im_start|>assistant\n');
-            formatted = buffer.toString();
-          } else {
-            formatted = buf.cast<Utf8>().toDartString(length: actualSize);
-          }
-        } finally {
-          calloc.free(buf);
-        }
-      }
-
-      final addBosByTokenizer = resolvedBindings.llama_vocab_get_add_bos(vocabPtr);
-      final templateRefersToBos = modelTemplateStr != null &&
-          (modelTemplateStr.contains('bos_token') ||
-              modelTemplateStr.contains('<|begin_of_text|>') ||
-              modelTemplateStr.contains('<|startoftext|>'));
-      final shouldManuallyPrependBos = templateRefersToBos && !addBosByTokenizer;
-
-      final promptPtr = formatted.toNativeUtf8();
-      final promptByteLen = promptPtr.length;
-      final maxTokens = promptByteLen + 256;
-      final tokBuf = calloc<ffi.Int32>(maxTokens);
-      try {
-        final nTok = resolvedBindings.llama_tokenize(
-          vocabPtr,
-          promptPtr.cast(),
-          promptByteLen,
-          tokBuf,
-          maxTokens,
-          !shouldManuallyPrependBos,
-          true,
-        );
-        if (nTok < 0) return null;
-        return shouldManuallyPrependBos ? nTok + 1 : nTok;
-      } finally {
-        calloc.free(promptPtr);
-        calloc.free(tokBuf);
-      }
-    } finally {
-      for (final p in allocated) {
-        calloc.free(p);
-      }
-      calloc.free(chatMessages);
-    }
+    final formatted = formatWithModelTemplate(
+      bindings: resolvedBindings,
+      model: model.cast<llama_model>(),
+      messages: [
+        for (final message in messages)
+          ChatTurn(role: message.role.name, content: message.content ?? ''),
+      ],
+    );
+    final tokenIds = tokenizeFormattedPrompt(
+      bindings: resolvedBindings,
+      vocab: vocab.cast<llama_vocab>(),
+      formatted: formatted,
+      usingChatTemplate: true,
+    );
+    return CountedPrompt(
+      tokenCount: tokenIds.length,
+      formatter: formatted.formatter,
+    );
+  } on ChatTemplateException {
+    rethrow;
   } catch (_) {
     return null;
   }

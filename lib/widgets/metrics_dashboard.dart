@@ -1,219 +1,184 @@
 import 'package:flutter/material.dart';
-import 'package:technical_exploration/system_metrics.dart';
+import 'package:technical_exploration/widgets/report_surface.dart';
 
-/// A prominent, easy-to-read dashboard displaying hardware and generation metrics.
-class MetricsDashboard extends StatelessWidget {
-  const MetricsDashboard({
+/// Six fixed tiles. The grid stays the same before and after a run.
+class TelemetryCard extends StatelessWidget {
+  const TelemetryCard({
     super.key,
     required this.coldLoadMs,
-    required this.baselineRssBytes,
-    required this.idleModelRssBytes,
-    required this.peakRssBytes,
-    required this.currentRssBytes,
+    required this.idleRamBytes,
+    required this.peakRamBytes,
     required this.ttftMs,
     required this.tokensPerSecond,
-    required this.evalCount,
-    required this.generationDuration,
-    required this.runCount,
-    required this.throttlePercentage,
-    required this.batteryTempCelsius,
+    required this.tokensGenerated,
+    required this.hasRun,
+    required this.contextLine,
   });
 
   final int? coldLoadMs;
-  final int? baselineRssBytes;
-  final int? idleModelRssBytes;
-  final int? peakRssBytes;
-  final int? currentRssBytes;
+  final int? idleRamBytes;
+  final int? peakRamBytes;
   final int? ttftMs;
   final double? tokensPerSecond;
-  final int? evalCount;
-  final Duration? generationDuration;
-  final int runCount;
-  final double? throttlePercentage;
-  final double? batteryTempCelsius;
+  final int? tokensGenerated;
+  final bool hasRun;
+  final String contextLine;
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
-    return Card(
-      elevation: 1,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: colorScheme.outlineVariant.withValues(alpha: 0.5)),
+    final tiles = <_MetricTile>[
+      _MetricTile(
+        label: 'Cold load',
+        value: coldLoadMs?.toString() ?? emDash,
+        unit: 'ms',
       ),
-      color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(Icons.speed, size: 20, color: colorScheme.primary),
-                const SizedBox(width: 8),
-                Text(
-                  'Hardware & Inference Telemetry',
-                  style: theme.textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: colorScheme.primary,
-                  ),
-                ),
-                const Spacer(),
-                if (batteryTempCelsius != null)
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: colorScheme.errorContainer.withValues(alpha: 0.6),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.thermostat, size: 14, color: colorScheme.onErrorContainer),
-                        const SizedBox(width: 4),
-                        Text(
-                          '${batteryTempCelsius!.toStringAsFixed(1)}°C',
-                          style: theme.textTheme.labelSmall?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: colorScheme.onErrorContainer,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-              ],
+      _MetricTile(
+        label: 'Idle RAM',
+        value: formatMbValue(idleRamBytes),
+        unit: 'MB',
+      ),
+      _MetricTile(
+        label: 'Peak RAM',
+        value: formatMbValue(peakRamBytes),
+        unit: 'MB',
+      ),
+      _MetricTile(label: 'TTFT', value: ttftMs?.toString() ?? emDash, unit: 'ms'),
+      _MetricTile(
+        label: 'Tokens/s',
+        value: tokensPerSecond?.toStringAsFixed(1) ?? emDash,
+        unit: 'tok/s',
+      ),
+      _MetricTile(
+        label: 'Tokens generated',
+        value: tokensGenerated?.toString() ?? emDash,
+        unit: 'tok',
+      ),
+    ];
+
+    return ReportCard(
+      title: 'Telemetry',
+      saveName: 'telemetry',
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          LayoutBuilder(
+            builder: (context, constraints) {
+              const minTile = 112.0;
+              const gap = 8.0;
+              final columns = constraints.maxWidth >= minTile * 6 + gap * 5
+                  ? 6
+                  : 3;
+              return _MetricGrid(columns: columns, tiles: tiles);
+            },
+          ),
+          const SizedBox(height: 8),
+          Visibility(
+            visible: !hasRun,
+            maintainSize: true,
+            maintainAnimation: true,
+            maintainState: true,
+            child: Text(
+              'Run to measure',
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
-            const SizedBox(height: 12),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: [
-                _MetricChip(
-                  icon: Icons.hourglass_top,
-                  label: 'Cold Load',
-                  value: coldLoadMs != null ? '$coldLoadMs ms' : '--',
-                  highlight: coldLoadMs != null,
-                ),
-                _MetricChip(
-                  icon: Icons.memory,
-                  label: 'Model Idle RAM',
-                  value: idleModelRssBytes != null
-                      ? formatBytes(idleModelRssBytes, signed: true)
-                      : (currentRssBytes != null ? formatBytes(currentRssBytes) : '--'),
-                  highlight: idleModelRssBytes != null,
-                ),
-                _MetricChip(
-                  icon: Icons.compress,
-                  label: 'Peak RAM',
-                  value: formatBytes(peakRssBytes),
-                ),
-                _MetricChip(
-                  icon: Icons.flash_on,
-                  label: 'TTFT',
-                  value: ttftMs != null ? '$ttftMs ms' : '--',
-                  highlight: ttftMs != null,
-                ),
-                _MetricChip(
-                  icon: Icons.trending_up,
-                  label: 'Tokens / Sec',
-                  value: tokensPerSecond != null
-                      ? '${tokensPerSecond!.toStringAsFixed(2)} tok/s'
-                      : '--',
-                  highlight: tokensPerSecond != null,
-                ),
-                _MetricChip(
-                  icon: Icons.tag,
-                  label: 'Tokens Generated',
-                  value: evalCount != null
-                      ? '$evalCount tok (${(generationDuration?.inMilliseconds ?? 0) / 1000.0}s)'
-                      : '--',
-                ),
-                if (runCount > 1 && throttlePercentage != null)
-                  _MetricChip(
-                    icon: Icons.local_fire_department,
-                    label: 'Throttle (Run #$runCount)',
-                    value: '${throttlePercentage! >= 0 ? '-' : '+'}${throttlePercentage!.abs().toStringAsFixed(1)}%',
-                    isAlert: throttlePercentage! > 10.0,
-                  ),
-              ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            contextLine,
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 }
 
-class _MetricChip extends StatelessWidget {
-  const _MetricChip({
-    required this.icon,
+class _MetricGrid extends StatelessWidget {
+  const _MetricGrid({required this.columns, required this.tiles});
+
+  final int columns;
+  final List<_MetricTile> tiles;
+
+  @override
+  Widget build(BuildContext context) {
+    final rows = <Widget>[];
+    for (var i = 0; i < tiles.length; i += columns) {
+      final end = i + columns > tiles.length ? tiles.length : i + columns;
+      final slice = tiles.sublist(i, end);
+      rows.add(
+        Padding(
+          padding: EdgeInsets.only(top: i == 0 ? 0 : 8),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              for (var c = 0; c < columns; c++)
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.only(left: c == 0 ? 0 : 8),
+                    child: c < slice.length ? slice[c] : const SizedBox.shrink(),
+                  ),
+                ),
+            ],
+          ),
+        ),
+      );
+    }
+    return Column(children: rows);
+  }
+}
+
+class _MetricTile extends StatelessWidget {
+  const _MetricTile({
     required this.label,
     required this.value,
-    this.highlight = false,
-    this.isAlert = false,
+    required this.unit,
   });
 
-  final IconData icon;
   final String label;
   final String value;
-  final bool highlight;
-  final bool isAlert;
+  final String unit;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
-    final bgColor = isAlert
-        ? colorScheme.errorContainer.withValues(alpha: 0.8)
-        : (highlight
-            ? colorScheme.primaryContainer.withValues(alpha: 0.5)
-            : colorScheme.surface);
-
-    final textColor = isAlert
-        ? colorScheme.onErrorContainer
-        : (highlight ? colorScheme.onPrimaryContainer : colorScheme.onSurface);
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-      decoration: BoxDecoration(
-        color: bgColor,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(
-          color: isAlert
-              ? colorScheme.error
-              : (highlight ? colorScheme.primary.withValues(alpha: 0.3) : colorScheme.outlineVariant.withValues(alpha: 0.4)),
+    final scheme = theme.colorScheme;
+    final missing = value == emDash;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: theme.textTheme.labelMedium?.copyWith(
+            color: scheme.onSurfaceVariant,
+          ),
         ),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 16, color: textColor),
-          const SizedBox(width: 6),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
+        const SizedBox(height: 4),
+        Text.rich(
+          TextSpan(
             children: [
-              Text(
-                label,
-                style: theme.textTheme.labelSmall?.copyWith(
-                  color: textColor.withValues(alpha: 0.7),
-                  fontSize: 10,
+              TextSpan(
+                text: value,
+                style: theme.textTheme.headlineSmall?.copyWith(
+                  fontFeatures: tabularFigures,
+                  fontWeight: FontWeight.w600,
+                  color: missing ? scheme.onSurfaceVariant : scheme.onSurface,
                 ),
               ),
-              Text(
-                value,
+              TextSpan(
+                text: ' $unit',
                 style: theme.textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: textColor,
+                  color: scheme.onSurfaceVariant,
+                  fontWeight: FontWeight.w400,
                 ),
               ),
             ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

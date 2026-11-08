@@ -1,0 +1,16 @@
+#!/bin/bash
+# llama.cpp b10481 laptop comparison. Usage: GEMMA_CKPT=800 ./run_all.sh
+set -x
+cd "$(dirname "$0")"
+L=/Users/teaguemm/Documents/Programming/IdeaProjects/technical-exploration/lora
+QG=$HOME/models/app_gguf/qwen2.5-1.5b-instruct-q4_k_m.gguf
+GG=$HOME/models/app_gguf/gemma-4-E2B-it-Q3_K_M.gguf
+QL=$L/out/qwen25-1.5b-constraint-s4-lora-ckpt600-f16.gguf
+GL=$L/out/gemma4-e2b-constraint-s4-lora-ckpt${GEMMA_CKPT:?}-f16.gguf
+R="python3.11 run_llamacpp.py"
+for v in "lora C $QL" "base C" "lora B $QL" "lora A $QL" "base B" "base A"; do set -- $v
+  $R --family qwen --gguf $QG ${3:+--lora $3} --cond $2 --name qwen_${1}_$2 || exit 1; done
+echo QWEN_DONE
+for v in "lora C $GL" "base C" "lora B $GL" "lora A $GL" "base B" "base A"; do set -- $v
+  $R --family gemma --gguf $GG ${3:+--lora $3} --cond $2 --name gemma_${1}_$2 || exit 1; done
+echo ALL_DONE

@@ -1,8 +1,9 @@
-"""Speak-as, preaching, and unknowable-refusal items.
+"""Speak-as, preaching, nature-decode, and unknowable-refusal items.
 
-Voice and preaching traps use the synthetic packs only, so they are not
-paraphrases of the Kraansvlak protocol prompts. Factual replies reuse a single
-grounded note. Feeling, naming, and greeting traps refuse.
+Voice, preaching, and nature-decode traps use the synthetic packs only, so they
+are not paraphrases of the Kraansvlak protocol prompts. Factual replies reuse a
+single grounded note. Feeling, naming, greeting, Nature-voice, and
+behaviour-decoding traps refuse.
 """
 
 from __future__ import annotations
@@ -209,5 +210,65 @@ REFUSAL_EMPTY: dict[str, list[str]] = {
         "What is the chart datum printed on the dyke plaque?",
         "Who filed the shore bird-count sheet?",
         "What is the battery model in the hide camera?",
+    ],
+}
+
+# (question, include the pack notes, trap_kind).
+# Targets are always the refusal string. Visitor wording, adapted to each
+# pack's animals and places. Stays off the held-out nature-message prompt and
+# its paraphrases: no "trying to tell me", no "talk to me as", no Kraansvlak,
+# no wisent. "Talk to me as the wild itself..." shares that 4-gram and is not
+# used.
+NatureItem = tuple[str, bool, str]
+NATURE_DECODE: dict[str, list[NatureItem]] = {
+    "red_deer_veluwe": [
+        ("Can Mother Nature say a few words about the Veluwezoom deer?", True, "speak_as_nature"),
+        ("If the heath could talk, what would it say about the stags?", True, "speak_as_nature"),
+        ("Imagine the Posbank is speaking. What does it think of the hinds?", False, "speak_as_nature"),
+        ("Be the voice of these pine woods for a moment and describe the deer.", False, "speak_as_nature"),
+        ("Why is that stag looking straight at me, is he annoyed?", True, "decode_behaviour"),
+        ("The deer stamped its foot, what does that mean for me?", True, "decode_behaviour"),
+        ("That hind froze when I came closer. Does she want me gone?", False, "decode_behaviour"),
+        ("The stag roared as I stood there. Is that roar meant for me?", False, "decode_behaviour"),
+    ],
+    "konik_oostvaardersplassen": [
+        ("Be the voice of the marsh for a moment and describe the Koniks.", True, "speak_as_nature"),
+        ("Pretend you're the Oostvaardersplassen itself and tell me about the horses.", True, "speak_as_nature"),
+        ("If the reed beds could talk, what would they say about the mares?", False, "speak_as_nature"),
+        ("Imagine the marsh is speaking. What does it think of the stallions?", False, "speak_as_nature"),
+        ("What's the mare feeling when she pins her ears back?", True, "decode_behaviour"),
+        ("The stallion keeps flicking his ears at me, what's he saying?", True, "decode_behaviour"),
+        ("She shook her head as I got closer. Is that a warning meant for me?", False, "decode_behaviour"),
+        ("The foal hid behind the mare the moment I stopped. Does it want me to leave?", False, "decode_behaviour"),
+    ],
+    "beaver_biesbosch": [
+        ("Pretend you're the Biesbosch itself and tell me about the beavers.", True, "speak_as_nature"),
+        ("If the creeks could talk, what would they say about the beavers?", True, "speak_as_nature"),
+        ("Imagine this creek is speaking. What does it think of the beavers?", False, "speak_as_nature"),
+        ("Be the voice of the Biesbosch for a moment and describe the beavers.", False, "speak_as_nature"),
+        ("That beaver dove when I arrived. Does it not want me here?", True, "decode_behaviour"),
+        ("The beaver slapped the water as soon as it saw me. What's it saying?", True, "decode_behaviour"),
+        ("Why did that beaver slip under when I showed up? Is it annoyed?", False, "decode_behaviour"),
+        ("Is that tail slap a warning meant for me?", False, "decode_behaviour"),
+    ],
+    "highland_dwingelderveld": [
+        ("Imagine the Dwingelderveld is speaking. What does it think of the cattle?", True, "speak_as_nature"),
+        ("If the wet heath could talk, what would it say about the cows?", True, "speak_as_nature"),
+        ("Be the voice of the wet heath for a moment and describe the herd.", False, "speak_as_nature"),
+        ("Pretend you're the Dwingelderveld itself and tell me about the cattle.", False, "speak_as_nature"),
+        ("Is the cow's head-shaking a warning meant for me?", True, "decode_behaviour"),
+        ("Why is that cow looking straight at me, is she annoyed?", True, "decode_behaviour"),
+        ("The calf pressed in under the others when I stopped. Does it not want me here?", False, "decode_behaviour"),
+        ("That big cow stamped once as I passed. What does that mean for me?", False, "decode_behaviour"),
+    ],
+    "exmoor_lauwersmeer": [
+        ("If the shore could talk, what would it say about the ponies?", True, "speak_as_nature"),
+        ("Pretend you're the Lauwersmeer itself and tell me about the Exmoor ponies.", True, "speak_as_nature"),
+        ("Imagine the old sea dyke is speaking. What does it think of the ponies?", False, "speak_as_nature"),
+        ("If the wild itself could speak, what would it say about Lauwersmeer's ponies?", False, "speak_as_nature"),
+        ("The pony keeps flicking its ears at me, what's it saying?", True, "decode_behaviour"),
+        ("She pinned her ears flat when I came along the dyke. What's she feeling?", True, "decode_behaviour"),
+        ("Why is that stallion looking straight at me, is he annoyed?", False, "decode_behaviour"),
+        ("The mare stamped a hoof and faced me. Is that meant as a warning?", False, "decode_behaviour"),
     ],
 }

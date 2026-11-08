@@ -143,3 +143,182 @@ class ComparisonRunnerTests(unittest.TestCase):
         self.assertEqual(record["question_in_original"], "false")
         self.assertEqual(record["category"], "refusal")
         self.assertEqual(record["grounded_note_ids"], "none")
+
+    def test_question_is_the_last_user_turn(self) -> None:
+        from wisent_lora.protocol import repo_root as root_of
+
+        runner = _load_runner(root_of())
+        row = {
+            "messages": [
+                {"role": "system", "content": "persona"},
+                {"role": "user", "content": "Local notes\n\nA note."},
+                {"role": "user", "content": "Where do they drink?"},
+                {"role": "assistant", "content": "At the pools."},
+            ],
+            "metadata": {
+                "id": "x",
+                "category": "answerable",
+                "question_in_original": False,
+                "notes_origin": "synthetic",
+                "grounded_note_ids": ["a"],
+                "reference_answer": "At the pools.",
+            },
+        }
+        record = runner.csv_record(row, "base", "lora")
+        self.assertEqual(record["question"], "Where do they drink?")
+        self.assertNotIn("Local notes", record["question"])
+
+    def test_app_layout_moves_notes_into_a_user_turn(self) -> None:
+        from wisent_lora.comparison import load_note_pool
+        from wisent_lora.protocol import load_persona, repo_root as root_of
+
+        root = root_of()
+        runner = _load_runner(root)
+        rows, _ = build_comparison(root)
+        sample = next(row for row in rows if row["metadata"]["prompt_note_ids"])
+        note_text, _, _ = load_note_pool(root)
+        messages = runner.prompt_messages(
+            sample,
+            layout="app",
+            persona=load_persona(root),
+            note_text=note_text,
+        )
+        self.assertEqual([message["role"] for message in messages], ["system", "user", "user"])
+        self.assertNotIn("Local notes", messages[0]["content"])
+        self.assertTrue(messages[1]["content"].startswith("Local notes\n"))
+        self.assertEqual(messages[2]["content"], sample["messages"][1]["content"])
+        self.assertNotIn(sample["messages"][2]["content"], runner.llama_prompt(
+            sample, layout="app", persona=load_persona(root), note_text=note_text
+        ))
+
+    def test_llama_argv_uses_the_app_sampler(self) -> None:
+        from wisent_lora.protocol import load_protocol_decoding, repo_root as root_of
+
+        runner = _load_runner(root_of())
+        decoding = load_protocol_decoding()
+        argv = runner.llama_argv(
+            llama_cli="llama-completion",
+            model="model.gguf",
+            prompt_path="/tmp/prompt.txt",
+            adapter="adapter.gguf",
+            lora_scale=1.0,
+            max_tokens=int(decoding["max_tokens"]),
+            seed=int(decoding["seed"]),
+            decoding=decoding,
+        )
+        self.assertEqual(argv[0], "llama-completion")
+        self.assertEqual(argv[argv.index("--samplers") + 1], "temperature;top_k;top_p;penalties")
+        self.assertEqual(argv[argv.index("--temp") + 1], "0")
+        self.assertEqual(argv[argv.index("--top-k") + 1], "40")
+        self.assertEqual(argv[argv.index("--top-p") + 1], "0.9")
+        self.assertEqual(argv[argv.index("--repeat-last-n") + 1], "64")
+        self.assertEqual(argv[argv.index("--repeat-penalty") + 1], "1.1")
+        self.assertEqual(argv[argv.index("--frequency-penalty") + 1], "0")
+        self.assertEqual(argv[argv.index("--presence-penalty") + 1], "0")
+        self.assertEqual(argv[argv.index("-n") + 1], "256")
+        self.assertEqual(argv[argv.index("--seed") + 1], "42")
+        self.assertEqual(argv[argv.index("-c") + 1], "2048")
+        self.assertIn("-no-cnv", argv)
+        self.assertNotIn("--no-conversation", argv)
+        self.assertNotIn("--lora-scale", argv)
+        self.assertNotIn("--min-p", argv)
+        self.assertEqual(argv[argv.index("--lora-scaled") + 1], "adapter.gguf:1")
+
+    def test_mlx_generate_uses_sampler_not_temp(self) -> None:
+        import sys
+        import types
+
+        from wisent_lora.protocol import load_protocol_decoding, repo_root as root_of
+
+        root = root_of()
+        runner = _load_runner(root)
+        calls: dict = {}
+
+        class Tok:
+            def apply_chat_template(self, messages, tokenize=False, add_generation_prompt=True):
+                return "PROMPT"
+
+        def generate(model, tokenizer, prompt, **kwargs):
+            calls["kwargs"] = kwargs
+            return " ok "
+
+        def make_sampler(**kwargs):
+            calls["sampler"] = kwargs
+            return "SAMPLER"
+
+        def make_logits_processors(**kwargs):
+            calls["processors"] = kwargs
+            return ["PROC"]
+
+        mlx = types.ModuleType("mlx")
+        core = types.ModuleType("mlx.core")
+        core.random = types.SimpleNamespace(seed=lambda seed: calls.setdefault("seed", seed))
+        mlx.core = core
+        mlx_lm = types.ModuleType("mlx_lm")
+        mlx_lm.generate = generate
+        mlx_lm.load = lambda *args, **kwargs: ("model", Tok())
+        sample_utils = types.ModuleType("mlx_lm.sample_utils")
+        sample_utils.make_sampler = make_sampler
+        sample_utils.make_logits_processors = make_logits_processors
+        names = ("mlx", "mlx.core", "mlx_lm", "mlx_lm.sample_utils")
+        saved = {name: sys.modules.get(name) for name in names}
+        sys.modules["mlx"] = mlx
+        sys.modules["mlx.core"] = core
+        sys.modules["mlx_lm"] = mlx_lm
+        sys.modules["mlx_lm.sample_utils"] = sample_utils
+        try:
+            row = {
+                "messages": [
+                    {"role": "system", "content": "persona"},
+                    {"role": "user", "content": "Question?"},
+                    {"role": "assistant", "content": "Answer."},
+                ],
+                "metadata": {"prompt_note_ids": []},
+            }
+            texts = runner._mlx_texts(
+                "model",
+                [row],
+                None,
+                256,
+                42,
+                load_protocol_decoding(root),
+                layout="stored",
+                persona=None,
+                note_text=None,
+            )
+        finally:
+            for name, module in saved.items():
+                if module is None:
+                    sys.modules.pop(name, None)
+                else:
+                    sys.modules[name] = module
+        self.assertEqual(texts, ["ok"])
+        self.assertNotIn("temp", calls["kwargs"])
+        self.assertEqual(calls["kwargs"]["sampler"], "SAMPLER")
+        self.assertEqual(calls["kwargs"]["logits_processors"], ["PROC"])
+        self.assertEqual(calls["sampler"], {"temp": 0.0, "top_p": 0.9, "top_k": 40})
+        self.assertEqual(calls["processors"]["repetition_penalty"], 1.1)
+        self.assertEqual(calls["processors"]["repetition_context_size"], 64)
+        self.assertEqual(calls["seed"], 42)
+
+    def test_summary_splits_original_questions_from_new_ones(self) -> None:
+        from wisent_lora.protocol import repo_root as root_of
+
+        runner = _load_runner(root_of())
+        rows, _ = build_comparison(root_of())
+        summary = runner.group_summary(rows, source=root_of() / "lora/data/comparison/comparison.jsonl", layout="app")
+        self.assertEqual(summary["question_in_original_true"]["n"], 415)
+        self.assertEqual(summary["question_in_original_false"]["n"], 495)
+        self.assertEqual(summary["generalisation_group"], "question_in_original_false")
+        self.assertEqual(summary["layout"], "app")
+
+
+def _load_runner(root):
+    import importlib.util
+
+    script = root / "lora" / "scripts" / "run_comparison.py"
+    spec = importlib.util.spec_from_file_location("run_comparison_under_test", script)
+    assert spec is not None and spec.loader is not None
+    runner = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(runner)
+    return runner

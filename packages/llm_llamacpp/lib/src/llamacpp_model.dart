@@ -55,6 +55,12 @@ class LlamaCppModel {
     return _bindings.llama_model_n_embd(_modelPtr);
   }
 
+  /// Total parameters reported by llama.cpp for this loaded model.
+  int get parameterCount {
+    _checkNotDisposed();
+    return _bindings.llama_model_n_params(_modelPtr);
+  }
+
   /// Gets the beginning-of-sequence token.
   int get bosToken {
     _checkNotDisposed();

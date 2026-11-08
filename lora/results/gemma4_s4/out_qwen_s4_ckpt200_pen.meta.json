@@ -1,0 +1,1 @@
+{"name": "qwen_s4_ckpt200_pen", "model": "Qwen/Qwen2.5-1.5B-Instruct", "adapter": "/tmp/q4ad/ckpt200", "penalty": "on", "seconds": 40.2}

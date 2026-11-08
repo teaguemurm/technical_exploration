@@ -229,6 +229,11 @@ class RunRecord {
     this.throttlePercentage,
     this.isHeatTest = false,
     this.thinkingDisabled,
+    this.promptFormatter,
+    this.thoughtEmitted = false,
+    this.adapterFileName = '',
+    this.adapterSha256 = '',
+    this.adapterScale,
   });
 
   final int runIndex;
@@ -276,6 +281,21 @@ class RunRecord {
   final bool isHeatTest;
   final bool? thinkingDisabled;
 
+  /// `native`, `gemma4`, or `chatml-fallback`. Null on runs recorded before
+  /// the formatter was logged.
+  final String? promptFormatter;
+
+  /// True when the model output contained a thought block. Independent of
+  /// [thinkingDisabled], which stays null because this app applies no toggle.
+  final bool thoughtEmitted;
+
+  /// Empty when the run used the base model. Trailing export fields.
+  final String adapterFileName;
+  final String adapterSha256;
+
+  /// Null for a base run. `1.0` when an adapter was loaded.
+  final double? adapterScale;
+
   String get loadType => isColdLoad ? 'Cold' : 'Warm';
 
   Map<String, dynamic> toJson() => {
@@ -318,6 +338,11 @@ class RunRecord {
     'throttlePercentage': throttlePercentage,
     'isHeatTest': isHeatTest,
     'thinkingDisabled': thinkingDisabled,
+    'promptFormatter': promptFormatter,
+    'thoughtEmitted': thoughtEmitted,
+    'adapterFileName': adapterFileName,
+    'adapterSha256': adapterSha256,
+    'adapterScale': adapterScale,
   };
 
   factory RunRecord.fromJson(Map<String, dynamic> json) {
@@ -372,6 +397,11 @@ class RunRecord {
       throttlePercentage: (json['throttlePercentage'] as num?)?.toDouble(),
       isHeatTest: json['isHeatTest'] as bool? ?? false,
       thinkingDisabled: json['thinkingDisabled'] as bool?,
+      promptFormatter: json['promptFormatter'] as String?,
+      thoughtEmitted: json['thoughtEmitted'] as bool? ?? false,
+      adapterFileName: json['adapterFileName']?.toString() ?? '',
+      adapterSha256: json['adapterSha256']?.toString() ?? '',
+      adapterScale: (json['adapterScale'] as num?)?.toDouble(),
     );
   }
 }
@@ -488,11 +518,12 @@ class BenchmarkExporter {
     // Section 1: Load and Idle Summary
     buffer.writeln('# Tab: Load and idle');
     buffer.writeln(
-      'Device Model,OS Version,Model File,Architecture,Quantization,Backend,GPU Layers,Load Type,Load Time (ms),RAM Before Load (MB),RAM Idle Model (MB),RAM Overhead (MB),Timestamp',
+      'Device Model,OS Version,Model File,Architecture,Quantization,Backend,GPU Layers,Load Type,Load Time (ms),RAM Before Load (MB),RAM Idle Model (MB),RAM Overhead (MB),Timestamp,Adapter File,Adapter SHA-256,Adapter Scale',
     );
     final seenLoads = <String>{};
     for (final r in runs) {
-      final key = '${r.modelFileName}_${r.isColdLoad}_${r.loadDurationMs}';
+      final key =
+          '${r.modelFileName}_${r.adapterFileName}_${r.isColdLoad}_${r.loadDurationMs}';
       if (!seenLoads.contains(key) && r.loadDurationMs != null) {
         seenLoads.add(key);
         final beforeMb = r.ramBeforeLoadBytes != null
@@ -507,7 +538,7 @@ class BenchmarkExporter {
                   .toStringAsFixed(1)
             : '';
         buffer.writeln(
-          '${_escape(r.deviceModel)},${_escape(r.osVersion)},${_escape(r.modelFileName)},${_escape(r.architecture)},${_escape(r.quantization)},${_escape(r.backend)},${r.nGpuLayers},${r.loadType},${r.loadDurationMs ?? ""},$beforeMb,$idleMb,$overheadMb,${r.timestamp.toIso8601String()}',
+          '${_escape(r.deviceModel)},${_escape(r.osVersion)},${_escape(r.modelFileName)},${_escape(r.architecture)},${_escape(r.quantization)},${_escape(r.backend)},${r.nGpuLayers},${r.loadType},${r.loadDurationMs ?? ""},$beforeMb,$idleMb,$overheadMb,${r.timestamp.toIso8601String()},${_escape(r.adapterFileName)},${_escape(r.adapterSha256)},${_scaleCell(r.adapterScale)}',
         );
       }
     }
@@ -517,7 +548,7 @@ class BenchmarkExporter {
     // Section 2: Inference Runs
     buffer.writeln('# Tab: Inference');
     buffer.writeln(
-      'Run Index,Run Since Load,Load Type,Timestamp,Device Model,OS Version,Model File,Architecture,Quantization,Backend,Condition,Notes Mode,k,Injected Notes,Prompt ID,Prompt Text,Temperature,Seed,Top-K,Top-P,Repeat Penalty,Max Tokens,Context Size,Prompt Tokens,Gen Tokens,Hit Max Tokens,TTFT (ms),Gen Duration (ms),TPS (tok/s),RAM Peak (MB),Battery Level Before (%),Battery Level After (%),Battery Temp Before (C),Battery Temp After (C),Throttle (%),Is Heat Test,Thinking Disabled,Output',
+      'Run Index,Run Since Load,Load Type,Timestamp,Device Model,OS Version,Model File,Architecture,Quantization,Backend,Condition,Notes Mode,k,Injected Notes,Prompt ID,Prompt Text,Temperature,Seed,Top-K,Top-P,Repeat Penalty,Max Tokens,Context Size,Prompt Tokens,Gen Tokens,Hit Max Tokens,TTFT (ms),Gen Duration (ms),TPS (tok/s),RAM Peak (MB),Battery Level Before (%),Battery Level After (%),Battery Temp Before (C),Battery Temp After (C),Throttle (%),Is Heat Test,Thinking Disabled,Prompt Formatter,Thought Emitted,Output,Adapter File,Adapter SHA-256,Adapter Scale',
     );
 
     for (final r in runs) {
@@ -578,7 +609,12 @@ class BenchmarkExporter {
           r.thinkingDisabled == null
               ? 'N/A'
               : (r.thinkingDisabled! ? 'Yes' : 'No'),
+          _escape(r.promptFormatter ?? ''),
+          r.thoughtEmitted ? 'Yes' : 'No',
           _escape(r.output),
+          _escape(r.adapterFileName),
+          _escape(r.adapterSha256),
+          _scaleCell(r.adapterScale),
         ].join(','),
       );
     }
@@ -675,6 +711,9 @@ class BenchmarkExporter {
 
     return {'csv': csvFile.path, 'json': jsonFile.path};
   }
+
+  static String _scaleCell(double? scale) =>
+      scale == null ? '' : scale.toStringAsFixed(1);
 
   static String _escape(String value) {
     if (value.contains(',') ||

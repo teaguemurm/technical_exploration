@@ -130,121 +130,53 @@ void _handleInferenceRequest(
     }
 
     try {
-      String prompt;
-      // Inspect the model's GGUF chat template so we can correctly compensate
-      // for cases where llama_chat_apply_template's hard-coded fallback drops
-      // the leading BOS that the real Jinja template would emit.
-      String? modelTemplateStr;
-      final templatePtr = bindings.llama_model_chat_template(
-        model,
-        ffi.nullptr,
-      );
-      if (templatePtr.address != 0) {
-        try {
-          modelTemplateStr = templatePtr.cast<Utf8>().toDartString();
-        } catch (_) {
-          modelTemplateStr = null;
-        }
-      }
-
-      if (request.messages != null && request.messages!.isNotEmpty) {
-        prompt = _applyNativeChatTemplate(
+      final usingChatTemplate =
+          request.messages != null && request.messages!.isNotEmpty;
+      final FormattedPrompt formatted;
+      if (usingChatTemplate) {
+        formatted = _applyNativeChatTemplate(
           bindings,
           model,
           request.messages!,
           toolSchemasJson: request.toolSchemasJson,
         );
       } else {
-        prompt = request.prompt;
-      }
-
-      // llama_chat_apply_template is NOT a Jinja interpreter; if the model's
-      // GGUF template starts with `{{- bos_token -}}` (LFM2.5, some Llama 3
-      // variants, etc.), the fallback chatml formatter drops the BOS. The
-      // tokenizer's `add_bos_token` flag is also frequently false on such
-      // models, because the template is supposed to handle BOS itself. Net
-      // result: no BOS token in the prompt → model behaves like a base model
-      // and never produces an EOS. Detect this and prepend the BOS id by hand.
-      final usingChatTemplate =
-          request.messages != null && request.messages!.isNotEmpty;
-      final addBosByTokenizer = bindings.llama_vocab_get_add_bos(vocab);
-      final templateRefersToBos =
-          modelTemplateStr != null &&
-          (modelTemplateStr.contains('bos_token') ||
-              modelTemplateStr.contains('<|begin_of_text|>') ||
-              modelTemplateStr.contains('<|startoftext|>'));
-      final shouldManuallyPrependBos =
-          usingChatTemplate && templateRefersToBos && !addBosByTokenizer;
-      // ignore: avoid_print
-      print(
-        '[inference_isolate_handler] BOS handling: '
-        'add_bos_token=$addBosByTokenizer '
-        'template_refers_to_bos=$templateRefersToBos '
-        'manual_bos_prepend=$shouldManuallyPrependBos',
-      );
-
-      final promptPtr = prompt.toNativeUtf8();
-      // Use UTF-8 byte length, not Dart string length (UTF-16 code units), so
-      // that prompts with non-ASCII characters tokenize correctly.
-      final promptByteLen = promptPtr.length;
-      final maxTokens = promptByteLen + 256;
-      final tokensPtr = calloc<ffi.Int32>(maxTokens);
-
-      // When we'll manually prepend BOS, ask the tokenizer NOT to add specials.
-      // Otherwise keep the prior behavior so the tokenizer's configured
-      // BOS/EOS handling stays in effect.
-      final tokenizerAddSpecial = !shouldManuallyPrependBos;
-      final nTokensFromTokenizer = bindings.llama_tokenize(
-        vocab,
-        promptPtr.cast(),
-        promptByteLen,
-        tokensPtr,
-        maxTokens,
-        tokenizerAddSpecial,
-        true,
-      );
-      calloc.free(promptPtr);
-
-      if (nTokensFromTokenizer < 0) {
-        calloc.free(tokensPtr);
-        // ignore: avoid_print
-        print(
-          '[inference_isolate_handler] Tokenization failed '
-          '(returned $nTokensFromTokenizer) '
-          'for prompt of ${prompt.length} chars / $promptByteLen bytes',
+        // Raw prompt. No chat formatter ran, so BOS follows the tokenizer.
+        formatted = FormattedPrompt(
+          text: request.prompt,
+          formatter: promptFormatterNative,
+          bosIncludedInText: false,
+          template: readModelChatTemplate(bindings, model),
         );
+      }
+      final prompt = formatted.text;
+      final promptFormatter = usingChatTemplate ? formatted.formatter : null;
+
+      final List<int> tokenIds;
+      try {
+        tokenIds = tokenizeFormattedPrompt(
+          bindings: bindings,
+          vocab: vocab,
+          formatted: formatted,
+          usingChatTemplate: usingChatTemplate,
+        );
+      } on ChatTemplateException catch (error) {
+        // ignore: avoid_print
+        print('[inference_isolate_handler] ${error.message}');
         mainSendPort.send(
           _IsolateResponse(
             requestId: request.requestId,
-            payload: InferenceError('Failed to tokenize prompt'),
+            payload: InferenceError(error.message),
             isComplete: true,
           ),
         );
         return;
       }
 
-      var nTokens = nTokensFromTokenizer;
-      if (shouldManuallyPrependBos) {
-        final bosId = bindings.llama_vocab_bos(vocab);
-        if (bosId >= 0) {
-          // Shift right by 1 to make room for BOS at index 0.
-          for (var i = nTokens; i > 0; i--) {
-            tokensPtr[i] = tokensPtr[i - 1];
-          }
-          tokensPtr[0] = bosId;
-          nTokens += 1;
-          // ignore: avoid_print
-          print(
-            '[inference_isolate_handler] Manually prepended BOS token id=$bosId; '
-            'prompt now $nTokens tokens',
-          );
-        } else {
-          // ignore: avoid_print
-          print(
-            '[inference_isolate_handler] WARNING: wanted to prepend BOS but '
-            'llama_vocab_bos returned $bosId',
-          );
-        }
+      final nTokens = tokenIds.length;
+      final tokensPtr = calloc<ffi.Int32>(nTokens);
+      for (var i = 0; i < nTokens; i++) {
+        tokensPtr[i] = tokenIds[i];
       }
 
       // ignore: avoid_print
@@ -348,6 +280,7 @@ void _handleInferenceRequest(
           payload: InferenceComplete(
             promptTokens: nTokens,
             generatedTokens: generatedTokens,
+            promptFormatter: promptFormatter,
           ),
           isComplete: true,
         ),
